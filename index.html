@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -22,12 +23,16 @@
       --matcha-deep: #4A5A38;
       --matcha-rich: #2C3A1F;
       
-      --bg-light: #f8fafc; /* Light background for content */
-      --bg-dark: var(--matcha-rich); /* Dark background for hero/footer */
+      --bg-light: #f8fafc; 
+      --bg-dark: var(--matcha-rich); 
       --text-white: #f8fafc;
-      --text-muted: #cbd5e1; /* Slightly lighter muted text for better contrast */
+      --text-muted: #cbd5e1;
       --text-dark: var(--matcha-rich);
       --accent: var(--matcha-medium);
+
+      /* iMessage specific colors */
+      --imessage-gray: #e9e9eb;
+      --imessage-green: var(--matcha-deep); /* Using brand color for sent messages */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
@@ -43,7 +48,7 @@
 
     .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; }
 
-    /* --- CUSTOM SCROLLBAR (Updated Colors) --- */
+    /* --- CUSTOM SCROLLBAR --- */
     .custom-scrollbar {
         position: fixed;
         right: 30px;
@@ -66,30 +71,30 @@
         opacity: 0.5;
         transition: opacity 0.3s;
         text-align: right;
+        mix-blend-mode: difference;
     }
 
     .sb-segment {
         width: 4px;
         height: 40px;
-        background: rgba(74, 90, 56, 0.2); /* Matcha deep with opacity */
+        background: rgba(44, 58, 31, 0.2);
         border-radius: 4px;
         position: relative;
         overflow: hidden;
         transition: width 0.3s;
     }
 
-    .sb-segment.active .sb-label { opacity: 1; color: var(--matcha-deep); }
+    .sb-segment.active .sb-label { opacity: 1; }
     
     .sb-fill {
         position: absolute; top: 0; left: 0;
         width: 100%; height: 100%;
-        background: var(--matcha-deep); /* Matcha deep */
+        background: var(--matcha-rich);
         transform: scaleY(0);
         transform-origin: top center;
         transition: transform 0.1s linear;
     }
 
-    /* Sub-segments container */
     .sb-group {
         display: flex;
         flex-direction: column;
@@ -100,14 +105,13 @@
 
     .sb-sub {
         width: 4px;
-        height: 15px; /* Shorter bars for steps */
-        background: rgba(74, 90, 56, 0.2); /* Matcha deep with opacity */
+        height: 15px; 
+        background: rgba(44, 58, 31, 0.2);
         border-radius: 4px;
         position: relative;
         overflow: hidden;
     }
 
-    /* Tooltip text on hover */
     .sb-wrap {
         display: flex;
         flex-direction: column;
@@ -129,12 +133,9 @@
         align-items: center;
         justify-content: center;
         padding-top: 5vh; 
-        
-        /* GLITCH FIX: Force GPU rendering layer to prevent painting snaps */
         transform: translateZ(0);
         -webkit-transform: translateZ(0);
         backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
         perspective: 1000px;
     }
 
@@ -143,8 +144,6 @@
         width: auto; height: 70vh; 
         max-height: 800px;
         aspect-ratio: 9 / 19.5; 
-        
-        /* GLITCH FIX: Ensure smooth transform processing */
         will-change: transform;
         transform-style: preserve-3d;
     }
@@ -154,8 +153,9 @@
         top: 50%; left: 50%;
         transform: translate(-50%, -50%);
         width: 140%; height: 100%;
-        background: radial-gradient(circle, rgba(152, 170, 128, 0.2) 0%, transparent 60%); /* Matcha medium glow */
+        background: radial-gradient(circle, rgba(198, 215, 179, 0.3) 0%, transparent 60%);
         filter: blur(50px);
+        opacity: 0.5; /* Initial subtle glow */
     }
 
     .phone-device {
@@ -171,38 +171,69 @@
         width: 30%; height: 15px; background: #000; border-radius: 10px; z-index: 60;
     }
 
-    .screen { position: absolute; inset: 6px; overflow: hidden; border-radius: 48px; background: #f0fdf4; } /* Light green screen background */
-    .screen-content { 
-        position: absolute; inset: 0; 
-        display: flex; flex-direction: column; 
-        padding: 60px 20px 20px;
-    }
+    .screen { position: absolute; inset: 6px; overflow: hidden; border-radius: 48px; background: #fff; display: flex; flex-direction: column; }
+    
+    /* --- NEW REALISTIC IMESSAGE STYLES --- */
     .screen-header {
-        display: flex; align-items: center; gap: 10px; margin-bottom: 30px;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 50px 15px 15px; /* PT for dynamic island area */
+        background: rgba(245, 245, 247, 0.85); /* iOS header frosted look */
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        z-index: 10;
     }
-    .screen-header img { width: 40px; height: auto; }
-    .screen-header h2 { font-size: 1.2rem; color: var(--matcha-rich); }
+    .screen-header img { width: auto; height: 45px; object-fit: contain; }
+    /* Hiding text because the logo image has text */
+    .screen-header h2 { display: none; font-size: 1rem; color: #000; font-family: 'SF Pro Display', sans-serif; font-weight: 600; }
 
-    /* Chat bubbles for phone screen */
-    .chat-bubble {
-        padding: 12px 16px;
-        border-radius: 18px;
-        max-width: 80%;
-        margin-bottom: 10px;
-        font-size: 0.9rem;
-        line-height: 1.4;
+    .screen-body-container {
+        position: relative;
+        flex-grow: 1;
+        background: #fff;
+        overflow: hidden;
     }
-    .chat-bubble.ai {
-        background: var(--matcha-light);
-        color: var(--matcha-rich);
+
+    .chat-container {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end; /* Bottom up messages */
+        padding: 20px 12px 30px;
+        gap: 8px; /* Tight gap like real iMessage */
+        overflow-y: auto;
+        background: #fff;
+        font-family: 'SF Pro Display', sans-serif; /* Use iOS font */
+    }
+
+    /* Chat states for animation */
+    #chat-state-1 { z-index: 2; } /* Mom chat on top initially */
+    #chat-state-2 { z-index: 1; opacity: 0; filter: blur(5px); } /* AI chat hidden initially */
+
+    .imessage-bubble {
+        max-width: 75%;
+        padding: 8px 14px; /* Realistic padding */
+        font-size: 15px; /* Realistic font size for phone screen */
+        line-height: 1.3;
+        position: relative;
+        word-wrap: break-word;
+    }
+
+    /* Received Messages (Gray) */
+    .imessage-received {
         align-self: flex-start;
-        border-bottom-left-radius: 4px;
+        background-color: var(--imessage-gray);
+        color: #000;
+        border-radius: 18px 18px 18px 4px; /* Tail bottom left */
     }
-    .chat-bubble.user {
-        background: var(--matcha-rich);
-        color: var(--text-white);
+
+    /* Sent Messages (Green) */
+    .imessage-sent {
         align-self: flex-end;
-        border-bottom-right-radius: 4px;
+        background-color: var(--imessage-green);
+        color: white;
+        border-radius: 18px 18px 4px 18px; /* Tail bottom right */
     }
 
 
@@ -211,8 +242,7 @@
       height: 100vh; 
       position: relative;
       display: flex; flex-direction: column; align-items: center;
-      /* Matcha gradient background */
-      background: radial-gradient(circle at 50% 50%, var(--matcha-deep), var(--matcha-rich)); 
+      background: radial-gradient(circle at 50% 50%, var(--matcha-rich), #1a2312); 
       z-index: 10;
     }
 
@@ -220,28 +250,26 @@
       text-align: center;
       z-index: 40; 
       position: absolute; top: 5%; width: 100%;
+      padding: 0 20px;
     }
 
     .heading-swapper {
-        display: grid; place-items: center; height: 80px; position: relative;
+        display: grid; place-items: center; height: 120px; position: relative;
     }
 
     .hero-title {
       grid-area: 1 / 1;
-      font-size: clamp(2rem, 4vw, 3.5rem); 
+      font-size: clamp(2.5rem, 5vw, 4.5rem); 
       line-height: 1.1; font-weight: 700; margin: 0;
-      /* Gradient text fill */
-      background-image: linear-gradient(to bottom right, var(--matcha-light) 30%, #fff 100%);
+      background-image: linear-gradient(to bottom right, #fff 30%, var(--matcha-light) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      /* Initial state for the transition */
+      /* Initial Hidden State */
       opacity: 0; scale: 0.9; filter: blur(10px); 
     }
 
-    /* Corrected titles based on user request */
-    .title-looking { opacity: 1; scale: 1; filter: blur(0px); } /* Visible initially */
-    .title-onetext { } /* Hidden initially by default style above */
+    /* Title states defined by IDs in GSAP now */
 
-    .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.05rem; color: var(--matcha-light); }
+    .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.1rem; color: var(--matcha-medium); }
 
     /* Content */
     .content-section {
@@ -249,7 +277,7 @@
       min-height: 150vh; padding: 120px 0; z-index: 40; overflow: hidden; 
     }
     .reveal-header h2 { color: var(--matcha-rich); }
-    .reveal-header p { color: var(--matcha-deep); }
+    .reveal-header p { color: var(--matcha-deep); font-size: 1.2rem; line-height: 1.5; }
 
     .split-layout { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 60px; }
     .content-left { width: 45%; display: flex; flex-direction: column; gap: 200px; padding-bottom: 200px; }
@@ -257,56 +285,45 @@
 
     .card {
       background: #fff; padding: 32px; border-radius: 24px;
-      border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0; box-shadow: 0 10px 30px -5px rgba(44, 58, 31, 0.08);
       opacity: 0; transform: translateY(30px);
     }
     .card h3 { font-size: 1.5rem; margin-bottom: 12px; color: var(--matcha-rich); font-weight: 700;}
-    .card p { color: var(--matcha-deep); font-size: 1.1rem; }
-    .step-num { font-size: 0.8rem; font-weight: 700; color: var(--matcha-medium); text-transform: uppercase; margin-bottom: 8px; display: block;}
+    .card p { color: var(--matcha-deep); font-size: 1.05rem; line-height: 1.6; }
+    .step-num { font-size: 0.8rem; font-weight: 700; color: var(--matcha-medium); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 0.05em; }
 
     /* CTA */
-    /* Changed CTA background to Matcha Rich */
     .cta { background: var(--matcha-rich); color: var(--text-white); text-align: center; padding: 120px 0 160px; z-index: 60; position: relative; }
     
-    .btn-buy {
-      display: inline-block; margin-top: 30px; margin-bottom: 50px;
-      background: var(--matcha-light); color: var(--matcha-rich); padding: 18px 40px; 
-      border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 1.1rem;
-      transition: all 0.2s;
-    }
-
-    .btn-buy:hover { 
-      background: var(--matcha-medium); 
-      color: var(--matcha-rich);      
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      transform: translateY(-2px);
-    }
-
     .waitlist-group { max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
     .waitlist-input {
       background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
-      padding: 14px 20px; border-radius: 12px; color: #fff; font-size: 1rem;
+      padding: 16px 20px; border-radius: 12px; color: #fff; font-size: 1rem;
+      outline: none; transition: border-color 0.2s;
     }
-    .waitlist-input::placeholder { color: rgba(255,255,255,0.5); }
-    .btn-waitlist {
-      background: var(--matcha-medium); color: var(--matcha-rich); border: none;
-      padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 1rem;
-      transition: background 0.2s;
-    }
-    .btn-waitlist:hover { background: var(--matcha-light); }
+    .waitlist-input:focus { border-color: var(--matcha-light); }
+    .waitlist-input::placeholder { color: rgba(255,255,255,0.4); }
     
-    #form-status { margin-top: 15px; font-size: 0.9rem; height: 20px; }
+    .btn-waitlist {
+      background: var(--matcha-light); color: var(--matcha-rich); border: none;
+      padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1rem;
+      transition: all 0.2s; margin-top: 8px;
+    }
+    .btn-waitlist:hover { background: #fff; transform: translateY(-2px); }
+    
+    #form-status { margin-top: 20px; font-size: 0.95rem; height: 20px; font-weight: 500;}
     .status-success { color: var(--matcha-light); }
     .status-error { color: #f87171; }
 
-    footer { background: var(--matcha-rich); color: var(--matcha-light); text-align: center; padding: 40px; font-size: 0.9rem; position: relative; z-index: 60; }
+    footer { background: #1a2312; color: var(--matcha-medium); text-align: center; padding: 40px; font-size: 0.9rem; position: relative; z-index: 60; }
 
     @media (max-width: 768px) {
         .custom-scrollbar { display: none; }
         .split-layout { flex-direction: column; }
-        .content-left { width: 100%; gap: 40px; padding-bottom: 50px;}
+        .content-left { width: 100%; gap: 60px; padding-bottom: 50px;}
         .content-right { display: none; }
-        .hero-content { top: 10%; }
+        .hero-content { top: 12%; }
+        .hero-title { font-size: 2.5rem; }
     }
   </style>
 </head>
@@ -341,23 +358,47 @@
         <div class="phone-device">
           <div class="dynamic-island"></div>
           <div class="screen">
-            <div class="screen-content" id="screen-chat">
-                <div class="screen-header">
-                    <img src="image_9.png" alt="Matcha Match Logo"> 
-                    <h2>Matcha Match AI</h2>
+            
+            <div class="screen-header">
+                <img src="logo.png" alt="Matcha Match Logo"> 
+                <h2>Matcha Match</h2>
+            </div>
+
+            <div class="screen-body-container">
+                
+                <div class="chat-container" id="chat-state-1">
+                    <div style="flex-grow:1;"></div> <div class="imessage-bubble imessage-sent">
+                        happy birthday mom!
+                    </div>
+                    <div class="imessage-bubble imessage-received">
+                        thank you son
+                    </div>
+                    <div class="imessage-bubble imessage-received">
+                        what do you wish for?
+                    </div>
+                    <div class="imessage-bubble imessage-sent">
+                        for a son who has the job
+                    </div>
                 </div>
-                <div class="chat-bubble ai">
-                    hey! welcome to matcha match 🍵 what kind of internship are you looking for?
+
+                <div class="chat-container" id="chat-state-2">
+                    <div style="flex-grow:1;"></div> <div class="imessage-bubble imessage-sent">
+                        I need a job. pls help me.
+                    </div>
+                    <div class="imessage-bubble imessage-received">
+                        you've come to the right place. what kinda internship are you looking for?
+                    </div>
+                    <div class="imessage-bubble imessage-sent">
+                        investment banking
+                    </div>
+                    <div class="imessage-bubble imessage-received">
+                        James interned at GS last summer. I'll connect you right away!
+                    </div>
+                    <div class="imessage-bubble imessage-sent">
+                        thanks!
+                    </div>
                 </div>
-                <div class="chat-bubble user">
-                    I really want to get into Investment Banking at J.P. Morgan.
-                </div>
-                <div class="chat-bubble ai">
-                    Got it. Let me find you a mentor at Boston College who interned there recently...
-                </div>
-                 <div class="chat-bubble ai" style="opacity:0;" id="chat-match-reveal">
-                    Found a match! Josiah Kondo (JPM Summer '25). Want to connect?
-                </div>
+
             </div>
           </div>
         </div>
@@ -367,10 +408,10 @@
   <section class="hero" id="hero-section">
       <div class="hero-content container" id="hero-text"> 
         <div class="heading-swapper">
-            <h1 class="hero-title title-looking" id="text-looking">looking for an internship?</h1>
-            <h1 class="hero-title title-onetext" id="text-onetext">you're ONE TEXT away</h1>
+            <h1 class="hero-title" id="text-looking" style="opacity: 1; scale: 1; filter: blur(0px);">looking for an internship?</h1>
+            <h1 class="hero-title" id="text-onetext">you're ONE TEXT away</h1>
         </div>
-        <p class="hero-subtitle" id="text-sub">Skip the cold emails. Get matched with mentors who've been in your shoes.</p>
+        <p class="hero-subtitle" id="text-sub">Skip the cold emails. Get matched with BC mentors who've been in your shoes.</p>
       </div>
   </section>
 
@@ -411,7 +452,7 @@
       
       <form id="waitlist-form" class="waitlist-group">
         <input type="text" name="name" class="waitlist-input" placeholder="Your Full Name" required>
-        <input type="tel" name="phone" class="waitlist-input" placeholder="Mobile Phone Number" required pattern="[0-9]{10}" title="Please enter a 10-digit phone number">
+        <input type="tel" name="phone" class="waitlist-input" placeholder="Mobile Phone Number" required pattern="[0-9]{10,}" title="Please enter a valid phone number">
         <button type="submit" class="btn-waitlist">Join Now</button>
       </form>
       <p id="form-status"></p>
@@ -433,15 +474,16 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    // --- 1. HERO PINNED ANIMATION ---
+    // --- 1. HERO PINNED ANIMATION (Titles & Phone Content Swap) ---
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
             start: "top top",
-            end: "+=2000",
+            end: "+=2000", // Pin for 2000px
             pin: true,
             scrub: 1,
             onUpdate: (self) => {
+                // Update custom scrollbar
                 const p = self.progress;
                 if (p <= 0.5) {
                     sbChaos.style.transform = `scaleY(${p * 2})`;
@@ -454,28 +496,36 @@
         }
     });
 
-    // Swapping Titles and revealing chat match
-    heroTl.to("#text-looking", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 1 }, 0)
-          .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1 }, 0.5)
-          .to("#phone-glow", { opacity: 1, duration: 1 }, 0.5) // Intensify glow on match
-          .to("#chat-match-reveal", { opacity: 1, duration: 1, delay: 0.2 }, 0.8); // Reveal final chat bubble
+    // Timeline: Swap Titles AND Swap Chat States simultaneously
+    heroTl
+        // 1. Fade OUT "Looking for internship?" title
+        .to("#text-looking", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 1 }, 0)
+        // 2. Fade OUT Mom Chat State
+        .to("#chat-state-1", { opacity: 0, filter: "blur(5px)", duration: 1 }, 0)
+
+        // 3. Fade IN "One text away" title
+        .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1 }, 0.5)
+        // 4. Fade IN AI Chat State
+        .to("#chat-state-2", { opacity: 1, filter: "blur(0px)", duration: 1 }, 0.5)
+        
+        // Intensify phone glow on match state
+        .to("#phone-glow", { opacity: 1, duration: 1 }, 0.5);
 
 
-    // --- 2. MOVE PHONE TO RIGHT (GLITCH FIX) ---
+    // --- 2. MOVE PHONE TO RIGHT ---
     const moveTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
             start: "top bottom",
             end: "top top",
-            scrub: 1, // Smoothing enabled
+            scrub: 1, 
         }
     });
 
-    // FIX 1: immediateRender: false prevents GSAP from calculating the start position too early (before layout settles).
-    // FIX 2: Changed y to 0 (center) to raise it up from the low "10vh" position.
+    // Move phone to side and slightly down to center near steps
     moveTl.to("#global-phone", {
         x: "25vw", 
-        y: "0vh",      
+        y: "10vh",      
         scale: 0.85, 
         rotation: -2, 
         ease: "power2.inOut",
@@ -518,7 +568,7 @@
     });
 
 
-    // --- 4. JOIN (CTA) SEGMENT ---
+    // --- 4. JOIN SEGMENT ---
     gsap.to(sbJoin, {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -529,7 +579,7 @@
         duration: 0.2
     });
 
-    // GLITCH FIX: Ensure smooth exit
+    // Phone exits up
     gsap.to("#global-phone", {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -541,7 +591,7 @@
         immediateRender: false
     });
 
-    // --- 5. FORM SUBMISSION (SIMULATED FOR NOW) ---
+    // --- 5. FORM SUBMISSION (SIMULATED) ---
     const form = document.getElementById("waitlist-form");
     
     async function handleSubmit(event) {
@@ -549,35 +599,16 @@
       const status = document.getElementById("form-status");
       const data = new FormData(event.target);
       const name = data.get('name');
-      // const phone = data.get('phone'); // In a real app, you'd send this to your backend.
-
+      
       status.innerHTML = "Sending...";
       status.className = "";
 
-      // Simulate API call delay
+      // Simulated SMS response message
       setTimeout(() => {
-          // NOTE: In the real implementation, your backend would trigger the Twilio SMS here.
-          // For now, we just show the success message on the site.
-          status.innerHTML = `Thanks, ${name}! Check your phone for a text from us.`;
+          status.innerHTML = `Hey ${name}, thanks for your interest in Matcha Match! Hang tight till our official launch on 2.14.26!`;
           status.className = "status-success";
           form.reset();
       }, 1500);
-
-      /* --- REAL BACKEND IMPLEMENTATION MOCKUP ---
-      fetch('/api/join', { // Your Next.js API route endpoints
-        method: 'POST',
-        body: JSON.stringify({ name, phone }),
-        headers: { 'Content-Type': 'application/json' }
-      }).then(response => {
-        if (response.ok) {
-          status.innerHTML = `Thanks, ${name}! Check your phone for a text from us.`;
-          status.className = "status-success";
-          form.reset();
-        } else {
-          // Handle errors
-        }
-      });
-      */
     }
     
     form.addEventListener("submit", handleSubmit);
