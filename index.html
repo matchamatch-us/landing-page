@@ -306,7 +306,15 @@
     .reveal-header p { color: var(--matcha-deep); font-size: 1.2rem; line-height: 1.5; }
 
     .split-layout { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 60px; }
-    .content-left { width: 45%; display: flex; flex-direction: column; gap: 150px; padding-bottom: 100px; }
+    
+    /* UPDATED: Content Left for Sticky Stacking */
+    .content-left { 
+        width: 45%; 
+        height: 60vh; /* Fixed height to keep content centered vertically */
+        display: grid; 
+        place-items: center; /* Center cards in the grid */
+    }
+    
     .content-right { width: 50%; position: relative; height: 100%; }
 
     .card {
@@ -314,7 +322,11 @@
       border: 1px solid #e2e8f0; box-shadow: 0 10px 30px -5px rgba(44, 58, 31, 0.08);
       /* Initially hidden for scroll reveal */
       opacity: 0; transform: translateY(30px);
+      /* UPDATED: Stack cards on top of each other */
+      grid-area: 1 / 1; 
+      width: 100%;
     }
+    
     .card h3 { font-size: 1.5rem; margin-bottom: 12px; color: var(--matcha-rich); font-weight: 700;}
     .card p { color: var(--matcha-deep); font-size: 1.05rem; line-height: 1.6; }
     .step-num { font-size: 0.8rem; font-weight: 700; color: var(--matcha-medium); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 0.05em; }
@@ -347,7 +359,8 @@
     @media (max-width: 768px) {
         .custom-scrollbar { display: none; }
         .split-layout { flex-direction: column; }
-        .content-left { width: 100%; gap: 60px; padding-bottom: 50px;}
+        .content-left { width: 100%; height: auto; display: block; padding-bottom: 50px;}
+        .card { margin-bottom: 40px; opacity: 1; transform: translateY(0); } /* Reset for mobile */
         .content-right { display: none; }
         .hero-content { top: 12%; }
         .hero-title { font-size: 2.5rem; }
@@ -509,18 +522,16 @@
     const sbJoin  = document.getElementById('fill-join');
 
     // --- 1. HERO ANIMATION (Titles & Initial Phone State) ---
-    // Increased end distance to create the "resistance/pause"
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
             start: "top top",
-            end: "+=3000", // Increased pin duration for resistance
+            end: "+=3000", 
             pin: true,
             scrub: true,
             onUpdate: (self) => {
                 const p = self.progress;
-                // Adjust scrollbar based on new longer timeline
-                if (p <= 0.3) { // Shorter first phase
+                if (p <= 0.3) { 
                     sbChaos.style.transform = `scaleY(${p * 3.33})`;
                     sbFocus.style.transform = `scaleY(0)`;
                 } else {
@@ -532,7 +543,6 @@
     });
 
     heroTl
-        // Transition happens quickly in the first 30% of scroll
         .to("#text-looking", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 0.3 }, 0)
         .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3 }, 0.3) 
         
@@ -543,58 +553,64 @@
         .to("#chat-state-ai-initial", { opacity: 1, duration: 0.3 }, 0.3)
         .to("#phone-glow", { opacity: 1, duration: 0.3 }, 0.3)
         
-        // Add dummy tween to hold the state for the remaining 70% of scroll
         .to({}, { duration: 0.7 });
 
 
     // --- 2. PHONE POSITIONING & STEP RESISTANCE ---
-    // We now PIN the content section to create resistance for each step.
     const contentTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
-            start: "top top", // Start pinning immediately
-            end: "+=4000",   // Long pin distance creates the "hold" for steps
-            pin: true,       // THE KEY to resistance
+            start: "top top", 
+            end: "+=4000",   
+            pin: true,       
             scrub: true,
         }
     });
 
-    // 2a. Move phone to RIGHT side and straighten immediately upon entering section
+    // 2a. Move phone to RIGHT side 
     contentTl.to("#global-phone", {
-        x: "30vw",  // Using viewport units to ensure it's on the right
+        x: "30vw",  
         y: "10vh",    
         scale: 1.35, 
         rotation: 0, 
         ease: "power1.inOut",
-        duration: 0.1 // Quick transition to position
+        duration: 0.1 
     }, 0);
     
     contentTl.to("#hero-text", { opacity: 0, y: -50, duration: 0.1 }, 0);
 
     // 2b. Step-by-Step Resistance & Content Reveal
-    // We spread the step transitions across the long pinned timeline
+    // UPDATED LOGIC: We now HIDE the previous card before showing the next one.
     
     // --- STEP 1 ---
     contentTl.to("#card-step1", { opacity: 1, y: 0, duration: 0.1 }, 0.1) // Reveal Card 1
-             .to(sbStep1, { scaleY: 1, duration: 0.1 }, 0.1) // Fill Bar 1
-             .to("#chat-state-ai-initial", { opacity: 0, duration: 0.1 }, 0.1) // Hide Previous Chat
-             .to("#chat-state-step1", { opacity: 1, duration: 0.1 }, 0.2) // Show Step 1 Chat
-             .to({}, { duration: 0.2 }); // HOLD RESISTANCE
+             .to(sbStep1, { scaleY: 1, duration: 0.1 }, 0.1) 
+             .to("#chat-state-ai-initial", { opacity: 0, duration: 0.1 }, 0.1) 
+             .to("#chat-state-step1", { opacity: 1, duration: 0.1 }, 0.2) 
+             .to({}, { duration: 0.2 }); 
+
+    // --- TRANSITION 1 -> 2 ---
+    // Hide Card 1 slightly before Card 2 appears
+    contentTl.to("#card-step1", { opacity: 0, y: -20, duration: 0.1 }, 0.4); 
 
     // --- STEP 2 ---
     contentTl.to("#card-step2", { opacity: 1, y: 0, duration: 0.1 }, 0.5) // Reveal Card 2
-             .to(sbStep2, { scaleY: 1, duration: 0.1 }, 0.5) // Fill Bar 2
-             .to("#chat-state-step1", { opacity: 0, duration: 0.1 }, 0.5) // Hide Previous Chat
-             .to("#chat-state-step2", { opacity: 1, duration: 0.1 }, 0.6) // Show Step 2 Chat
-             .to({}, { duration: 0.2 }); // HOLD RESISTANCE
+             .to(sbStep2, { scaleY: 1, duration: 0.1 }, 0.5) 
+             .to("#chat-state-step1", { opacity: 0, duration: 0.1 }, 0.5) 
+             .to("#chat-state-step2", { opacity: 1, duration: 0.1 }, 0.6) 
+             .to({}, { duration: 0.2 }); 
+
+    // --- TRANSITION 2 -> 3 ---
+    // Hide Card 2 slightly before Card 3 appears
+    contentTl.to("#card-step2", { opacity: 0, y: -20, duration: 0.1 }, 0.8);
 
     // --- STEP 3 ---
     contentTl.to("#card-step3", { opacity: 1, y: 0, duration: 0.1 }, 0.9) // Reveal Card 3
-             .to(sbStep3, { scaleY: 1, duration: 0.1 }, 0.9) // Fill Bar 3
-             .to("#header-ai", { opacity: 0, duration: 0.1 }, 0.9) // Hide AI Header
-             .to("#chat-state-step2", { opacity: 0, duration: 0.1 }, 0.9) // Hide Previous Chat
-             .to("#header-james", { opacity: 1, duration: 0.1 }, 1.0) // Show James Header
-             .to("#chat-state-step3", { opacity: 1, duration: 0.1 }, 1.0); // Show Step 3 Chat
+             .to(sbStep3, { scaleY: 1, duration: 0.1 }, 0.9) 
+             .to("#header-ai", { opacity: 0, duration: 0.1 }, 0.9) 
+             .to("#chat-state-step2", { opacity: 0, duration: 0.1 }, 0.9) 
+             .to("#header-james", { opacity: 1, duration: 0.1 }, 1.0) 
+             .to("#chat-state-step3", { opacity: 1, duration: 0.1 }, 1.0); 
 
 
     // --- 3. PHONE EXIT (SMOOTHER) ---
@@ -608,21 +624,20 @@
         duration: 0.2
     });
 
-    // Phone glides down smoothly instead of disappearing
     gsap.to("#global-phone", {
         scrollTrigger: {
             trigger: "#section-cta",
-            start: "top bottom", // Start smoothly as CTA enters view
-            end: "center center", // Finish by the time CTA is centered
+            start: "top bottom", 
+            end: "center center", 
             scrub: true
         },
-        y: "100vh", // Move completely offscreen down
+        y: "100vh", 
         opacity: 0,
-        ease: "none", // Linear scrub for smoothness
+        ease: "none", 
         immediateRender: false
     });
 
-    // --- 4. FORM SUBMISSION (SIMULATED) ---
+    // --- 4. FORM SUBMISSION ---
     const form = document.getElementById("waitlist-form");
     
     async function handleSubmit(event) {
