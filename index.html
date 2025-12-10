@@ -153,7 +153,7 @@
         width: 140%; height: 100%;
         background: radial-gradient(circle, rgba(198, 215, 179, 0.3) 0%, transparent 60%);
         filter: blur(50px);
-        opacity: 0.5; 
+        opacity: 0; 
     }
 
     .phone-device {
@@ -232,11 +232,8 @@
     }
 
     /* Chat states for animation */
-    /* Initial Hero States */
     #chat-state-mom { z-index: 5; opacity: 1; }
     #chat-state-ai-initial { z-index: 4; opacity: 0; }
-    
-    /* Scroll Step States (Hidden initially) */
     #chat-state-step1, #chat-state-step2, #chat-state-step3 {
         z-index: 3; opacity: 0;
     }
@@ -299,7 +296,6 @@
     /* Content */
     .content-section {
       position: relative; background: var(--bg-light); color: var(--text-dark);
-      /* Removed min-height, pinning creates the height now */
       padding: 120px 0; z-index: 40; overflow: hidden; 
     }
     .reveal-header h2 { color: var(--matcha-rich); }
@@ -307,12 +303,11 @@
 
     .split-layout { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 60px; }
     
-    /* UPDATED: Content Left for Sticky Stacking */
     .content-left { 
         width: 45%; 
-        height: 60vh; /* Fixed height to keep content centered vertically */
+        height: 60vh;
         display: grid; 
-        place-items: center; /* Center cards in the grid */
+        place-items: center;
     }
     
     .content-right { width: 50%; position: relative; height: 100%; }
@@ -320,9 +315,7 @@
     .card {
       background: #fff; padding: 32px; border-radius: 24px;
       border: 1px solid #e2e8f0; box-shadow: 0 10px 30px -5px rgba(44, 58, 31, 0.08);
-      /* Initially hidden for scroll reveal */
       opacity: 0; transform: translateY(30px);
-      /* UPDATED: Stack cards on top of each other */
       grid-area: 1 / 1; 
       width: 100%;
     }
@@ -360,7 +353,7 @@
         .custom-scrollbar { display: none; }
         .split-layout { flex-direction: column; }
         .content-left { width: 100%; height: auto; display: block; padding-bottom: 50px;}
-        .card { margin-bottom: 40px; opacity: 1; transform: translateY(0); } /* Reset for mobile */
+        .card { margin-bottom: 40px; opacity: 1; transform: translateY(0); }
         .content-right { display: none; }
         .hero-content { top: 12%; }
         .hero-title { font-size: 2.5rem; }
@@ -405,7 +398,7 @@
             </div>
 
             <div class="screen-header" id="header-ai">
-                <img src="logo.png" alt="matchAI Logo" class="header-profile-pic" style="background-color: transparent; padding: 2px;">
+                <div class="header-profile-pic" style="background: var(--matcha-medium); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">🍵</div>
                 <span class="header-name">matchAI</span>
             </div>
 
@@ -521,99 +514,216 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    // --- 1. HERO ANIMATION (Titles & Initial Phone State) ---
+    // --- 1. HERO ANIMATION (SMOOTH & EXTENDED) ---
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
             start: "top top",
-            end: "+=3000", 
+            end: "+=4000", // Extended for smoother progression
             pin: true,
-            scrub: true,
+            scrub: 1.5, // Increased scrub for smoother feel
             onUpdate: (self) => {
                 const p = self.progress;
-                if (p <= 0.3) { 
-                    sbChaos.style.transform = `scaleY(${p * 3.33})`;
+                // Smoother scrollbar transitions
+                if (p <= 0.4) { 
+                    sbChaos.style.transform = `scaleY(${p * 2.5})`;
                     sbFocus.style.transform = `scaleY(0)`;
                 } else {
                     sbChaos.style.transform = `scaleY(1)`;
-                    sbFocus.style.transform = `scaleY(${(p - 0.3) * 1.42})`;
+                    sbFocus.style.transform = `scaleY(${(p - 0.4) * 1.66})`;
                 }
             }
         }
     });
 
+    // Extended timeline with breathing room between transitions
     heroTl
-        .to("#text-looking", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 0.3 }, 0)
-        .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3 }, 0.3) 
+        // Hold initial state longer
+        .to({}, { duration: 0.15 })
         
-        .to("#header-mom", { opacity: 0, duration: 0.3 }, 0)
-        .to("#chat-state-mom", { opacity: 0, duration: 0.3 }, 0)
+        // Fade out first title smoothly
+        .to("#text-looking", { 
+            opacity: 0, 
+            scale: 0.95, 
+            filter: "blur(8px)", 
+            duration: 0.2,
+            ease: "power2.inOut"
+        }, 0.15)
         
-        .to("#header-ai", { opacity: 1, duration: 0.3 }, 0.3)
-        .to("#chat-state-ai-initial", { opacity: 1, duration: 0.3 }, 0.3)
-        .to("#phone-glow", { opacity: 1, duration: 0.3 }, 0.3)
+        // Breathing room
+        .to({}, { duration: 0.05 })
         
-        .to({}, { duration: 0.7 });
+        // Fade in second title
+        .to("#text-onetext", { 
+            opacity: 1, 
+            scale: 1, 
+            filter: "blur(0px)", 
+            duration: 0.2,
+            ease: "power2.inOut"
+        }, 0.35)
+        
+        // Simultaneous phone/header transitions (overlapping for smoothness)
+        .to("#header-mom", { 
+            opacity: 0, 
+            duration: 0.15,
+            ease: "power2.inOut"
+        }, 0.15)
+        .to("#chat-state-mom", { 
+            opacity: 0, 
+            duration: 0.15,
+            ease: "power2.inOut"
+        }, 0.15)
+        
+        .to("#header-ai", { 
+            opacity: 1, 
+            duration: 0.2,
+            ease: "power2.inOut"
+        }, 0.3)
+        .to("#chat-state-ai-initial", { 
+            opacity: 1, 
+            duration: 0.2,
+            ease: "power2.inOut"
+        }, 0.3)
+        .to("#phone-glow", { 
+            opacity: 1, 
+            duration: 0.25,
+            ease: "power2.inOut"
+        }, 0.3)
+        
+        // Extended hold at end
+        .to({}, { duration: 0.3 });
 
 
-    // --- 2. PHONE POSITIONING & STEP RESISTANCE ---
+    // --- 2. PHONE REPOSITIONING (SMOOTH GLIDE) ---
     const contentTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
-            start: "top top", 
-            end: "+=4000",   
-            pin: true,       
-            scrub: true,
+            start: "top bottom",
+            end: "top top",
+            scrub: 1.5, // Smooth scrubbing
         }
     });
 
-    // 2a. Move phone to RIGHT side 
     contentTl.to("#global-phone", {
         x: "30vw",  
-        y: "10vh",    
-        scale: 1.35, 
+        y: "5vh",    
+        scale: 1.4, 
         rotation: 0, 
-        ease: "power1.inOut",
-        duration: 0.1 
+        ease: "power2.inOut",
+        immediateRender: false // Prevents glitchy pre-calculation
     }, 0);
     
-    contentTl.to("#hero-text", { opacity: 0, y: -50, duration: 0.1 }, 0);
-
-    // 2b. Step-by-Step Resistance & Content Reveal
-    // UPDATED LOGIC: We now HIDE the previous card before showing the next one.
-    
-    // --- STEP 1 ---
-    contentTl.to("#card-step1", { opacity: 1, y: 0, duration: 0.1 }, 0.1) // Reveal Card 1
-             .to(sbStep1, { scaleY: 1, duration: 0.1 }, 0.1) 
-             .to("#chat-state-ai-initial", { opacity: 0, duration: 0.1 }, 0.1) 
-             .to("#chat-state-step1", { opacity: 1, duration: 0.1 }, 0.2) 
-             .to({}, { duration: 0.2 }); 
-
-    // --- TRANSITION 1 -> 2 ---
-    // Hide Card 1 slightly before Card 2 appears
-    contentTl.to("#card-step1", { opacity: 0, y: -20, duration: 0.1 }, 0.4); 
-
-    // --- STEP 2 ---
-    contentTl.to("#card-step2", { opacity: 1, y: 0, duration: 0.1 }, 0.5) // Reveal Card 2
-             .to(sbStep2, { scaleY: 1, duration: 0.1 }, 0.5) 
-             .to("#chat-state-step1", { opacity: 0, duration: 0.1 }, 0.5) 
-             .to("#chat-state-step2", { opacity: 1, duration: 0.1 }, 0.6) 
-             .to({}, { duration: 0.2 }); 
-
-    // --- TRANSITION 2 -> 3 ---
-    // Hide Card 2 slightly before Card 3 appears
-    contentTl.to("#card-step2", { opacity: 0, y: -20, duration: 0.1 }, 0.8);
-
-    // --- STEP 3 ---
-    contentTl.to("#card-step3", { opacity: 1, y: 0, duration: 0.1 }, 0.9) // Reveal Card 3
-             .to(sbStep3, { scaleY: 1, duration: 0.1 }, 0.9) 
-             .to("#header-ai", { opacity: 0, duration: 0.1 }, 0.9) 
-             .to("#chat-state-step2", { opacity: 0, duration: 0.1 }, 0.9) 
-             .to("#header-james", { opacity: 1, duration: 0.1 }, 1.0) 
-             .to("#chat-state-step3", { opacity: 1, duration: 0.1 }, 1.0); 
+    contentTl.to("#hero-text", { 
+        opacity: 0, 
+        y: -50, 
+        ease: "power2.in",
+        immediateRender: false 
+    }, 0);
 
 
-    // --- 3. PHONE EXIT (SMOOTHER) ---
+    // --- 3. STEP-BY-STEP CONTENT ANIMATION (STAGGERED & SMOOTH) ---
+    const stepsTl = gsap.timeline({
+        scrollTrigger: {
+            trigger: "#section-content",
+            start: "top top", 
+            end: "+=5000", // Extended for smooth pacing
+            pin: true,       
+            scrub: 1.5,
+        }
+    });
+
+    // --- STEP 1: Reveal ---
+    stepsTl
+        .to("#card-step1", { 
+            opacity: 1, 
+            y: 0, 
+            duration: 0.12,
+            ease: "power2.out"
+        }, 0.08)
+        .to(sbStep1, { scaleY: 1, duration: 0.08 }, 0.08)
+        .to("#chat-state-ai-initial", { 
+            opacity: 0, 
+            duration: 0.1,
+            ease: "power2.inOut"
+        }, 0.08)
+        .to("#chat-state-step1", { 
+            opacity: 1, 
+            duration: 0.12,
+            ease: "power2.inOut"
+        }, 0.15)
+        // Hold Step 1
+        .to({}, { duration: 0.25 })
+        
+        // --- TRANSITION 1 → 2 ---
+        .to("#card-step1", { 
+            opacity: 0, 
+            y: -30, 
+            duration: 0.1,
+            ease: "power2.in"
+        }, 0.43)
+        .to({}, { duration: 0.05 }) // Gap for clarity
+        
+        // --- STEP 2: Reveal ---
+        .to("#card-step2", { 
+            opacity: 1, 
+            y: 0, 
+            duration: 0.12,
+            ease: "power2.out"
+        }, 0.53)
+        .to(sbStep2, { scaleY: 1, duration: 0.08 }, 0.53)
+        .to("#chat-state-step1", { 
+            opacity: 0, 
+            duration: 0.1,
+            ease: "power2.inOut"
+        }, 0.53)
+        .to("#chat-state-step2", { 
+            opacity: 1, 
+            duration: 0.12,
+            ease: "power2.inOut"
+        }, 0.6)
+        // Hold Step 2
+        .to({}, { duration: 0.25 })
+        
+        // --- TRANSITION 2 → 3 ---
+        .to("#card-step2", { 
+            opacity: 0, 
+            y: -30, 
+            duration: 0.1,
+            ease: "power2.in"
+        }, 0.85)
+        .to({}, { duration: 0.05 }) // Gap for clarity
+        
+        // --- STEP 3: Reveal ---
+        .to("#card-step3", { 
+            opacity: 1, 
+            y: 0, 
+            duration: 0.12,
+            ease: "power2.out"
+        }, 0.95)
+        .to(sbStep3, { scaleY: 1, duration: 0.08 }, 0.95)
+        .to("#header-ai", { 
+            opacity: 0, 
+            duration: 0.1,
+            ease: "power2.inOut"
+        }, 0.95)
+        .to("#chat-state-step2", { 
+            opacity: 0, 
+            duration: 0.1,
+            ease: "power2.inOut"
+        }, 0.95)
+        .to("#header-james", { 
+            opacity: 1, 
+            duration: 0.12,
+            ease: "power2.inOut"
+        }, 1.0)
+        .to("#chat-state-step3", { 
+            opacity: 1, 
+            duration: 0.12,
+            ease: "power2.inOut"
+        }, 1.05);
+
+
+    // --- 4. PHONE EXIT TO CTA (BUTTER SMOOTH) ---
     gsap.to(sbJoin, {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -621,23 +731,25 @@
             toggleActions: "play reverse play reverse"
         },
         scaleY: 1,
-        duration: 0.2
+        duration: 0.3,
+        ease: "power2.out"
     });
 
+    // Smooth exit animation
     gsap.to("#global-phone", {
         scrollTrigger: {
             trigger: "#section-cta",
             start: "top bottom", 
-            end: "center center", 
-            scrub: true
+            end: "top center", 
+            scrub: 1.5 // Smooth scrubbing
         },
-        y: "100vh", 
+        y: "-100vh", 
         opacity: 0,
-        ease: "none", 
-        immediateRender: false
+        ease: "power2.in",
+        immediateRender: false // Prevents glitchy pre-calculation
     });
 
-    // --- 4. FORM SUBMISSION ---
+    // --- 5. FORM SUBMISSION ---
     const form = document.getElementById("waitlist-form");
     
     async function handleSubmit(event) {
