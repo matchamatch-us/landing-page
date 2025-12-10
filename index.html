@@ -229,7 +229,6 @@
         gap: 8px; 
         overflow-y: auto;
         font-family: 'SF Pro Display', sans-serif;
-        /* Removed general transition to fix blurring issues */
     }
 
     /* Chat states for animation */
@@ -300,20 +299,21 @@
     /* Content */
     .content-section {
       position: relative; background: var(--bg-light); color: var(--text-dark);
-      min-height: 200vh; /* Increased height for scrolling room */
+      /* Removed min-height, pinning creates the height now */
       padding: 120px 0; z-index: 40; overflow: hidden; 
     }
     .reveal-header h2 { color: var(--matcha-rich); }
     .reveal-header p { color: var(--matcha-deep); font-size: 1.2rem; line-height: 1.5; }
 
     .split-layout { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 60px; }
-    .content-left { width: 45%; display: flex; flex-direction: column; gap: 250px; padding-bottom: 200px; }
+    .content-left { width: 45%; display: flex; flex-direction: column; gap: 150px; padding-bottom: 100px; }
     .content-right { width: 50%; position: relative; height: 100%; }
 
     .card {
       background: #fff; padding: 32px; border-radius: 24px;
       border: 1px solid #e2e8f0; box-shadow: 0 10px 30px -5px rgba(44, 58, 31, 0.08);
-      /* Removed initial opacity/transform for smoother scrolltrigger handling */
+      /* Initially hidden for scroll reveal */
+      opacity: 0; transform: translateY(30px);
     }
     .card h3 { font-size: 1.5rem; margin-bottom: 12px; color: var(--matcha-rich); font-weight: 700;}
     .card p { color: var(--matcha-deep); font-size: 1.05rem; line-height: 1.6; }
@@ -406,15 +406,15 @@
                 <div class="chat-container" id="chat-state-mom">
                     <div class="imessage-bubble imessage-sent">happy birthday mom!</div>
                     <div class="imessage-bubble imessage-received">thank you son</div>
-                    <div class="imessage-bubble imessage-received">what do you wish for?</div>
-                    <div class="imessage-bubble imessage-sent">for a son who has the job</div>
+                    <div class="imessage-bubble imessage-sent">what do you wish for?</div>
+                    <div class="imessage-bubble imessage-received">for a son who has the job</div>
                 </div>
 
                 <div class="chat-container" id="chat-state-ai-initial">
-                    <div class="imessage-bubble imessage-sent">I need a job. pls help me.</div>
+                    <div class="imessage-bubble imessage-sent">I need a job. pls help.</div>
                     <div class="imessage-bubble imessage-received">that's my cup of tea 😉. what kinda internship are you looking for?</div>
                     <div class="imessage-bubble imessage-sent">investment banking</div>
-                    <div class="imessage-bubble imessage-received">James interned at GS last summer. I'll connect you right away!</div>
+                    <div class="imessage-bubble imessage-received">I know a senior who was at GS last summer. I'll connect you right away!</div>
                     <div class="imessage-bubble imessage-sent">amazing! thanks!</div>
                 </div>
 
@@ -424,11 +424,13 @@
 
                 <div class="chat-container" id="chat-state-step2">
                     <div class="imessage-bubble imessage-sent" style="opacity: 0.5;">Help me find a JPM IB intern from BC.</div>
-                    <div class="imessage-bubble imessage-received">James, a senior, interned at GS last summer. I'll connect you right away!</div>
+                    <div class="imessage-bubble imessage-received">One sec, searching far and wide for the best mentor...</div>
+                    <div class="imessage-bubble imessage-received">Done! James, a senior, interned at GS last summer. I'll connect you right away!</div>
                 </div>
 
                  <div class="chat-container" id="chat-state-step3">
                     <div class="imessage-bubble imessage-sent">Hey James, it's Bob from matcha match!</div>
+                    <div class="imessage-bubble imessage-sent">Howdy, happy to connect!</div>
                 </div>
 
             </div>
@@ -507,125 +509,95 @@
     const sbJoin  = document.getElementById('fill-join');
 
     // --- 1. HERO ANIMATION (Titles & Initial Phone State) ---
+    // Increased end distance to create the "resistance/pause"
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
             start: "top top",
-            end: "+=2000", 
+            end: "+=3000", // Increased pin duration for resistance
             pin: true,
             scrub: true,
             onUpdate: (self) => {
                 const p = self.progress;
-                if (p <= 0.5) {
-                    sbChaos.style.transform = `scaleY(${p * 2})`;
+                // Adjust scrollbar based on new longer timeline
+                if (p <= 0.3) { // Shorter first phase
+                    sbChaos.style.transform = `scaleY(${p * 3.33})`;
                     sbFocus.style.transform = `scaleY(0)`;
                 } else {
                     sbChaos.style.transform = `scaleY(1)`;
-                    sbFocus.style.transform = `scaleY(${(p - 0.5) * 2})`;
+                    sbFocus.style.transform = `scaleY(${(p - 0.3) * 1.42})`;
                 }
             }
         }
     });
 
     heroTl
-        // Swap Titles
-        .to("#text-looking", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 1 }, 0)
-        // HOLD longer on the "one text away" state by adding a delay to the next title's appearance
-        .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1 }, 0.5) 
+        // Transition happens quickly in the first 30% of scroll
+        .to("#text-looking", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 0.3 }, 0)
+        .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3 }, 0.3) 
         
-        // Swap Phone Header & Content (Mom -> AI Initial)
-        .to("#header-mom", { opacity: 0, duration: 1 }, 0)
-        .to("#chat-state-mom", { opacity: 0, filter: "blur(5px)", duration: 1 }, 0)
-        // HOLD longer on the AI state by delaying its appearance to match the title
-        .to("#header-ai", { opacity: 1, duration: 1 }, 0.5)
-        .to("#chat-state-ai-initial", { opacity: 1, filter: "blur(0px)", duration: 1 }, 0.5)
+        .to("#header-mom", { opacity: 0, duration: 0.3 }, 0)
+        .to("#chat-state-mom", { opacity: 0, duration: 0.3 }, 0)
         
-        .to("#phone-glow", { opacity: 1, duration: 1 }, 0.5);
+        .to("#header-ai", { opacity: 1, duration: 0.3 }, 0.3)
+        .to("#chat-state-ai-initial", { opacity: 1, duration: 0.3 }, 0.3)
+        .to("#phone-glow", { opacity: 1, duration: 0.3 }, 0.3)
+        
+        // Add dummy tween to hold the state for the remaining 70% of scroll
+        .to({}, { duration: 0.7 });
 
 
-    // --- 2. MOVE PHONE TO RIGHT & STRAIGHTEN ---
-    const moveTl = gsap.timeline({
+    // --- 2. PHONE POSITIONING & STEP RESISTANCE ---
+    // We now PIN the content section to create resistance for each step.
+    const contentTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
-            start: "top bottom",
-            end: "top top",
-            scrub: true, 
-        }
-    });
-
-    moveTl.to("#global-phone", {
-        x: "25%",   // Reduced from 35% to center it better on the right half
-        y: "5%",    
-        scale: 1.35, 
-        rotation: 0, 
-        ease: "power2.inOut",
-        immediateRender: false 
-    }, 0);
-    
-    moveTl.to("#hero-text", { opacity: 0, y: -50, immediateRender: false }, 0);
-
-
-    // --- 3. STEP-BY-STEP SCREEN UPDATES ---
-    // Removed filters from transitions to fix blurring issues.
-    // We use a single timeline pinned to the content section to scrub through phone states based on scroll position.
-    const screenTl = gsap.timeline({
-        scrollTrigger: {
-            trigger: "#section-content",
-            start: "top center", // Start scrubbing when section hits center screen
-            end: "bottom center",
+            start: "top top", // Start pinning immediately
+            end: "+=4000",   // Long pin distance creates the "hold" for steps
+            pin: true,       // THE KEY to resistance
             scrub: true,
         }
     });
 
-    // Transition to Step 1 State (No blur)
-    screenTl.to("#chat-state-ai-initial", { opacity: 0 }, 0)
-            .to("#chat-state-step1", { opacity: 1 }, 0.1);
+    // 2a. Move phone to RIGHT side and straighten immediately upon entering section
+    contentTl.to("#global-phone", {
+        x: "30vw",  // Using viewport units to ensure it's on the right
+        y: "10vh",    
+        scale: 1.35, 
+        rotation: 0, 
+        ease: "power1.inOut",
+        duration: 0.1 // Quick transition to position
+    }, 0);
+    
+    contentTl.to("#hero-text", { opacity: 0, y: -50, duration: 0.1 }, 0);
 
-    // Transition to Step 2 State (No blur)
-    screenTl.to("#chat-state-step1", { opacity: 0 }, 0.35)
-            .to("#chat-state-step2", { opacity: 1 }, 0.45);
+    // 2b. Step-by-Step Resistance & Content Reveal
+    // We spread the step transitions across the long pinned timeline
+    
+    // --- STEP 1 ---
+    contentTl.to("#card-step1", { opacity: 1, y: 0, duration: 0.1 }, 0.1) // Reveal Card 1
+             .to(sbStep1, { scaleY: 1, duration: 0.1 }, 0.1) // Fill Bar 1
+             .to("#chat-state-ai-initial", { opacity: 0, duration: 0.1 }, 0.1) // Hide Previous Chat
+             .to("#chat-state-step1", { opacity: 1, duration: 0.1 }, 0.2) // Show Step 1 Chat
+             .to({}, { duration: 0.2 }); // HOLD RESISTANCE
 
-    // Transition to Step 3 State (Change Chat AND Header, No blur)
-    screenTl.to("#header-ai", { opacity: 0 }, 0.7)
-            .to("#chat-state-step2", { opacity: 0 }, 0.7)
-            .to("#header-james", { opacity: 1 }, 0.8)
-            .to("#chat-state-step3", { opacity: 1 }, 0.8);
+    // --- STEP 2 ---
+    contentTl.to("#card-step2", { opacity: 1, y: 0, duration: 0.1 }, 0.5) // Reveal Card 2
+             .to(sbStep2, { scaleY: 1, duration: 0.1 }, 0.5) // Fill Bar 2
+             .to("#chat-state-step1", { opacity: 0, duration: 0.1 }, 0.5) // Hide Previous Chat
+             .to("#chat-state-step2", { opacity: 1, duration: 0.1 }, 0.6) // Show Step 2 Chat
+             .to({}, { duration: 0.2 }); // HOLD RESISTANCE
 
-
-    // --- 4. CARD & SCROLLBAR REVEALS ---
-    const steps = [
-        { id: "#card-step1", bar: sbStep1 },
-        { id: "#card-step2", bar: sbStep2 },
-        { id: "#card-step3", bar: sbStep3 }
-    ];
-
-    steps.forEach((step) => {
-        gsap.from(step.id, {
-            scrollTrigger: {
-                trigger: step.id,
-                start: "top 85%",
-                toggleActions: "play none none reverse"
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.6,
-            ease: "power2.out"
-        });
-
-        gsap.to(step.bar, {
-            scrollTrigger: {
-                trigger: step.id,
-                start: "top 60%", 
-                end: "bottom 60%",
-                toggleActions: "play reverse play reverse"
-            },
-            scaleY: 1,
-            duration: 0.2
-        });
-    });
+    // --- STEP 3 ---
+    contentTl.to("#card-step3", { opacity: 1, y: 0, duration: 0.1 }, 0.9) // Reveal Card 3
+             .to(sbStep3, { scaleY: 1, duration: 0.1 }, 0.9) // Fill Bar 3
+             .to("#header-ai", { opacity: 0, duration: 0.1 }, 0.9) // Hide AI Header
+             .to("#chat-state-step2", { opacity: 0, duration: 0.1 }, 0.9) // Hide Previous Chat
+             .to("#header-james", { opacity: 1, duration: 0.1 }, 1.0) // Show James Header
+             .to("#chat-state-step3", { opacity: 1, duration: 0.1 }, 1.0); // Show Step 3 Chat
 
 
-    // --- 5. JOIN SEGMENT (Fixing Phone Exit) ---
+    // --- 3. PHONE EXIT (SMOOTHER) ---
     gsap.to(sbJoin, {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -636,21 +608,21 @@
         duration: 0.2
     });
 
-    // Phone exits down and fades out smoothly
+    // Phone glides down smoothly instead of disappearing
     gsap.to("#global-phone", {
         scrollTrigger: {
             trigger: "#section-cta",
-            start: "top center", // Start exit when CTA hits center
-            end: "bottom center", // End exit when CTA leaves
+            start: "top bottom", // Start smoothly as CTA enters view
+            end: "center center", // Finish by the time CTA is centered
             scrub: true
         },
-        y: "50vh", // Move down instead of up
+        y: "100vh", // Move completely offscreen down
         opacity: 0,
-        ease: "power2.in", // Accelerate out
+        ease: "none", // Linear scrub for smoothness
         immediateRender: false
     });
 
-    // --- 6. FORM SUBMISSION (SIMULATED) ---
+    // --- 4. FORM SUBMISSION (SIMULATED) ---
     const form = document.getElementById("waitlist-form");
     
     async function handleSubmit(event) {
