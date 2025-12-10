@@ -171,27 +171,65 @@
         width: 30%; height: 15px; background: #000; border-radius: 10px; z-index: 60;
     }
 
-    .screen { position: absolute; inset: 6px; overflow: hidden; border-radius: 48px; background: #fff; display: flex; flex-direction: column; }
+    /* --- UPDATED IPHONE SCREEN & CHAT STYLES --- */
+    .screen {
+        position: absolute;
+        inset: 6px;
+        overflow: hidden;
+        border-radius: 48px;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        /* Add padding at the top for the status bar/dynamic island area */
+        padding-top: 35px;
+    }
     
-    /* --- NEW REALISTIC IMESSAGE STYLES --- */
+    /* New styling for dynamic headers */
     .screen-header {
-        display: flex; align-items: center; justify-content: center; gap: 8px;
-        padding: 50px 15px 15px; /* PT for dynamic island area */
-        background: rgba(245, 245, 247, 0.85); /* iOS header frosted look */
+        position: absolute;
+        top: 35px; /* below status bar area */
+        left: 0;
+        right: 0;
+        height: 65px; /* fixed height for header */
+        display: flex;
+        flex-direction: column; /* Stack pic and name */
+        align-items: center;
+        justify-content: center;
+        background: rgba(245, 245, 247, 0.95); /* slightly more opaque */
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-bottom: 1px solid rgba(0,0,0,0.1);
         z-index: 10;
     }
-    .screen-header img { width: auto; height: 45px; object-fit: contain; }
-    /* Hiding text because the logo image has text */
-    .screen-header h2 { display: none; font-size: 1rem; color: #000; font-family: 'SF Pro Display', sans-serif; font-weight: 600; }
+
+    /* Profile picture styling */
+    .header-profile-pic {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Name styling below pic */
+    .header-name {
+        font-size: 11px;
+        color: #000;
+        font-family: 'SF Pro Display', sans-serif;
+        font-weight: 500;
+        margin-top: 4px;
+    }
+
+    /* Initial states for headers */
+    #header-mom { opacity: 1; z-index: 11; }
+    #header-ai { opacity: 0; z-index: 10; }
 
     .screen-body-container {
         position: relative;
         flex-grow: 1;
         background: #fff;
         overflow: hidden;
+        /* Push down below the header */
+        margin-top: 65px; 
     }
 
     .chat-container {
@@ -199,11 +237,12 @@
         inset: 0;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end; /* Bottom up messages */
-        padding: 20px 12px 30px;
+        /* Start messages from the top */
+        justify-content: flex-start;
+        /* Padding: top, right, bottom, left */
+        padding: 15px 12px 30px;
         gap: 8px; /* Tight gap like real iMessage */
         overflow-y: auto;
-        background: #fff;
         font-family: 'SF Pro Display', sans-serif; /* Use iOS font */
     }
 
@@ -359,15 +398,20 @@
           <div class="dynamic-island"></div>
           <div class="screen">
             
-            <div class="screen-header">
-                <img src="logo.png" alt="Matcha Match Logo"> 
-                <h2>Matcha Match</h2>
+            <div class="screen-header" id="header-mom">
+                <div class="header-profile-pic" style="background: #ffb6c1; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">M</div>
+                <span class="header-name">Mom</span>
+            </div>
+
+            <div class="screen-header" id="header-ai">
+                <img src="image_17.png" alt="matchAI Logo" class="header-profile-pic" style="background-color: transparent; padding: 2px;">
+                <span class="header-name">matchAI</span>
             </div>
 
             <div class="screen-body-container">
                 
                 <div class="chat-container" id="chat-state-1">
-                    <div style="flex-grow:1;"></div> <div class="imessage-bubble imessage-sent">
+                    <div class="imessage-bubble imessage-sent">
                         happy birthday mom!
                     </div>
                     <div class="imessage-bubble imessage-received">
@@ -382,7 +426,7 @@
                 </div>
 
                 <div class="chat-container" id="chat-state-2">
-                    <div style="flex-grow:1;"></div> <div class="imessage-bubble imessage-sent">
+                    <div class="imessage-bubble imessage-sent">
                         I need a job. pls help me.
                     </div>
                     <div class="imessage-bubble imessage-received">
@@ -474,7 +518,7 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    // --- 1. HERO PINNED ANIMATION (Titles & Phone Content Swap) ---
+    // --- 1. HERO PINNED ANIMATION (Titles, Phone Headers & Chat States) ---
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
@@ -496,16 +540,16 @@
         }
     });
 
-    // Timeline: Swap Titles AND Swap Chat States simultaneously
+    // Timeline: Swap Titles, Headers, AND Chat States simultaneously
     heroTl
-        // 1. Fade OUT "Looking for internship?" title
+        // 1. Fade OUT "Looking for internship?" title & Mom's Header & Mom's Chat
         .to("#text-looking", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 1 }, 0)
-        // 2. Fade OUT Mom Chat State
+        .to("#header-mom", { opacity: 0, duration: 1 }, 0)
         .to("#chat-state-1", { opacity: 0, filter: "blur(5px)", duration: 1 }, 0)
 
-        // 3. Fade IN "One text away" title
+        // 2. Fade IN "One text away" title & AI's Header & AI's Chat
         .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1 }, 0.5)
-        // 4. Fade IN AI Chat State
+        .to("#header-ai", { opacity: 1, duration: 1 }, 0.5)
         .to("#chat-state-2", { opacity: 1, filter: "blur(0px)", duration: 1 }, 0.5)
         
         // Intensify phone glow on match state
