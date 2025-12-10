@@ -229,17 +229,17 @@
         gap: 8px; 
         overflow-y: auto;
         font-family: 'SF Pro Display', sans-serif;
-        transition: all 0.5s ease;
+        /* Removed general transition to fix blurring issues */
     }
 
     /* Chat states for animation */
     /* Initial Hero States */
     #chat-state-mom { z-index: 5; opacity: 1; }
-    #chat-state-ai-initial { z-index: 4; opacity: 0; filter: blur(5px); }
+    #chat-state-ai-initial { z-index: 4; opacity: 0; }
     
     /* Scroll Step States (Hidden initially) */
     #chat-state-step1, #chat-state-step2, #chat-state-step3 {
-        z-index: 3; opacity: 0; filter: blur(5px);
+        z-index: 3; opacity: 0;
     }
 
     .imessage-bubble {
@@ -406,8 +406,8 @@
                 <div class="chat-container" id="chat-state-mom">
                     <div class="imessage-bubble imessage-sent">happy birthday mom!</div>
                     <div class="imessage-bubble imessage-received">thank you son</div>
-                    <div class="imessage-bubble imessage-sent">what do you wish for?</div>
-                    <div class="imessage-bubble imessage-received">for a son who has the job</div>
+                    <div class="imessage-bubble imessage-received">what do you wish for?</div>
+                    <div class="imessage-bubble imessage-sent">for a son who has the job</div>
                 </div>
 
                 <div class="chat-container" id="chat-state-ai-initial">
@@ -530,12 +530,16 @@
     heroTl
         // Swap Titles
         .to("#text-looking", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 1 }, 0)
-        .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1 }, 0.5)
+        // HOLD longer on the "one text away" state by adding a delay to the next title's appearance
+        .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1 }, 0.5) 
+        
         // Swap Phone Header & Content (Mom -> AI Initial)
         .to("#header-mom", { opacity: 0, duration: 1 }, 0)
         .to("#chat-state-mom", { opacity: 0, filter: "blur(5px)", duration: 1 }, 0)
+        // HOLD longer on the AI state by delaying its appearance to match the title
         .to("#header-ai", { opacity: 1, duration: 1 }, 0.5)
         .to("#chat-state-ai-initial", { opacity: 1, filter: "blur(0px)", duration: 1 }, 0.5)
+        
         .to("#phone-glow", { opacity: 1, duration: 1 }, 0.5);
 
 
@@ -550,10 +554,10 @@
     });
 
     moveTl.to("#global-phone", {
-        x: "35%",   // Move further right
-        y: "5%",    // Center vertically relative to viewport
-        scale: 1.35, // Make it BIG to cover height
-        rotation: 0, // Straighten it
+        x: "25%",   // Reduced from 35% to center it better on the right half
+        y: "5%",    
+        scale: 1.35, 
+        rotation: 0, 
         ease: "power2.inOut",
         immediateRender: false 
     }, 0);
@@ -562,6 +566,7 @@
 
 
     // --- 3. STEP-BY-STEP SCREEN UPDATES ---
+    // Removed filters from transitions to fix blurring issues.
     // We use a single timeline pinned to the content section to scrub through phone states based on scroll position.
     const screenTl = gsap.timeline({
         scrollTrigger: {
@@ -572,19 +577,19 @@
         }
     });
 
-    // Transition to Step 1 State
-    screenTl.to("#chat-state-ai-initial", { opacity: 0, filter: "blur(5px)" }, 0)
-            .to("#chat-state-step1", { opacity: 1, filter: "blur(0px)" }, 0.1);
+    // Transition to Step 1 State (No blur)
+    screenTl.to("#chat-state-ai-initial", { opacity: 0 }, 0)
+            .to("#chat-state-step1", { opacity: 1 }, 0.1);
 
-    // Transition to Step 2 State
-    screenTl.to("#chat-state-step1", { opacity: 0, filter: "blur(5px)" }, 0.35)
-            .to("#chat-state-step2", { opacity: 1, filter: "blur(0px)" }, 0.45);
+    // Transition to Step 2 State (No blur)
+    screenTl.to("#chat-state-step1", { opacity: 0 }, 0.35)
+            .to("#chat-state-step2", { opacity: 1 }, 0.45);
 
-    // Transition to Step 3 State (Change Chat AND Header)
+    // Transition to Step 3 State (Change Chat AND Header, No blur)
     screenTl.to("#header-ai", { opacity: 0 }, 0.7)
-            .to("#chat-state-step2", { opacity: 0, filter: "blur(5px)" }, 0.7)
+            .to("#chat-state-step2", { opacity: 0 }, 0.7)
             .to("#header-james", { opacity: 1 }, 0.8)
-            .to("#chat-state-step3", { opacity: 1, filter: "blur(0px)" }, 0.8);
+            .to("#chat-state-step3", { opacity: 1 }, 0.8);
 
 
     // --- 4. CARD & SCROLLBAR REVEALS ---
@@ -620,7 +625,7 @@
     });
 
 
-    // --- 5. JOIN SEGMENT ---
+    // --- 5. JOIN SEGMENT (Fixing Phone Exit) ---
     gsap.to(sbJoin, {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -631,15 +636,17 @@
         duration: 0.2
     });
 
-    // Phone exits up
+    // Phone exits down and fades out smoothly
     gsap.to("#global-phone", {
         scrollTrigger: {
             trigger: "#section-cta",
-            start: "top center",
+            start: "top center", // Start exit when CTA hits center
+            end: "bottom center", // End exit when CTA leaves
             scrub: true
         },
-        y: "-100vh",
+        y: "50vh", // Move down instead of up
         opacity: 0,
+        ease: "power2.in", // Accelerate out
         immediateRender: false
     });
 
