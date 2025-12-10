@@ -16,7 +16,6 @@
   <style>
     /* --- RESET & VARIABLES --- */
     :root {
-      /* Matcha Color Palette */
       --matcha-light: #C6D7B3;
       --matcha-medium: #98AA80;
       --matcha-dark: #6E7F56;
@@ -30,9 +29,8 @@
       --text-dark: var(--matcha-rich);
       --accent: var(--matcha-medium);
 
-      /* iMessage specific colors */
       --imessage-gray: #e9e9eb;
-      --imessage-green: var(--matcha-deep); /* Using brand color for sent messages */
+      --imessage-green: var(--matcha-deep);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
@@ -155,7 +153,7 @@
         width: 140%; height: 100%;
         background: radial-gradient(circle, rgba(198, 215, 179, 0.3) 0%, transparent 60%);
         filter: blur(50px);
-        opacity: 0.5; /* Initial subtle glow */
+        opacity: 0.5; 
     }
 
     .phone-device {
@@ -171,7 +169,7 @@
         width: 30%; height: 15px; background: #000; border-radius: 10px; z-index: 60;
     }
 
-    /* --- UPDATED IPHONE SCREEN & CHAT STYLES --- */
+    /* --- IPHONE SCREEN & CHAT STYLES --- */
     .screen {
         position: absolute;
         inset: 6px;
@@ -180,55 +178,44 @@
         background: #fff;
         display: flex;
         flex-direction: column;
-        /* Add padding at the top for the status bar/dynamic island area */
         padding-top: 35px;
     }
     
-    /* New styling for dynamic headers */
     .screen-header {
         position: absolute;
-        top: 35px; /* below status bar area */
+        top: 35px; 
         left: 0;
         right: 0;
-        height: 65px; /* fixed height for header */
+        height: 65px; 
         display: flex;
-        flex-direction: column; /* Stack pic and name */
+        flex-direction: column; 
         align-items: center;
         justify-content: center;
-        background: rgba(245, 245, 247, 0.95); /* slightly more opaque */
+        background: rgba(245, 245, 247, 0.95); 
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-bottom: 1px solid rgba(0,0,0,0.1);
         z-index: 10;
+        transition: opacity 0.3s ease;
     }
 
-    /* Profile picture styling */
     .header-profile-pic {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        object-fit: cover;
+        width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
     }
-
-    /* Name styling below pic */
     .header-name {
-        font-size: 11px;
-        color: #000;
-        font-family: 'SF Pro Display', sans-serif;
-        font-weight: 500;
-        margin-top: 4px;
+        font-size: 11px; color: #000; font-family: 'SF Pro Display', sans-serif; font-weight: 500; margin-top: 4px;
     }
 
-    /* Initial states for headers */
-    #header-mom { opacity: 1; z-index: 11; }
-    #header-ai { opacity: 0; z-index: 10; }
+    /* Initial header states */
+    #header-mom { opacity: 1; z-index: 12; }
+    #header-ai { opacity: 0; z-index: 11; }
+    #header-james { opacity: 0; z-index: 11; }
 
     .screen-body-container {
         position: relative;
         flex-grow: 1;
         background: #fff;
         overflow: hidden;
-        /* Push down below the header */
         margin-top: 65px; 
     }
 
@@ -237,42 +224,45 @@
         inset: 0;
         display: flex;
         flex-direction: column;
-        /* Start messages from the top */
         justify-content: flex-start;
-        /* Padding: top, right, bottom, left */
         padding: 15px 12px 30px;
-        gap: 8px; /* Tight gap like real iMessage */
+        gap: 8px; 
         overflow-y: auto;
-        font-family: 'SF Pro Display', sans-serif; /* Use iOS font */
+        font-family: 'SF Pro Display', sans-serif;
+        transition: all 0.5s ease;
     }
 
     /* Chat states for animation */
-    #chat-state-1 { z-index: 2; } /* Mom chat on top initially */
-    #chat-state-2 { z-index: 1; opacity: 0; filter: blur(5px); } /* AI chat hidden initially */
+    /* Initial Hero States */
+    #chat-state-mom { z-index: 5; opacity: 1; }
+    #chat-state-ai-initial { z-index: 4; opacity: 0; filter: blur(5px); }
+    
+    /* Scroll Step States (Hidden initially) */
+    #chat-state-step1, #chat-state-step2, #chat-state-step3 {
+        z-index: 3; opacity: 0; filter: blur(5px);
+    }
 
     .imessage-bubble {
         max-width: 75%;
-        padding: 8px 14px; /* Realistic padding */
-        font-size: 15px; /* Realistic font size for phone screen */
+        padding: 8px 14px; 
+        font-size: 15px; 
         line-height: 1.3;
         position: relative;
         word-wrap: break-word;
     }
 
-    /* Received Messages (Gray) */
     .imessage-received {
         align-self: flex-start;
         background-color: var(--imessage-gray);
         color: #000;
-        border-radius: 18px 18px 18px 4px; /* Tail bottom left */
+        border-radius: 18px 18px 18px 4px;
     }
 
-    /* Sent Messages (Green) */
     .imessage-sent {
         align-self: flex-end;
         background-color: var(--imessage-green);
         color: white;
-        border-radius: 18px 18px 4px 18px; /* Tail bottom right */
+        border-radius: 18px 18px 4px 18px;
     }
 
 
@@ -302,30 +292,28 @@
       line-height: 1.1; font-weight: 700; margin: 0;
       background-image: linear-gradient(to bottom right, #fff 30%, var(--matcha-light) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      /* Initial Hidden State */
       opacity: 0; scale: 0.9; filter: blur(10px); 
     }
-
-    /* Title states defined by IDs in GSAP now */
 
     .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.1rem; color: var(--matcha-medium); }
 
     /* Content */
     .content-section {
       position: relative; background: var(--bg-light); color: var(--text-dark);
-      min-height: 150vh; padding: 120px 0; z-index: 40; overflow: hidden; 
+      min-height: 200vh; /* Increased height for scrolling room */
+      padding: 120px 0; z-index: 40; overflow: hidden; 
     }
     .reveal-header h2 { color: var(--matcha-rich); }
     .reveal-header p { color: var(--matcha-deep); font-size: 1.2rem; line-height: 1.5; }
 
     .split-layout { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 60px; }
-    .content-left { width: 45%; display: flex; flex-direction: column; gap: 200px; padding-bottom: 200px; }
-    .content-right { width: 50%; }
+    .content-left { width: 45%; display: flex; flex-direction: column; gap: 250px; padding-bottom: 200px; }
+    .content-right { width: 50%; position: relative; height: 100%; }
 
     .card {
       background: #fff; padding: 32px; border-radius: 24px;
       border: 1px solid #e2e8f0; box-shadow: 0 10px 30px -5px rgba(44, 58, 31, 0.08);
-      opacity: 0; transform: translateY(30px);
+      /* Removed initial opacity/transform for smoother scrolltrigger handling */
     }
     .card h3 { font-size: 1.5rem; margin-bottom: 12px; color: var(--matcha-rich); font-weight: 700;}
     .card p { color: var(--matcha-deep); font-size: 1.05rem; line-height: 1.6; }
@@ -404,43 +392,43 @@
             </div>
 
             <div class="screen-header" id="header-ai">
-                <img src="image_17.png" alt="matchAI Logo" class="header-profile-pic" style="background-color: transparent; padding: 2px;">
+                <img src="logo.png" alt="matchAI Logo" class="header-profile-pic" style="background-color: transparent; padding: 2px;">
                 <span class="header-name">matchAI</span>
+            </div>
+
+             <div class="screen-header" id="header-james">
+                <div class="header-profile-pic" style="background: #98AA80; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">J</div>
+                <span class="header-name">James</span>
             </div>
 
             <div class="screen-body-container">
                 
-                <div class="chat-container" id="chat-state-1">
-                    <div class="imessage-bubble imessage-sent">
-                        happy birthday mom!
-                    </div>
-                    <div class="imessage-bubble imessage-received">
-                        thank you son
-                    </div>
-                    <div class="imessage-bubble imessage-received">
-                        what do you wish for?
-                    </div>
-                    <div class="imessage-bubble imessage-sent">
-                        for a son who has the job
-                    </div>
+                <div class="chat-container" id="chat-state-mom">
+                    <div class="imessage-bubble imessage-sent">happy birthday mom!</div>
+                    <div class="imessage-bubble imessage-received">thank you son</div>
+                    <div class="imessage-bubble imessage-sent">what do you wish for?</div>
+                    <div class="imessage-bubble imessage-received">for a son who has the job</div>
                 </div>
 
-                <div class="chat-container" id="chat-state-2">
-                    <div class="imessage-bubble imessage-sent">
-                        I need a job. pls help me.
-                    </div>
-                    <div class="imessage-bubble imessage-received">
-                        you've come to the right place. what kinda internship are you looking for?
-                    </div>
-                    <div class="imessage-bubble imessage-sent">
-                        investment banking
-                    </div>
-                    <div class="imessage-bubble imessage-received">
-                        James interned at GS last summer. I'll connect you right away!
-                    </div>
-                    <div class="imessage-bubble imessage-sent">
-                        thanks!
-                    </div>
+                <div class="chat-container" id="chat-state-ai-initial">
+                    <div class="imessage-bubble imessage-sent">I need a job. pls help me.</div>
+                    <div class="imessage-bubble imessage-received">that's my cup of tea 😉. what kinda internship are you looking for?</div>
+                    <div class="imessage-bubble imessage-sent">investment banking</div>
+                    <div class="imessage-bubble imessage-received">James interned at GS last summer. I'll connect you right away!</div>
+                    <div class="imessage-bubble imessage-sent">amazing! thanks!</div>
+                </div>
+
+                <div class="chat-container" id="chat-state-step1">
+                    <div class="imessage-bubble imessage-sent">Help me find a JPM IB intern from BC.</div>
+                </div>
+
+                <div class="chat-container" id="chat-state-step2">
+                    <div class="imessage-bubble imessage-sent" style="opacity: 0.5;">Help me find a JPM IB intern from BC.</div>
+                    <div class="imessage-bubble imessage-received">James, a senior, interned at GS last summer. I'll connect you right away!</div>
+                </div>
+
+                 <div class="chat-container" id="chat-state-step3">
+                    <div class="imessage-bubble imessage-sent">Hey James, it's Bob from matcha match!</div>
                 </div>
 
             </div>
@@ -518,16 +506,15 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    // --- 1. HERO PINNED ANIMATION (Titles, Phone Headers & Chat States) ---
+    // --- 1. HERO ANIMATION (Titles & Initial Phone State) ---
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
             start: "top top",
-            end: "+=2000", // Pin for 2000px
+            end: "+=2000", 
             pin: true,
-            scrub: 1,
+            scrub: true,
             onUpdate: (self) => {
-                // Update custom scrollbar
                 const p = self.progress;
                 if (p <= 0.5) {
                     sbChaos.style.transform = `scaleY(${p * 2})`;
@@ -540,38 +527,33 @@
         }
     });
 
-    // Timeline: Swap Titles, Headers, AND Chat States simultaneously
     heroTl
-        // 1. Fade OUT "Looking for internship?" title & Mom's Header & Mom's Chat
+        // Swap Titles
         .to("#text-looking", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 1 }, 0)
-        .to("#header-mom", { opacity: 0, duration: 1 }, 0)
-        .to("#chat-state-1", { opacity: 0, filter: "blur(5px)", duration: 1 }, 0)
-
-        // 2. Fade IN "One text away" title & AI's Header & AI's Chat
         .to("#text-onetext", { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1 }, 0.5)
+        // Swap Phone Header & Content (Mom -> AI Initial)
+        .to("#header-mom", { opacity: 0, duration: 1 }, 0)
+        .to("#chat-state-mom", { opacity: 0, filter: "blur(5px)", duration: 1 }, 0)
         .to("#header-ai", { opacity: 1, duration: 1 }, 0.5)
-        .to("#chat-state-2", { opacity: 1, filter: "blur(0px)", duration: 1 }, 0.5)
-        
-        // Intensify phone glow on match state
+        .to("#chat-state-ai-initial", { opacity: 1, filter: "blur(0px)", duration: 1 }, 0.5)
         .to("#phone-glow", { opacity: 1, duration: 1 }, 0.5);
 
 
-    // --- 2. MOVE PHONE TO RIGHT ---
+    // --- 2. MOVE PHONE TO RIGHT & STRAIGHTEN ---
     const moveTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
             start: "top bottom",
             end: "top top",
-            scrub: 1, 
+            scrub: true, 
         }
     });
 
-    // Move phone to side and slightly down to center near steps
     moveTl.to("#global-phone", {
-        x: "25vw", 
-        y: "10vh",      
-        scale: 0.85, 
-        rotation: -2, 
+        x: "35%",   // Move further right
+        y: "5%",    // Center vertically relative to viewport
+        scale: 1.35, // Make it BIG to cover height
+        rotation: 0, // Straighten it
         ease: "power2.inOut",
         immediateRender: false 
     }, 0);
@@ -579,7 +561,33 @@
     moveTl.to("#hero-text", { opacity: 0, y: -50, immediateRender: false }, 0);
 
 
-    // --- 3. CARD REVEALS ---
+    // --- 3. STEP-BY-STEP SCREEN UPDATES ---
+    // We use a single timeline pinned to the content section to scrub through phone states based on scroll position.
+    const screenTl = gsap.timeline({
+        scrollTrigger: {
+            trigger: "#section-content",
+            start: "top center", // Start scrubbing when section hits center screen
+            end: "bottom center",
+            scrub: true,
+        }
+    });
+
+    // Transition to Step 1 State
+    screenTl.to("#chat-state-ai-initial", { opacity: 0, filter: "blur(5px)" }, 0)
+            .to("#chat-state-step1", { opacity: 1, filter: "blur(0px)" }, 0.1);
+
+    // Transition to Step 2 State
+    screenTl.to("#chat-state-step1", { opacity: 0, filter: "blur(5px)" }, 0.35)
+            .to("#chat-state-step2", { opacity: 1, filter: "blur(0px)" }, 0.45);
+
+    // Transition to Step 3 State (Change Chat AND Header)
+    screenTl.to("#header-ai", { opacity: 0 }, 0.7)
+            .to("#chat-state-step2", { opacity: 0, filter: "blur(5px)" }, 0.7)
+            .to("#header-james", { opacity: 1 }, 0.8)
+            .to("#chat-state-step3", { opacity: 1, filter: "blur(0px)" }, 0.8);
+
+
+    // --- 4. CARD & SCROLLBAR REVEALS ---
     const steps = [
         { id: "#card-step1", bar: sbStep1 },
         { id: "#card-step2", bar: sbStep2 },
@@ -587,14 +595,14 @@
     ];
 
     steps.forEach((step) => {
-        gsap.to(step.id, {
+        gsap.from(step.id, {
             scrollTrigger: {
                 trigger: step.id,
                 start: "top 85%",
                 toggleActions: "play none none reverse"
             },
-            opacity: 1,
-            y: 0,
+            opacity: 0,
+            y: 30,
             duration: 0.6,
             ease: "power2.out"
         });
@@ -612,7 +620,7 @@
     });
 
 
-    // --- 4. JOIN SEGMENT ---
+    // --- 5. JOIN SEGMENT ---
     gsap.to(sbJoin, {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -627,15 +635,15 @@
     gsap.to("#global-phone", {
         scrollTrigger: {
             trigger: "#section-cta",
-            start: "top bottom",
-            scrub: 1
+            start: "top center",
+            scrub: true
         },
-        y: "-120vh",
+        y: "-100vh",
         opacity: 0,
         immediateRender: false
     });
 
-    // --- 5. FORM SUBMISSION (SIMULATED) ---
+    // --- 6. FORM SUBMISSION (SIMULATED) ---
     const form = document.getElementById("waitlist-form");
     
     async function handleSubmit(event) {
@@ -647,7 +655,6 @@
       status.innerHTML = "Sending...";
       status.className = "";
 
-      // Simulated SMS response message
       setTimeout(() => {
           status.innerHTML = `Hey ${name}, thanks for your interest in Matcha Match! Hang tight till our official launch on 2.14.26!`;
           status.className = "status-success";
