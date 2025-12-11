@@ -139,8 +139,9 @@
 
     .phone-stage {
         position: relative;
-        width: auto; height: 70vh; 
-        max-height: 800px;
+        width: auto;
+        height: 65vmin;            /* <-- use vmin so size is tied to smaller dimension */
+        max-height: 780px;
         aspect-ratio: 9 / 19.5; 
         will-change: transform;
         transform-style: preserve-3d;
@@ -241,7 +242,7 @@
     .imessage-bubble {
         max-width: 75%;
         padding: 8px 14px; 
-        font-size: 15px; 
+        font-size: clamp(0.85rem, 1.1vmin, 1rem);  /* <-- scale bubbles with vmin too */
         line-height: 1.3;
         position: relative;
         word-wrap: break-word;
@@ -284,7 +285,7 @@
 
     .hero-title {
       grid-area: 1 / 1;
-      font-size: clamp(2.5rem, 5vw, 4.5rem); 
+      font-size: clamp(2.5rem, 5vmin, 4.5rem); /* <-- use vmin so title and phone scale together */
       line-height: 1.1; font-weight: 700; margin: 0;
       background-image: linear-gradient(to bottom right, #fff 30%, var(--matcha-light) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -292,6 +293,10 @@
     }
 
     .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.1rem; color: var(--matcha-medium); }
+    #text-sub {
+        opacity: 0;                     /* hidden on page 1 */
+        transform: translateY(10px);    /* will slide up when revealed */
+    }
 
     /* Content */
     .content-section {
@@ -352,13 +357,13 @@
     /* --- RESPONSIVE FIX FOR SHORTER VIEWPORT HEIGHTS --- */
     @media (max-height: 850px) {
         .phone-wrapper-fixed {
-            padding-top: 10vh; /* push phone slightly down */
+            padding-top: 10vh;
         }
         .phone-stage {
-            height: 60vh; /* shrink phone so it doesn't cover title */
+            height: 65vmin;   /* keep same scaling even on shorter heights */
         }
         .hero-content {
-            top: 4%; /* tiny adjustment so heading still feels high */
+            top: 4%;
         }
     }
 
@@ -407,7 +412,6 @@
             
             <!-- BofA header -->
             <div class="screen-header" id="header-bofa">
-                <!-- Point this src to your BofA logo asset -->
                 <img src="bofa-logo.png" alt="BofA" class="header-profile-pic">
                 <span class="header-name">BofA</span>
             </div>
@@ -468,7 +472,8 @@
             <h1 class="hero-title" id="text-looking" style="opacity: 1; scale: 1; filter: blur(0px);">looking for an internship?</h1>
             <h1 class="hero-title" id="text-onetext">you're ONE TEXT away</h1>
         </div>
-        <p class="hero-subtitle" id="text-sub">Skip the cold emails. Get matched with BC mentors who've been in your shoes.</p>
+        <!-- New copy: only appears on page 2 -->
+        <p class="hero-subtitle" id="text-sub">with matcha match...</p>
       </div>
   </section>
 
@@ -575,6 +580,13 @@
             duration: 0.2,
             ease: "power2.inOut"
         }, 0.35)
+        // subtitle appears only on page 2
+        .to("#text-sub", {
+            opacity: 1,
+            y: 0,
+            duration: 0.25,
+            ease: "power2.out"
+        }, 0.4)
         .to("#header-bofa", { 
             opacity: 0, 
             duration: 0.15,
