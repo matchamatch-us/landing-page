@@ -35,7 +35,7 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
     ::-webkit-scrollbar { display: none; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: auto; /* Let GSAP handle smoothing */ }
     
     body { 
         font-family: 'Inter', sans-serif;
@@ -410,9 +410,8 @@
           <div class="dynamic-island"></div>
           <div class="screen">
             
-            <!-- BofA header -->
             <div class="screen-header" id="header-bofa">
-                <img src="bofa-logo.png" alt="BofA" class="header-profile-pic">
+                <div class="header-profile-pic" style="background:#e31837; display:grid; place-items:center; color:white; font-weight:bold; font-size:9px;">B</div>
                 <span class="header-name">BofA</span>
             </div>
 
@@ -428,7 +427,6 @@
 
             <div class="screen-body-container">
                 
-                <!-- Option 1: BofA roasting your balance -->
                 <div class="chat-container" id="chat-state-bofa">
                     <div class="imessage-bubble imessage-received">⚠️ Low balance alert.</div>
                     <div class="imessage-bubble imessage-received">Your checking account: $2.17.</div>
@@ -472,7 +470,6 @@
             <h1 class="hero-title" id="text-looking" style="opacity: 1; scale: 1; filter: blur(0px);">looking for an internship?</h1>
             <h1 class="hero-title" id="text-onetext">you're ONE TEXT away</h1>
         </div>
-        <!-- New copy: only appears on page 2 -->
         <p class="hero-subtitle" id="text-sub">with matcha match...</p>
       </div>
   </section>
@@ -536,18 +533,19 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    // --- 1. HERO ANIMATION (SMOOTH, WITH SNAP "RESISTANCE") ---
+    // --- 1. HERO ANIMATION ---
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
             start: "top top",
-            end: "+=4000",
+            end: "+=3000",
             pin: true,
-            scrub: 1.5,
+            scrub: 1, // Tighter scrub for better responsiveness
+            anticipatePin: 1, // <--- CRITICAL: Prevents jitter on pin
             snap: {
-                snapTo: [0, 1],       // stick a bit at start & end
-                duration: 0.4,
-                delay: 0.02,
+                snapTo: [0, 1],       
+                duration: { min: 0.3, max: 0.8 },
+                delay: 0.1,
                 ease: "power2.inOut"
             },
             onUpdate: (self) => {
@@ -564,190 +562,133 @@
     });
 
     heroTl
-        .to({}, { duration: 0.15 })
+        .to({}, { duration: 0.1 })
         .to("#text-looking", { 
             opacity: 0, 
             scale: 0.95, 
             filter: "blur(8px)", 
             duration: 0.2,
             ease: "power2.inOut"
-        }, 0.15)
-        .to({}, { duration: 0.05 })
+        }, 0.1)
         .to("#text-onetext", { 
             opacity: 1, 
             scale: 1, 
             filter: "blur(0px)", 
             duration: 0.2,
             ease: "power2.inOut"
-        }, 0.35)
+        }, 0.3)
         // subtitle appears only on page 2
         .to("#text-sub", {
             opacity: 1,
             y: 0,
             duration: 0.25,
             ease: "power2.out"
-        }, 0.4)
+        }, 0.35)
         .to("#header-bofa", { 
             opacity: 0, 
-            duration: 0.15,
-            ease: "power2.inOut"
+            duration: 0.15
         }, 0.15)
         .to("#chat-state-bofa", { 
             opacity: 0, 
-            duration: 0.15,
-            ease: "power2.inOut"
+            duration: 0.15
         }, 0.15)
         .to("#header-ai", { 
             opacity: 1, 
-            duration: 0.2,
-            ease: "power2.inOut"
+            duration: 0.2
         }, 0.3)
         .to("#chat-state-ai-initial", { 
             opacity: 1, 
-            duration: 0.2,
-            ease: "power2.inOut"
+            duration: 0.2
         }, 0.3)
         .to("#phone-glow", { 
             opacity: 1, 
-            duration: 0.25,
-            ease: "power2.inOut"
+            duration: 0.25
         }, 0.3)
-        .to({}, { duration: 0.3 });
-
-    // --- 2. PHONE REPOSITIONING (SMOOTH GLIDE) ---
-    const contentTl = gsap.timeline({
-        scrollTrigger: {
-            trigger: "#section-content",
-            start: "top bottom",
-            end: "top top",
-            scrub: 1.5
-        }
-    });
-
-    contentTl.to("#global-phone", {
-        x: "30vw",
-        y: "5vh",
-        scale: 1.4,
-        rotation: 0,
-        ease: "power2.inOut",
-        immediateRender: false
-    }, 0);
-    
-    contentTl.to("#hero-text", { 
-        opacity: 0, 
-        y: -50, 
-        ease: "power2.in",
-        immediateRender: false 
-    }, 0);
+        .to({}, { duration: 0.3 }); // Buffer at end
 
 
-    // --- 3. STEP-BY-STEP CONTENT (WITH SNAP AT EACH STEP FOR "RESISTANCE") ---
-    const stepsTl = gsap.timeline({
+    // --- 2. MASTER CONTENT TIMELINE (Merged Phone Move + Steps) ---
+    // Merging triggers prevents the "jump" between phone moving and steps changing.
+    const masterTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
             start: "top top", 
             end: "+=5000",
             pin: true,
-            scrub: 1.5,
+            scrub: 1,
+            anticipatePin: 1, // <--- CRITICAL: Prevents jitter
             snap: {
-                snapTo: [0, 0.33, 0.66, 1],  // Step 1, Step 2, Step 3, End
-                duration: 0.4,
-                delay: 0.02,
-                ease: "power2.inOut"
+                snapTo: "labels", // Snap to specific logical points defined below
+                duration: { min: 0.2, max: 0.6 }, // Fast snap
+                delay: 0.1,
+                ease: "power1.inOut",
+                directional: false // Snaps to closest point (magnetic feel)
             }
         }
     });
 
-    stepsTl
-        // STEP 1
-        .to("#card-step1", { 
-            opacity: 1, 
-            y: 0, 
-            duration: 0.12,
-            ease: "power2.out"
-        }, 0.08)
-        .to(sbStep1, { scaleY: 1, duration: 0.08 }, 0.08)
-        .to("#chat-state-ai-initial", { 
-            opacity: 0, 
-            duration: 0.1,
+    // A. MOVE PHONE TO RIGHT (HAPPENS IMMEDIATELY)
+    masterTl
+        .to("#global-phone", {
+            x: "30vw",
+            y: "5vh",
+            scale: 1.4,
+            rotation: 0,
+            duration: 1,
             ease: "power2.inOut"
-        }, 0.08)
-        .to("#chat-state-step1", { 
-            opacity: 1, 
-            duration: 0.12,
-            ease: "power2.inOut"
-        }, 0.15)
-        .to({}, { duration: 0.25 })
-        
-        // TRANSITION TO STEP 2
-        .to("#card-step1", { 
+        }, 0)
+        .to("#hero-text", { 
             opacity: 0, 
-            y: -30, 
-            duration: 0.1,
+            y: -50, 
+            duration: 1,
             ease: "power2.in"
-        }, 0.43)
-        .to({}, { duration: 0.05 })
+        }, 0)
         
-        // STEP 2
-        .to("#card-step2", { 
-            opacity: 1, 
-            y: 0, 
-            duration: 0.12,
-            ease: "power2.out"
-        }, 0.53)
-        .to(sbStep2, { scaleY: 1, duration: 0.08 }, 0.53)
-        .to("#chat-state-step1", { 
-            opacity: 0, 
-            duration: 0.1,
-            ease: "power2.inOut"
-        }, 0.53)
-        .to("#chat-state-step2", { 
-            opacity: 1, 
-            duration: 0.12,
-            ease: "power2.inOut"
-        }, 0.6)
-        .to({}, { duration: 0.25 })
-        
-        // TRANSITION TO STEP 3
-        .to("#card-step2", { 
-            opacity: 0, 
-            y: -30, 
-            duration: 0.1,
-            ease: "power2.in"
-        }, 0.85)
-        .to({}, { duration: 0.05 })
-        
-        // STEP 3
-        .to("#card-step3", { 
-            opacity: 1, 
-            y: 0, 
-            duration: 0.12,
-            ease: "power2.out"
-        }, 0.95)
-        .to(sbStep3, { scaleY: 1, duration: 0.08 }, 0.95)
-        .to("#header-ai", { 
-            opacity: 0, 
-            duration: 0.1,
-            ease: "power2.inOut"
-        }, 0.95)
-        .to("#chat-state-step2", { 
-            opacity: 0, 
-            duration: 0.1,
-            ease: "power2.inOut"
-        }, 0.95)
-        .to("#header-james", { 
-            opacity: 1, 
-            duration: 0.12,
-            ease: "power2.inOut"
-        }, 1.0)
-        .to("#chat-state-step3", { 
-            opacity: 1, 
-            duration: 0.12,
-            ease: "power2.inOut"
-        }, 1.05)
-        .to({}, { duration: 1 }); // extra hold on Step 3
+        // Add a small buffer before steps start
+        .to({}, { duration: 0.2 });
 
-    // --- 4. PHONE EXIT TO CTA ---
+
+    // B. STEP SEQUENCE
+    // STEP 1
+    masterTl.addLabel("step1")
+        .to("#card-step1", { opacity: 1, y: 0, duration: 1, ease: "power2.out" })
+        .to(sbStep1, { scaleY: 1, duration: 0.5 }, "<")
+        .to("#chat-state-ai-initial", { opacity: 0, duration: 0.5 }, "<")
+        .to("#chat-state-step1", { opacity: 1, duration: 0.5 }, ">-0.3")
+        
+        .to({}, { duration: 2 }); // HOLD TIME for Step 1
+
+    // TRANSITION 1 -> 2
+    masterTl
+        .to("#card-step1", { opacity: 0, y: -30, duration: 1, ease: "power2.in" });
+
+    // STEP 2
+    masterTl.addLabel("step2")
+        .to("#card-step2", { opacity: 1, y: 0, duration: 1, ease: "power2.out" })
+        .to(sbStep2, { scaleY: 1, duration: 0.5 }, "<")
+        .to("#chat-state-step1", { opacity: 0, duration: 0.5 }, "<")
+        .to("#chat-state-step2", { opacity: 1, duration: 0.5 }, ">-0.3")
+        
+        .to({}, { duration: 2 }); // HOLD TIME for Step 2
+
+    // TRANSITION 2 -> 3
+    masterTl
+        .to("#card-step2", { opacity: 0, y: -30, duration: 1, ease: "power2.in" });
+
+    // STEP 3
+    masterTl.addLabel("step3")
+        .to("#card-step3", { opacity: 1, y: 0, duration: 1, ease: "power2.out" })
+        .to(sbStep3, { scaleY: 1, duration: 0.5 }, "<")
+        .to("#header-ai", { opacity: 0, duration: 0.5 }, "<")
+        .to("#chat-state-step2", { opacity: 0, duration: 0.5 }, "<")
+        
+        .to("#header-james", { opacity: 1, duration: 0.5 }, ">-0.2")
+        .to("#chat-state-step3", { opacity: 1, duration: 0.5 }, "<")
+        
+        .to({}, { duration: 2 }); // HOLD TIME for Step 3
+
+
+    // --- 3. PHONE EXIT TO CTA ---
     gsap.to(sbJoin, {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -764,15 +705,14 @@
             trigger: "#section-cta",
             start: "top bottom", 
             end: "top center", 
-            scrub: 1.5
+            scrub: 1
         },
         y: "-100vh", 
         opacity: 0,
-        ease: "power2.in",
-        immediateRender: false
+        ease: "power2.in"
     });
 
-    // --- 5. FORM SUBMISSION ---
+    // --- 4. FORM SUBMISSION ---
     const form = document.getElementById("waitlist-form");
     
     async function handleSubmit(event) {
