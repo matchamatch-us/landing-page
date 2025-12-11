@@ -33,347 +33,536 @@
       --imessage-green: var(--matcha-deep);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
     ::-webkit-scrollbar { display: none; }
     html { scroll-behavior: smooth; }
     
     body { 
-        font-family: 'Inter', sans-serif;
-        background-color: var(--bg-light);
-        color: var(--text-dark);
-        overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      overflow-x: hidden;
     }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+    }
 
     /* --- CUSTOM SCROLLBAR --- */
     .custom-scrollbar {
-        position: fixed;
-        right: 30px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 12px;
+      position: fixed;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
     }
 
     .sb-label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 4px;
-        color: var(--text-muted);
-        opacity: 0.5;
-        transition: opacity 0.3s;
-        text-align: right;
-        mix-blend-mode: difference;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+      opacity: 0.5;
+      transition: opacity 0.3s;
+      text-align: right;
+      mix-blend-mode: difference;
     }
 
     .sb-segment {
-        width: 4px;
-        height: 40px;
-        background: rgba(44, 58, 31, 0.2);
-        border-radius: 4px;
-        position: relative;
-        overflow: hidden;
-        transition: width 0.3s;
+      width: 4px;
+      height: 40px;
+      background: rgba(44, 58, 31, 0.2);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      transition: width 0.3s;
     }
 
-    .sb-segment.active .sb-label { opacity: 1; }
-    
     .sb-fill {
-        position: absolute; top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: var(--matcha-rich);
-        transform: scaleY(0);
-        transform-origin: top center;
-        transition: transform 0.1s linear;
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--matcha-rich);
+      transform: scaleY(0);
+      transform-origin: top center;
+      transition: transform 0.1s linear;
     }
 
     .sb-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        align-items: flex-end;
-        margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+      margin-top: 4px;
     }
 
     .sb-sub {
-        width: 4px;
-        height: 15px; 
-        background: rgba(44, 58, 31, 0.2);
-        border-radius: 4px;
-        position: relative;
-        overflow: hidden;
+      width: 4px;
+      height: 15px; 
+      background: rgba(44, 58, 31, 0.2);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
     }
 
     .sb-wrap {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      cursor: pointer;
     }
-    .sb-wrap:hover .sb-label { opacity: 1; }
-    .sb-wrap:hover .sb-segment, .sb-wrap:hover .sb-sub { width: 6px; }
 
+    .sb-wrap:hover .sb-label { opacity: 1; }
+    .sb-wrap:hover .sb-segment,
+    .sb-wrap:hover .sb-sub { width: 6px; }
+
+    @media (max-width: 768px) {
+      .custom-scrollbar { display: none; }
+    }
 
     /* --- FIXED PHONE --- */
     .phone-wrapper-fixed {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100vh;
-        z-index: 50; 
-        pointer-events: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        /* Padding handled by JS centering/scaling now */
-        transform: translateZ(0);
-        -webkit-transform: translateZ(0);
-        backface-visibility: hidden;
-        perspective: 1000px;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100vh;
+      z-index: 50; 
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000px;
     }
 
     /* Scaler Wrapper */
     #phone-scaler {
-        transform-origin: center center;
-        will-change: transform;
-        /* Start hidden to prevent FOUC before JS resize */
-        opacity: 0; 
-        transition: opacity 0.3s ease;
+      transform-origin: center center;
+      will-change: transform;
+      opacity: 0; /* faded in by GSAP */
+      transition: opacity 0.3s ease;
     }
 
     .phone-stage {
-        position: relative;
-        /* FIXED PIXEL SIZE FOR LOCKED PROPORTIONS */
-        width: 400px; 
-        height: 860px;
-        
-        will-change: transform;
-        transform-style: preserve-3d;
+      position: relative;
+      width: 400px;
+      height: 860px;
+      will-change: transform;
+      transform-style: preserve-3d;
     }
 
     .phone-glow {
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        width: 140%; height: 100%;
-        background: radial-gradient(circle, rgba(198, 215, 179, 0.3) 0%, transparent 60%);
-        filter: blur(50px);
-        opacity: 0; 
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 140%; height: 100%;
+      background: radial-gradient(circle, rgba(198, 215, 179, 0.3) 0%, transparent 60%);
+      filter: blur(50px);
+      opacity: 0; 
     }
 
     .phone-device {
-        width: 100%; height: 100%;
-        background: #000;
-        border-radius: 54px; 
-        box-shadow: 0 0 0 1px #333, 0 0 0 3px #1a1a1a, 0 25px 70px -10px rgba(0,0,0,0.9);
-        position: relative; overflow: hidden;
+      width: 100%; height: 100%;
+      background: #000;
+      border-radius: 54px; 
+      box-shadow: 0 0 0 1px #333,
+                  0 0 0 3px #1a1a1a,
+                  0 25px 70px -10px rgba(0,0,0,0.9);
+      position: relative;
+      overflow: hidden;
     }
 
     .dynamic-island {
-        position: absolute;
-        top: 16px; left: 50%; transform: translateX(-50%);
-        width: 126px; /* Fixed px */
-        height: 36px; /* Fixed px */
-        background: #000; border-radius: 20px; z-index: 14;
+      position: absolute;
+      top: 16px; left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 36px;
+      background: #000; border-radius: 20px;
+      z-index: 14;
     }
 
     /* --- IPHONE SCREEN & CHAT STYLES --- */
     .screen {
-        position: absolute;
-        inset: 6px;
-        overflow: hidden;
-        border-radius: 48px;
-        background: #fff;
-        display: flex;
-        flex-direction: column;
+      position: absolute;
+      inset: 6px;
+      overflow: hidden;
+      border-radius: 48px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
     }
 
     /* Status bar */
     .status-bar {
-        position: absolute;
-        top: 14px;
-        left: 0;
-        right: 0;
-        padding: 0 32px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-family: 'SF Pro Display', sans-serif;
-        font-size: 16px; /* Fixed px */
-        font-weight: 600;
-        color: #111;
-        opacity: 0.9;
-        z-index: 12;
-        pointer-events: none;
+      position: absolute;
+      top: 14px;
+      left: 0;
+      right: 0;
+      padding: 0 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'SF Pro Display', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #111;
+      opacity: 0.9;
+      z-index: 12;
+      pointer-events: none;
     }
 
     .status-icons {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    /* signal bars */
     .status-signal {
-        display: flex;
-        align-items: flex-end;
-        gap: 2px;
-        height: 12px;
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
     }
     .status-signal span {
-        width: 3px;
-        border-radius: 1px;
-        background: #111;
+      width: 3px;
+      border-radius: 1px;
+      background: #111;
     }
     .status-signal span:nth-child(1) { height: 4px; opacity: 0.5; }
     .status-signal span:nth-child(2) { height: 6px; opacity: 0.7; }
     .status-signal span:nth-child(3) { height: 9px; opacity: 0.85; }
     .status-signal span:nth-child(4) { height: 12px; }
 
-    /* wifi */
     .status-wifi {
-        width: 18px;
-        height: 12px;
-        border-radius: 12px 12px 0 0;
-        border: 2px solid #111;
-        border-bottom: none;
-        position: relative;
-        box-sizing: border-box;
-        opacity: 0.9;
+      width: 18px;
+      height: 12px;
+      border-radius: 12px 12px 0 0;
+      border: 2px solid #111;
+      border-bottom: none;
+      position: relative;
+      box-sizing: border-box;
+      opacity: 0.9;
     }
     .status-wifi::after {
-        content: "";
-        position: absolute;
-        left: 3px;
-        right: 3px;
-        bottom: -2px;
-        height: 2px;
-        border-radius: 10px;
-        background: #111;
-        opacity: 0.65;
+      content: "";
+      position: absolute;
+      left: 3px;
+      right: 3px;
+      bottom: -2px;
+      height: 2px;
+      border-radius: 10px;
+      background: #111;
+      opacity: 0.65;
     }
 
-    /* battery */
     .status-battery {
-        width: 26px;
-        height: 13px;
-        border-radius: 4px;
-        border: 1.5px solid #111;
-        position: relative;
-        box-sizing: border-box;
+      width: 26px;
+      height: 13px;
+      border-radius: 4px;
+      border: 1.5px solid #111;
+      position: relative;
+      box-sizing: border-box;
     }
     .status-battery::after {
-        content: "";
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        right: 4px;
-        bottom: 2px;
-        border-radius: 2px;
-        background: #111;
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 4px;
+      bottom: 2px;
+      border-radius: 2px;
+      background: #111;
     }
     .status-battery::before {
-        content: "";
-        position: absolute;
-        right: -4px;
-        top: 3px;
-        width: 2px;
-        height: 5px;
-        border-radius: 1px;
-        background: #111;
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 3px;
+      width: 2px;
+      height: 5px;
+      border-radius: 1px;
+      background: #111;
     }
     
     .screen-header {
-        position: absolute;
-        top: 60px; 
-        left: 0;
-        right: 0;
-        height: 80px; 
-        display: flex;
-        flex-direction: column; 
-        align-items: center;
-        justify-content: center;
-        background: rgba(245, 245, 247, 0.96); 
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(0,0,0,0.08);
-        z-index: 11;
-        transition: opacity 0.3s ease;
+      position: absolute;
+      top: 60px; 
+      left: 0;
+      right: 0;
+      height: 80px; 
+      display: flex;
+      flex-direction: column; 
+      align-items: center;
+      justify-content: center;
+      background: rgba(245, 245, 247, 0.96); 
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      z-index: 11;
+      transition: opacity 0.3s ease;
     }
 
     .header-profile-pic {
-        width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
     }
     .header-name {
-        font-size: 13px; color: #000; font-family: 'SF Pro Display', sans-serif; font-weight: 500; margin-top: 6px;
+      font-size: 13px;
+      color: #000;
+      font-family: 'SF Pro Display', sans-serif;
+      font-weight: 500;
+      margin-top: 6px;
     }
 
-    /* Initial header states */
     #header-bofa { opacity: 1; z-index: 12; }
     #header-ai { opacity: 0; z-index: 11; }
     #header-james { opacity: 0; z-index: 11; }
 
     .screen-body-container {
-        position: relative;
-        flex-grow: 1;
-        background: #fff;
-        overflow: hidden;
-        margin-top: 140px; /* below header */
+      position: relative;
+      flex-grow: 1;
+      background: #fff;
+      overflow: hidden;
+      margin-top: 140px;
     }
 
     .chat-container {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        padding: 20px 16px 40px;
-        gap: 10px; 
-        overflow-y: auto;
-        font-family: 'SF Pro Display', sans-serif;
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 20px 16px 40px;
+      gap: 10px; 
+      overflow-y: auto;
+      font-family: 'SF Pro Display', sans-serif;
     }
 
-    /* Chat states for animation */
     #chat-state-bofa { z-index: 5; opacity: 1; }
     #chat-state-ai-initial { z-index: 4; opacity: 0; }
-    #chat-state-step1, #chat-state-step2, #chat-state-step3 {
-        z-index: 3; opacity: 0;
+    #chat-state-step1,
+    #chat-state-step2,
+    #chat-state-step3 {
+      z-index: 3; opacity: 0;
     }
 
     .imessage-bubble {
-        max-width: 280px; /* Fixed pixel width */
-        padding: 10px 16px; 
-        font-size: 17px; /* Fixed pixel size (standard iOS) */
-        line-height: 1.35;
-        position: relative;
-        word-wrap: break-word;
+      max-width: 280px;
+      padding: 10px 16px; 
+      font-size: 17px;
+      line-height: 1.35;
+      position: relative;
+      word-wrap: break-word;
     }
 
     .imessage-received {
-        align-self: flex-start;
-        background-color: var(--imessage-gray);
-        color: #000;
-        border-radius: 20px 20px 20px 4px;
+      align-self: flex-start;
+      background-color: var(--imessage-gray);
+      color: #000;
+      border-radius: 20px 20px 20px 4px;
     }
 
     .imessage-sent {
-        align-self: flex-end;
-        background-color: var(--imessage-green);
-        color: white;
-        border-radius: 20px 20px 4px 20px;
+      align-self: flex-end;
+      background-color: var(--imessage-green);
+      color: white;
+      border-radius: 20px 20px 4px 20px;
     }
 
+    /* --- NETWORK HERO (NEW) --- */
+    .network-hero {
+      height: 100vh;
+      position: relative;
+      background: radial-gradient(circle at 20% 0%, #334327, #111a10);
+      color: #f8fafc;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    /* --- SECTIONS --- */
+    .network-hero::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(198,215,179,0.15), transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(152,170,128,0.18), transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .network-inner {
+      position: relative;
+      z-index: 2;
+      text-align: left;
+      max-width: 520px;
+    }
+
+    .network-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(15, 23, 15, 0.7);
+      border: 1px solid rgba(198,215,179,0.5);
+      color: var(--matcha-light);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .network-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #7dd66f;
+      box-shadow: 0 0 12px rgba(125,214,111,0.8);
+    }
+
+    .network-headline {
+      font-size: clamp(2.3rem, 4vw, 3.4rem);
+      line-height: 1.1;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .network-sub {
+      font-size: 1.1rem;
+      color: var(--matcha-light);
+      max-width: 380px;
+      line-height: 1.6;
+    }
+
+    .network-graph-wrapper {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: min(8vw, 120px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .network-graph {
+      width: min(620px, 70vw);
+      max-height: 70vh;
+      opacity: 0.85;
+    }
+
+    .net-node {
+      fill: rgba(198,215,179, 0.85);
+      filter: drop-shadow(0 0 12px rgba(198,215,179,0.8));
+    }
+
+    .net-node-main {
+      fill: #ffffff;
+      stroke: rgba(198,215,179,0.9);
+      stroke-width: 2;
+      filter: drop-shadow(0 0 20px rgba(255,255,255,0.9));
+    }
+
+    .net-link {
+      stroke: rgba(180,199,160,0.5);
+      stroke-width: 1.4;
+      stroke-linecap: round;
+    }
+
+    .network-scroll-hint {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(226,232,240,0.8);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .network-scroll-dot {
+      width: 6px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(226,232,240,0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .network-scroll-dot::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 2px;
+      right: 2px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(226,232,240,0.9);
+      animation: scrollDot 1.4s ease-in-out infinite;
+    }
+
+    @keyframes scrollDot {
+      0% { transform: translateY(0); opacity: 1; }
+      60% { transform: translateY(4px); opacity: 0.2; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 900px) {
+      .network-graph-wrapper {
+        justify-content: center;
+        padding-right: 0;
+        align-items: flex-end;
+      }
+      .network-inner {
+        text-align: center;
+        align-items: center;
+      }
+      .network-sub {
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .network-headline {
+        font-size: 2.1rem;
+      }
+      .network-graph {
+        width: 80vw;
+      }
+    }
+
+    /* --- HERO (PHONE SECTION) --- */
     .hero {
       height: 100vh; 
       position: relative;
-      display: flex; flex-direction: column; align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       background: radial-gradient(circle at 50% 50%, var(--matcha-rich), #1a2312); 
       z-index: 10;
     }
@@ -381,230 +570,396 @@
     .hero-content {
       text-align: center;
       z-index: 40; 
-      position: absolute; 
-      top: 3%; /* Moved higher up */
+      position: absolute;
+      top: 3%;
       width: 100%;
       padding: 0 20px;
     }
 
     .heading-swapper {
-        display: grid; place-items: center; height: 120px; position: relative;
+      display: grid;
+      place-items: center;
+      height: 120px;
+      position: relative;
     }
 
     .hero-title {
       grid-area: 1 / 1;
-      /* Increased font size */
       font-size: clamp(3rem, 7vmin, 6.5rem);
-      line-height: 1.1; font-weight: 700; margin: 0;
+      line-height: 1.1;
+      font-weight: 700;
+      margin: 0;
       background-image: linear-gradient(to bottom right, #fff 30%, var(--matcha-light) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      opacity: 0; scale: 0.9; filter: blur(10px); 
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      opacity: 0;
+      scale: 0.9;
+      filter: blur(10px);
     }
 
     .hero-subtitle { 
-        max-width: 480px; 
-        margin: 0 auto 4px; /* Adjusted margin */
-        font-size: 1.2rem; 
-        color: var(--matcha-medium); 
+      max-width: 480px; 
+      margin: 0 auto 4px;
+      font-size: 1.2rem; 
+      color: var(--matcha-medium); 
     }
+
     #text-sub {
-        opacity: 0;
-        /* Start slightly above to slide down */
-        transform: translateY(-20px);
+      opacity: 0;
+      transform: translateY(-20px);
     }
 
-    /* Content */
+    /* --- CONTENT SECTIONS --- */
     .content-section {
-      position: relative; background: var(--bg-light); color: var(--text-dark);
-      padding: 120px 0; z-index: 40; overflow: hidden; 
-    }
-    .reveal-header h2 { color: var(--matcha-rich); }
-    .reveal-header p { 
-        color: var(--matcha-deep); 
-        font-size: 1.2rem; 
-        line-height: 1.5; 
-        margin-bottom: 20px; /* Reduced margin to pull cards up */
+      position: relative;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      padding: 120px 0;
+      z-index: 40;
+      overflow: hidden;
     }
 
-    .split-layout { 
-        display: flex; 
-        align-items: flex-start; 
-        justify-content: space-between; 
-        margin-top: 20px; /* Reduced margin to pull cards up */
+    .reveal-header h2 { color: var(--matcha-rich); }
+
+    .reveal-header p {
+      color: var(--matcha-deep);
+      font-size: 1.2rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
     }
-    
+
+    .split-layout {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
     .content-left { 
-        width: 45%; 
-        height: 60vh;
-        display: grid; 
-        place-items: center;
+      width: 45%; 
+      height: 60vh;
+      display: grid; 
+      place-items: center;
     }
     
-    .content-right { width: 50%; position: relative; height: 100%; }
+    .content-right {
+      width: 50%;
+      position: relative;
+      height: 100%;
+    }
 
     .card {
-      background: #fff; padding: 32px; border-radius: 24px;
-      border: 1px solid #e2e8f0; box-shadow: 0 10px 30px -5px rgba(44, 58, 31, 0.08);
-      opacity: 0; transform: translateY(30px);
-      grid-area: 1 / 1; 
+      background: #fff;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 30px -5px rgba(44, 58, 31, 0.08);
+      opacity: 0;
+      transform: translateY(30px);
+      grid-area: 1 / 1;
       width: 100%;
     }
     
-    .card h3 { font-size: 1.5rem; margin-bottom: 12px; color: var(--matcha-rich); font-weight: 700;}
-    .card p { color: var(--matcha-deep); font-size: 1.05rem; line-height: 1.6; }
-    .step-num { font-size: 0.8rem; font-weight: 700; color: var(--matcha-medium); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 0.05em; }
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      color: var(--matcha-rich);
+      font-weight: 700;
+    }
+    .card p {
+      color: var(--matcha-deep);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+    .step-num {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--matcha-medium);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+      letter-spacing: 0.05em;
+    }
 
     /* CTA */
-    .cta { background: var(--matcha-rich); color: var(--text-white); text-align: center; padding: 120px 0 160px; z-index: 60; position: relative; }
+    .cta {
+      background: var(--matcha-rich);
+      color: var(--text-white);
+      text-align: center;
+      padding: 120px 0 160px;
+      z-index: 60;
+      position: relative;
+    }
     
-    .waitlist-group { max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .waitlist-group {
+      max-width: 400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
     .waitlist-input {
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
-      padding: 16px 20px; border-radius: 12px; color: #fff; font-size: 1rem;
-      outline: none; transition: border-color 0.2s;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 16px 20px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
     }
     .waitlist-input:focus { border-color: var(--matcha-light); }
     .waitlist-input::placeholder { color: rgba(255,255,255,0.4); }
     
     .btn-waitlist {
-      background: var(--matcha-light); color: var(--matcha-rich); border: none;
-      padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1rem;
-      transition: all 0.2s; margin-top: 8px;
+      background: var(--matcha-light);
+      color: var(--matcha-rich);
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+      margin-top: 8px;
     }
-    .btn-waitlist:hover { background: #fff; transform: translateY(-2px); }
+    .btn-waitlist:hover {
+      background: #fff;
+      transform: translateY(-2px);
+    }
     
-    #form-status { margin-top: 20px; font-size: 0.95rem; height: 20px; font-weight: 500;}
+    #form-status {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      height: 20px;
+      font-weight: 500;
+    }
     .status-success { color: var(--matcha-light); }
     .status-error { color: #f87171; }
 
-    footer { background: #1a2312; color: var(--matcha-medium); text-align: center; padding: 40px; font-size: 0.9rem; position: relative; z-index: 60; }
+    footer {
+      background: #1a2312;
+      color: var(--matcha-medium);
+      text-align: center;
+      padding: 40px;
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 60;
+    }
 
+    /* Responsive tweaks */
     @media (max-width: 768px) {
-        .custom-scrollbar { display: none; }
-        .split-layout { flex-direction: column; }
-        .content-left { width: 100%; height: auto; display: block; padding-bottom: 50px;}
-        .card { margin-bottom: 40px; opacity: 1; transform: translateY(0); }
-        .content-right { display: none; }
-        .hero-content { top: 10%; }
-        .hero-title { font-size: 3rem; }
+      .split-layout { flex-direction: column; }
+      .content-left {
+        width: 100%;
+        height: auto;
+        display: block;
+        padding-bottom: 50px;
+      }
+      .card {
+        margin-bottom: 40px;
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .content-right { display: none; }
+      .hero-content { top: 10%; }
+      .hero-title { font-size: 3rem; }
     }
   </style>
 </head>
 <body>
 
+  <!-- CUSTOM SCROLLBAR -->
   <div class="custom-scrollbar">
-      <div class="sb-wrap" onclick="window.scrollTo(0,0)">
-          <div class="sb-label">Start</div>
-          <div class="sb-segment"><div class="sb-fill" id="fill-chaos"></div></div>
+    <div class="sb-wrap" onclick="window.scrollTo(0,0)">
+      <div class="sb-label">Start</div>
+      <div class="sb-segment"><div class="sb-fill" id="fill-chaos"></div></div>
+    </div>
+    <div class="sb-wrap">
+      <div class="sb-label">Match</div>
+      <div class="sb-segment"><div class="sb-fill" id="fill-focus"></div></div>
+    </div>
+    <div class="sb-wrap" onclick="document.getElementById('section-content').scrollIntoView()">
+      <div class="sb-label">How</div>
+      <div class="sb-group">
+        <div class="sb-sub"><div class="sb-fill" id="fill-step1"></div></div>
+        <div class="sb-sub"><div class="sb-fill" id="fill-step2"></div></div>
+        <div class="sb-sub"><div class="sb-fill" id="fill-step3"></div></div>
       </div>
-      <div class="sb-wrap">
-          <div class="sb-label">Match</div>
-          <div class="sb-segment"><div class="sb-fill" id="fill-focus"></div></div>
-      </div>
-      <div class="sb-wrap" onclick="document.getElementById('section-content').scrollIntoView()">
-          <div class="sb-label">How</div>
-          <div class="sb-group">
-              <div class="sb-sub"><div class="sb-fill" id="fill-step1"></div></div>
-              <div class="sb-sub"><div class="sb-fill" id="fill-step2"></div></div>
-              <div class="sb-sub"><div class="sb-fill" id="fill-step3"></div></div>
-          </div>
-      </div>
-      <div class="sb-wrap" onclick="document.getElementById('section-cta').scrollIntoView()">
-          <div class="sb-label">Join</div>
-          <div class="sb-segment"><div class="sb-fill" id="fill-join"></div></div>
-      </div>
+    </div>
+    <div class="sb-wrap" onclick="document.getElementById('section-cta').scrollIntoView()">
+      <div class="sb-label">Join</div>
+      <div class="sb-segment"><div class="sb-fill" id="fill-join"></div></div>
+    </div>
   </div>
 
+  <!-- FIXED PHONE (OVERLAY) -->
   <div class="phone-wrapper-fixed">
-      <div id="phone-scaler">
-          <div class="phone-stage" id="global-phone">
-            <div class="phone-glow" id="phone-glow"></div>
-            <div class="phone-device">
-              <div class="screen">
-                
-                <div class="status-bar">
-                  <div class="status-time">9:41</div>
-                  <div class="status-icons">
-                    <div class="status-signal">
-                      <span></span><span></span><span></span><span></span>
-                    </div>
-                    <div class="status-wifi"></div>
-                    <div class="status-battery"></div>
-                  </div>
+    <div id="phone-scaler">
+      <div class="phone-stage" id="global-phone">
+        <div class="phone-glow" id="phone-glow"></div>
+        <div class="phone-device">
+          <div class="screen">
+            <!-- Status bar -->
+            <div class="status-bar">
+              <div class="status-time">9:41</div>
+              <div class="status-icons">
+                <div class="status-signal">
+                  <span></span><span></span><span></span><span></span>
                 </div>
+                <div class="status-wifi"></div>
+                <div class="status-battery"></div>
+              </div>
+            </div>
 
-                <div class="dynamic-island"></div>
-                
-                <div class="screen-header" id="header-bofa">
-                    <img src="bofa-logo.png" alt="BofA" class="header-profile-pic">
-                    <span class="header-name">BofA</span>
-                </div>
+            <div class="dynamic-island"></div>
+            
+            <!-- Headers -->
+            <div class="screen-header" id="header-bofa">
+              <img src="bofa-logo.png" alt="BofA" class="header-profile-pic">
+              <span class="header-name">BofA</span>
+            </div>
 
-                <div class="screen-header" id="header-ai">
-                    <div class="header-profile-pic" style="background: var(--matcha-medium); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px;">🍵</div>
-                    <span class="header-name">matchAI</span>
-                </div>
+            <div class="screen-header" id="header-ai">
+              <div class="header-profile-pic" style="background: var(--matcha-medium); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:20px;">🍵</div>
+              <span class="header-name">matchAI</span>
+            </div>
 
-                <div class="screen-header" id="header-james">
-                    <div class="header-profile-pic" style="background: #98AA80; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">J</div>
-                    <span class="header-name">James</span>
-                </div>
+            <div class="screen-header" id="header-james">
+              <div class="header-profile-pic" style="background:#98AA80; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">J</div>
+              <span class="header-name">James</span>
+            </div>
 
-                <div class="screen-body-container">
-                    
-                    <div class="chat-container" id="chat-state-bofa">
-                        <div class="imessage-bubble imessage-received">⚠️ Low balance alert.</div>
-                        <div class="imessage-bubble imessage-received">Your checking account: $2.17.</div>
-                        <div class="imessage-bubble imessage-sent">...you didn’t have to say it out loud.</div>
-                        <div class="imessage-bubble imessage-received">You need an income stream bro</div>
-                        <div class="imessage-bubble imessage-sent">Alright alright, I’ll look for an internship 😭</div>
-                    </div>
+            <div class="screen-body-container">
+              <!-- BofA chat -->
+              <div class="chat-container" id="chat-state-bofa">
+                <div class="imessage-bubble imessage-received">⚠️ Low balance alert.</div>
+                <div class="imessage-bubble imessage-received">Your checking account: $2.17.</div>
+                <div class="imessage-bubble imessage-sent">...you didn’t have to say it out loud.</div>
+                <div class="imessage-bubble imessage-received">You need an income stream bro</div>
+                <div class="imessage-bubble imessage-sent">Alright alright, I’ll look for an internship 😭</div>
+              </div>
 
-                    <div class="chat-container" id="chat-state-ai-initial">
-                        <div class="imessage-bubble imessage-sent">I need a job. Pls help.</div>
-                        <div class="imessage-bubble imessage-received">That's my cup of tea 😉 What kinda internship are you looking for?</div>
-                        <div class="imessage-bubble imessage-sent">Investment banking</div>
-                        <div class="imessage-bubble imessage-received">I know a senior who was at GS last summer. I'll connect you right away!</div>
-                        <div class="imessage-bubble imessage-sent">Amazing! Thanks!</div>
-                    </div>
+              <!-- AI initial chat -->
+              <div class="chat-container" id="chat-state-ai-initial">
+                <div class="imessage-bubble imessage-sent">I need a job. Pls help.</div>
+                <div class="imessage-bubble imessage-received">That's my cup of tea 😉 What kinda internship are you looking for?</div>
+                <div class="imessage-bubble imessage-sent">Investment banking</div>
+                <div class="imessage-bubble imessage-received">I know a senior who was at GS last summer. I'll connect you right away!</div>
+                <div class="imessage-bubble imessage-sent">Amazing! Thanks!</div>
+              </div>
 
-                    <div class="chat-container" id="chat-state-step1">
-                        <div class="imessage-bubble imessage-sent">Help me find an IB intern from BC.</div>
-                    </div>
+              <!-- Steps chats -->
+              <div class="chat-container" id="chat-state-step1">
+                <div class="imessage-bubble imessage-sent">Help me find an IB intern from BC.</div>
+              </div>
 
-                    <div class="chat-container" id="chat-state-step2">
-                        <div class="imessage-bubble imessage-sent" style="opacity: 0.5;">Help me find an IB intern from BC.</div>
-                        <div class="imessage-bubble imessage-received">Got it, searching...</div>
-                        <div class="imessage-bubble imessage-received">Target acquired! James, a senior, interned at GS last summer. I'll connect you right away!</div>
-                    </div>
+              <div class="chat-container" id="chat-state-step2">
+                <div class="imessage-bubble imessage-sent" style="opacity:0.5;">Help me find an IB intern from BC.</div>
+                <div class="imessage-bubble imessage-received">Got it, searching...</div>
+                <div class="imessage-bubble imessage-received">Target acquired! James, a senior, interned at GS last summer. I'll connect you right away!</div>
+              </div>
 
-                     <div class="chat-container" id="chat-state-step3">
-                        <div class="imessage-bubble imessage-sent">Hey James, it's Bob from matcha match!</div>
-                        <div class="imessage-bubble imessage-received">Howdy, happy to connect!</div>
-                    </div>
-
-                </div>
+              <div class="chat-container" id="chat-state-step3">
+                <div class="imessage-bubble imessage-sent">Hey James, it's Bob from matcha match!</div>
+                <div class="imessage-bubble imessage-received">Howdy, happy to connect!</div>
               </div>
             </div>
           </div>
-      </div>
-  </div>
-
-  <section class="hero" id="hero-section">
-      <div class="hero-content container" id="hero-text"> 
-        <p class="hero-subtitle" id="text-sub">with matcha match...</p>
-        <div class="heading-swapper">
-            <h1 class="hero-title" id="text-looking" style="opacity: 1; scale: 1; filter: blur(0px);">looking for an internship?</h1>
-            <h1 class="hero-title" id="text-onetext">you're ONE TEXT away</h1>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- NEW NETWORK GRAPH OPENER -->
+  <section class="network-hero" id="network-hero">
+    <div class="network-inner container">
+      <div class="network-pill" id="network-pill">
+        <span class="network-pill-dot"></span>
+        Boston College · Internships
+      </div>
+      <h1 class="network-headline" id="network-headline">
+        Your school already has the network.
+      </h1>
+      <p class="network-sub" id="network-sub">
+        We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.
+      </p>
+    </div>
+
+    <div class="network-graph-wrapper">
+      <svg class="network-graph" id="network-graph" viewBox="0 0 800 480" preserveAspectRatio="xMidYMid meet">
+        <!-- links -->
+        <g class="net-links">
+          <line class="net-link" x1="400" y1="240" x2="220" y2="110" />
+          <line class="net-link" x1="400" y1="240" x2="620" y2="130" />
+          <line class="net-link" x1="400" y1="240" x2="190" y2="260" />
+          <line class="net-link" x1="400" y1="240" x2="610" y2="290" />
+          <line class="net-link" x1="400" y1="240" x2="320" y2="390" />
+          <line class="net-link" x1="400" y1="240" x2="510" y2="390" />
+          <!-- secondary links -->
+          <line class="net-link" x1="220" y1="110" x2="110" y2="180" />
+          <line class="net-link" x1="220" y1="110" x2="260" y2="40" />
+          <line class="net-link" x1="620" y1="130" x2="710" y2="200" />
+          <line class="net-link" x1="620" y1="130" x2="650" y2="60" />
+          <line class="net-link" x1="190" y1="260" x2="130" y2="330" />
+          <line class="net-link" x1="610" y1="290" x2="700" y2="330" />
+          <line class="net-link" x1="320" y1="390" x2="240" y2="430" />
+          <line class="net-link" x1="510" y1="390" x2="590" y2="430" />
+        </g>
+
+        <!-- nodes -->
+        <g class="net-nodes">
+          <!-- central node -->
+          <circle class="net-node net-node-main" cx="400" cy="240" r="16" />
+          <!-- primary layer -->
+          <circle class="net-node" cx="220" cy="110" r="9" />
+          <circle class="net-node" cx="620" cy="130" r="10" />
+          <circle class="net-node" cx="190" cy="260" r="9" />
+          <circle class="net-node" cx="610" cy="290" r="9" />
+          <circle class="net-node" cx="320" cy="390" r="10" />
+          <circle class="net-node" cx="510" cy="390" r="10" />
+          <!-- outer ring -->
+          <circle class="net-node" cx="110" cy="180" r="7" />
+          <circle class="net-node" cx="260" cy="40" r="7" />
+          <circle class="net-node" cx="650" cy="60" r="7" />
+          <circle class="net-node" cx="710" cy="200" r="7" />
+          <circle class="net-node" cx="130" cy="330" r="7" />
+          <circle class="net-node" cx="700" cy="330" r="7" />
+          <circle class="net-node" cx="240" cy="430" r="7" />
+          <circle class="net-node" cx="590" cy="430" r="7" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="network-scroll-hint">
+      <div class="network-scroll-dot"></div>
+      SCROLL TO REVEAL YOUR CONNECTIONS
+    </div>
   </section>
 
+  <!-- EXISTING HERO (PHONE + HEADING) -->
+  <section class="hero" id="hero-section">
+    <div class="hero-content container" id="hero-text"> 
+      <p class="hero-subtitle" id="text-sub">with matcha match...</p>
+      <div class="heading-swapper">
+        <h1 class="hero-title" id="text-looking" style="opacity:1; scale:1; filter:blur(0);">
+          looking for an internship?
+        </h1>
+        <h1 class="hero-title" id="text-onetext">
+          you're ONE TEXT away
+        </h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
   <section class="content-section" id="section-content">
     <div class="container">
       <div class="reveal-header">
-        <h2 style="text-align:left; font-size: 2.5rem; margin-bottom: 20px; max-width: 500px;">How it works</h2>
-        <p style="text-align:left; max-width:500px;">Real human connection, powered by AI. We bridge the gap between ambition and experience.</p>
+        <h2 style="text-align:left; font-size:2.5rem; margin-bottom:20px; max-width:500px;">How it works</h2>
+        <p style="text-align:left; max-width:500px;">
+          Real human connection, powered by AI. We bridge the gap between ambition and experience.
+        </p>
       </div>
       
       <div class="split-layout">
@@ -630,10 +985,13 @@
     </div>
   </section>
 
+  <!-- CTA -->
   <section class="cta" id="section-cta">
     <div class="container reveal-cta">
       <h2 style="font-size:3rem; margin-bottom:10px;">Your future is waiting.</h2>
-      <p style="color: var(--matcha-light); margin-bottom: 40px; font-size: 1.2rem;">Join the exclusive network for Boston College students.</p>
+      <p style="color:var(--matcha-light); margin-bottom:40px; font-size:1.2rem;">
+        Join the exclusive network for Boston College students.
+      </p>
       
       <form id="waitlist-form" class="waitlist-group">
         <input type="text" name="name" class="waitlist-input" placeholder="Your Full Name" required>
@@ -649,38 +1007,30 @@
   </footer>
 
   <script>
-    /* --- NEW RESIZE LOGIC (LOCK PROPORTIONS) --- */
-    function resizePhone() {
-        const scaler = document.getElementById('phone-scaler');
-        const baseHeight = 860; // Our fixed pixel height
-        const baseWidth = 400;  // Our fixed pixel width
-        
-        // Available space
-        const vh = window.innerHeight;
-        const vw = window.innerWidth;
-        
-        // Target: fit within 75% of height, but don't overflow width
-        let targetScale = (vh * 0.70) / baseHeight;
-        
-        // Prevent it from being too wide on mobile
-        if ((baseWidth * targetScale) > (vw * 0.9)) {
-            targetScale = (vw * 0.9) / baseWidth;
-        }
+    gsap.registerPlugin(ScrollTrigger);
 
-        // Apply scale
-        gsap.set(scaler, { scale: targetScale, opacity: 1 });
+    /* --- RESIZE LOGIC (LOCK PHONE PROPORTIONS) --- */
+    function resizePhone() {
+      const scaler = document.getElementById('phone-scaler');
+      const baseHeight = 860;
+      const baseWidth = 400;
+
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
+      
+      let targetScale = (vh * 0.70) / baseHeight;
+      if ((baseWidth * targetScale) > (vw * 0.9)) {
+        targetScale = (vw * 0.9) / baseWidth;
+      }
+
+      gsap.set(scaler, { scale: targetScale });
     }
 
-    // Run on load and resize
     window.addEventListener('load', resizePhone);
     window.addEventListener('resize', resizePhone);
     resizePhone();
 
-
-    /* --- EXISTING ANIMATIONS --- */
-    gsap.registerPlugin(ScrollTrigger);
-
-    // --- SCROLLBAR ELEMENTS ---
+    /* --- SCROLLBAR ELEMENTS --- */
     const sbChaos = document.getElementById('fill-chaos');
     const sbFocus = document.getElementById('fill-focus');
     const sbStep1 = document.getElementById('fill-step1');
@@ -688,229 +1038,300 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    // --- 1. HERO ANIMATION ---
+    /* --- NETWORK HERO TIMELINE --- */
+    const networkTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#network-hero",
+        start: "top top",
+        end: "+=2000",
+        scrub: 1,
+        pin: true,
+        anticipatePin: 1
+      }
+    });
+
+    networkTl
+      .from("#network-pill", {
+        opacity: 0,
+        y: 20,
+        duration: 0.4,
+        ease: "power2.out"
+      }, 0)
+      .from("#network-headline", {
+        opacity: 0,
+        y: 40,
+        duration: 0.5,
+        ease: "power2.out"
+      }, 0.05)
+      .from("#network-sub", {
+        opacity: 0,
+        y: 30,
+        duration: 0.5,
+        ease: "power2.out"
+      }, 0.15)
+      .from(".net-node", {
+        opacity: 0,
+        scale: 0,
+        transformOrigin: "50% 50%",
+        stagger: 0.06,
+        duration: 0.5,
+        ease: "back.out(1.7)"
+      }, 0.25)
+      .from(".net-link", {
+        opacity: 0,
+        stagger: 0.04,
+        duration: 0.4,
+        ease: "power1.out"
+      }, 0.3)
+      .to("#network-graph", {
+        scale: 0.95,
+        transformOrigin: "50% 50%",
+        duration: 0.6,
+        ease: "power1.inOut"
+      }, 0.7)
+      .to("#network-hero", {
+        opacity: 0.0,
+        duration: 0.8,
+        ease: "power2.inOut"
+      }, 1.1)
+      .to("#phone-scaler", {
+        opacity: 1,
+        duration: 0.6,
+        ease: "power2.inOut"
+      }, 1.1);
+
+    // gentle floating motion for nodes/links (ambient, not scroll-tied)
+    gsap.to(".net-node", {
+      y: (i) => (i % 2 === 0 ? -4 : 4),
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+    });
+    gsap.to(".net-link", {
+      opacity: 0.35,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+    });
+
+    /* --- HERO (PHONE) ANIMATION --- */
     const heroTl = gsap.timeline({
-        scrollTrigger: {
-            trigger: ".hero",
-            start: "top top",
-            end: "+=3000",
-            pin: true,
-            scrub: 1,
-            anticipatePin: 1,
-            onUpdate: (self) => {
-                const p = self.progress;
-                if (p <= 0.4) { 
-                    sbChaos.style.transform = `scaleY(${p * 2.5})`;
-                    sbFocus.style.transform = `scaleY(0)`;
-                } else {
-                    sbChaos.style.transform = `scaleY(1)`;
-                    sbFocus.style.transform = `scaleY(${(p - 0.4) * 1.66})`;
-                }
-            }
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        end: "+=3000",
+        pin: true,
+        scrub: 1,
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          const p = self.progress;
+          if (p <= 0.4) { 
+            sbChaos.style.transform = `scaleY(${p * 2.5})`;
+            sbFocus.style.transform = `scaleY(0)`;
+          } else {
+            sbChaos.style.transform = `scaleY(1)`;
+            sbFocus.style.transform = `scaleY(${(p - 0.4) * 1.66})`;
+          }
         }
+      }
     });
 
     heroTl
-        .to({}, { duration: 0.15 })
-        .to("#text-looking", { 
-            opacity: 0, 
-            scale: 0.95, 
-            filter: "blur(8px)", 
-            duration: 0.2,
-            ease: "power2.inOut"
-        }, 0.15)
-        // Animating Subtitle IN before second text
-        .to("#text-sub", {
-            opacity: 1,
-            y: 0,
-            duration: 0.3,
-            ease: "power2.out"
-        }, 0.3)
-        .to("#text-onetext", { 
-            opacity: 1, 
-            scale: 1, 
-            filter: "blur(0px)", 
-            duration: 0.2,
-            ease: "power2.inOut"
-        }, 0.35)
-        .to("#header-bofa", { 
-            opacity: 0, 
-            duration: 0.15,
-            ease: "power2.inOut"
-        }, 0.15)
-        .to("#chat-state-bofa", { 
-            opacity: 0, 
-            duration: 0.15,
-            ease: "power2.inOut"
-        }, 0.15)
-        .to("#header-ai", { 
-            opacity: 1, 
-            duration: 0.2,
-            ease: "power2.inOut"
-        }, 0.3)
-        .to("#chat-state-ai-initial", { 
-            opacity: 1, 
-            duration: 0.2,
-            ease: "power2.inOut"
-        }, 0.3)
-        .to("#phone-glow", { 
-            opacity: 1, 
-            duration: 0.25,
-            ease: "power2.inOut"
-        }, 0.3)
-        .to({}, { duration: 0.4 });
+      .to({}, { duration: 0.15 })
+      .to("#text-looking", { 
+        opacity: 0, 
+        scale: 0.95, 
+        filter: "blur(8px)", 
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, 0.15)
+      .to("#text-sub", {
+        opacity: 1,
+        y: 0,
+        duration: 0.3,
+        ease: "power2.out"
+      }, 0.3)
+      .to("#text-onetext", { 
+        opacity: 1, 
+        scale: 1, 
+        filter: "blur(0px)", 
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, 0.35)
+      .to("#header-bofa", { 
+        opacity: 0, 
+        duration: 0.15,
+        ease: "power2.inOut"
+      }, 0.15)
+      .to("#chat-state-bofa", { 
+        opacity: 0, 
+        duration: 0.15,
+        ease: "power2.inOut"
+      }, 0.15)
+      .to("#header-ai", { 
+        opacity: 1, 
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, 0.3)
+      .to("#chat-state-ai-initial", { 
+        opacity: 1, 
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, 0.3)
+      .to("#phone-glow", { 
+        opacity: 1, 
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, 0.3)
+      .to({}, { duration: 0.4 });
 
-    // --- 2. PHONE REPOSITIONING INTO "HOW IT WORKS" ---
+    /* PHONE REPOSITIONING INTO HOW-IT-WORKS */
     const contentTl = gsap.timeline({
-        scrollTrigger: {
-            trigger: "#section-content",
-            start: "top bottom",
-            end: "top top",
-            scrub: 1,
-        }
+      scrollTrigger: {
+        trigger: "#section-content",
+        start: "top bottom",
+        end: "top top",
+        scrub: 1,
+      }
     });
 
-    // Note: This animates the INNER stage. The SCALER wrapper remains controlled by resizePhone()
     contentTl.to("#global-phone", {
-        x: "30vw",
-        y: "5vh",
-        scale: 1.4, // This multiplies on top of the base JS scale
-        rotation: 0,
-        ease: "power2.inOut",
-        immediateRender: false
-    }, 0);
-    
-    contentTl.to("#hero-text", { 
-        opacity: 0, 
-        y: -50, 
-        ease: "power2.in",
-        immediateRender: false 
+      x: "30vw",
+      y: "5vh",
+      scale: 1.4,
+      rotation: 0,
+      ease: "power2.inOut",
+      immediateRender: false
+    }, 0)
+    .to("#hero-text", { 
+      opacity: 0, 
+      y: -50, 
+      ease: "power2.in",
+      immediateRender: false 
     }, 0);
 
-    // --- 3. STEP-BY-STEP CONTENT ---
+    /* STEP-BY-STEP CONTENT */
     const stepsTl = gsap.timeline({
-        scrollTrigger: {
-            trigger: "#section-content",
-            start: "top top", 
-            end: "+=3500",
-            pin: true,
-            scrub: 1,
-            anticipatePin: 1
-        }
+      scrollTrigger: {
+        trigger: "#section-content",
+        start: "top top", 
+        end: "+=3500",
+        pin: true,
+        scrub: 1,
+        anticipatePin: 1
+      }
     });
 
     stepsTl
-        // STEP 1
-        .to("#card-step1", { 
-            opacity: 1, 
-            y: 0, 
-            duration: 0.2,
-            ease: "power2.out"
-        }, 0.1)
-        .to(sbStep1, { scaleY: 1, duration: 0.15, ease: "power1.out" }, 0.1)
-        .to("#chat-state-ai-initial", { 
-            opacity: 0, 
-            duration: 0.2,
-            ease: "power2.inOut"
-        }, 0.1)
-        .to("#chat-state-step1", { 
-            opacity: 1, 
-            duration: 0.25,
-            ease: "power2.inOut"
-        }, 0.25)
-        .to({}, { duration: 0.4 })
-        
-        // STEP 2
-        .to("#card-step1", { 
-            opacity: 0, 
-            y: -30, 
-            duration: 0.2,
-            ease: "power2.in"
-        })
-        .to("#card-step2", { 
-            opacity: 1, 
-            y: 0, 
-            duration: 0.25,
-            ease: "power2.out"
-        })
-        .to(sbStep2, { scaleY: 1, duration: 0.15, ease: "power1.out" }, "<0.05")
-        .to("#chat-state-step1", { 
-            opacity: 0, 
-            duration: 0.2,
-            ease: "power2.inOut"
-        }, "<")
-        .to("#chat-state-step2", { 
-            opacity: 1, 
-            duration: 0.25,
-            ease: "power2.inOut"
-        }, ">")
-        .to({}, { duration: 0.4 })
-        
-        // STEP 3
-        .to("#card-step2", { 
-            opacity: 0, 
-            y: -30, 
-            duration: 0.2,
-            ease: "power2.in"
-        })
-        .to("#card-step3", { 
-            opacity: 1, 
-            y: 0, 
-            duration: 0.25,
-            ease: "power2.out"
-        })
-        .to(sbStep3, { scaleY: 1, duration: 0.15, ease: "power1.out" }, "<0.05")
-        .to("#header-ai", { 
-            opacity: 0, 
-            duration: 0.2,
-            ease: "power2.inOut"
-        }, "<")
-        .to("#chat-state-step2", { 
-            opacity: 0, 
-            duration: 0.2,
-            ease: "power2.inOut"
-        }, "<")
-        .to("#header-james", { 
-            opacity: 1, 
-            duration: 0.25,
-            ease: "power2.inOut"
-        }, ">")
-        .to("#chat-state-step3", { 
-            opacity: 1, 
-            duration: 0.25,
-            ease: "power2.inOut"
-        }, ">")
-        .to({}, { duration: 0.7 });
-
-    // --- 4. PHONE EXIT TO CTA ---
-    gsap.to(sbJoin, {
-        scrollTrigger: {
-            trigger: "#section-cta",
-            start: "top 70%",
-            toggleActions: "play reverse play reverse"
-        },
-        scaleY: 1,
-        duration: 0.3,
+      // STEP 1
+      .to("#card-step1", { 
+        opacity: 1, 
+        y: 0, 
+        duration: 0.2,
         ease: "power2.out"
+      }, 0.1)
+      .to(sbStep1, { scaleY: 1, duration: 0.15, ease: "power1.out" }, 0.1)
+      .to("#chat-state-ai-initial", { 
+        opacity: 0, 
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, 0.1)
+      .to("#chat-state-step1", { 
+        opacity: 1, 
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, 0.25)
+      .to({}, { duration: 0.4 })
+      // STEP 2
+      .to("#card-step1", { 
+        opacity: 0, 
+        y: -30, 
+        duration: 0.2,
+        ease: "power2.in"
+      })
+      .to("#card-step2", { 
+        opacity: 1, 
+        y: 0, 
+        duration: 0.25,
+        ease: "power2.out"
+      })
+      .to(sbStep2, { scaleY: 1, duration: 0.15, ease: "power1.out" }, "<0.05")
+      .to("#chat-state-step1", { 
+        opacity: 0, 
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, "<")
+      .to("#chat-state-step2", { 
+        opacity: 1, 
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, ">")
+      .to({}, { duration: 0.4 })
+      // STEP 3
+      .to("#card-step2", { 
+        opacity: 0, 
+        y: -30, 
+        duration: 0.2,
+        ease: "power2.in"
+      })
+      .to("#card-step3", { 
+        opacity: 1, 
+        y: 0, 
+        duration: 0.25,
+        ease: "power2.out"
+      })
+      .to(sbStep3, { scaleY: 1, duration: 0.15, ease: "power1.out" }, "<0.05")
+      .to("#header-ai", { 
+        opacity: 0, 
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, "<")
+      .to("#chat-state-step2", { 
+        opacity: 0, 
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, "<")
+      .to("#header-james", { 
+        opacity: 1, 
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, ">")
+      .to("#chat-state-step3", { 
+        opacity: 1, 
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, ">")
+      .to({}, { duration: 0.7 });
+
+    /* PHONE EXIT TO CTA */
+    gsap.to(sbJoin, {
+      scrollTrigger: {
+        trigger: "#section-cta",
+        start: "top 70%",
+        toggleActions: "play reverse play reverse"
+      },
+      scaleY: 1,
+      duration: 0.3,
+      ease: "power2.out"
     });
 
-    // Animate inner stage away
     gsap.to("#global-phone", {
-        scrollTrigger: {
-            trigger: "#section-cta",
-            start: "top bottom", 
-            end: "top center", 
-            scrub: 1
-        },
-        y: "-100vh", 
-        opacity: 0,
-        ease: "power2.in",
-        immediateRender: false
+      scrollTrigger: {
+        trigger: "#section-cta",
+        start: "top bottom", 
+        end: "top center", 
+        scrub: 1
+      },
+      y: "-100vh", 
+      opacity: 0,
+      ease: "power2.in",
+      immediateRender: false
     });
 
-    // --- 5. FORM SUBMISSION ---
+    /* FORM SUBMISSION */
     const form = document.getElementById("waitlist-form");
-    
     async function handleSubmit(event) {
       event.preventDefault();
       const status = document.getElementById("form-status");
@@ -921,14 +1342,12 @@
       status.className = "";
 
       setTimeout(() => {
-          status.innerHTML = `Hey ${name}, thanks for your interest in Matcha Match! Hang tight till our official launch on 2.14.26!`;
-          status.className = "status-success";
-          form.reset();
+        status.innerHTML = `Hey ${name}, thanks for your interest in Matcha Match! Hang tight till our official launch on 2.14.26!`;
+        status.className = "status-success";
+        form.reset();
       }, 1500);
     }
-    
     form.addEventListener("submit", handleSubmit);
-
   </script>
 
 </body>
