@@ -349,6 +349,19 @@
 
     footer { background: #1a2312; color: var(--matcha-medium); text-align: center; padding: 40px; font-size: 0.9rem; position: relative; z-index: 60; }
 
+    /* --- RESPONSIVE FIX FOR SHORTER VIEWPORT HEIGHTS --- */
+    @media (max-height: 850px) {
+        .phone-wrapper-fixed {
+            padding-top: 10vh; /* push phone slightly down */
+        }
+        .phone-stage {
+            height: 60vh; /* shrink phone so it doesn't cover title */
+        }
+        .hero-content {
+            top: 4%; /* tiny adjustment so heading still feels high */
+        }
+    }
+
     @media (max-width: 768px) {
         .custom-scrollbar { display: none; }
         .split-layout { flex-direction: column; }
@@ -394,7 +407,7 @@
             
             <!-- BofA header -->
             <div class="screen-header" id="header-bofa">
-                <!-- Replace 'bofa-logo.png' with the actual path to your logo file -->
+                <!-- Point this src to your BofA logo asset -->
                 <img src="bofa-logo.png" alt="BofA" class="header-profile-pic">
                 <span class="header-name">BofA</span>
             </div>
@@ -404,7 +417,7 @@
                 <span class="header-name">matchAI</span>
             </div>
 
-             <div class="screen-header" id="header-james">
+            <div class="screen-header" id="header-james">
                 <div class="header-profile-pic" style="background: #98AA80; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">J</div>
                 <span class="header-name">James</span>
             </div>
@@ -414,18 +427,18 @@
                 <!-- Option 1: BofA roasting your balance -->
                 <div class="chat-container" id="chat-state-bofa">
                     <div class="imessage-bubble imessage-received">⚠️ Low balance alert.</div>
-                    <div class="imessage-bubble imessage-received">Your checking account: $4.17.</div>
+                    <div class="imessage-bubble imessage-received">Your checking account: $2.17.</div>
                     <div class="imessage-bubble imessage-sent">...you didn’t have to say it out loud.</div>
-                    <div class="imessage-bubble imessage-received">You need an income stream, bestie.</div>
-                    <div class="imessage-bubble imessage-sent">Alright alright, I’ll get an internship 😭</div>
+                    <div class="imessage-bubble imessage-received">You need an income stream bro</div>
+                    <div class="imessage-bubble imessage-sent">Alright alright, I’ll look for an internship 😭</div>
                 </div>
 
                 <div class="chat-container" id="chat-state-ai-initial">
-                    <div class="imessage-bubble imessage-sent">I need a job. pls help.</div>
+                    <div class="imessage-bubble imessage-sent">I need a job. Pls help.</div>
                     <div class="imessage-bubble imessage-received">That's my cup of tea 😉 What kinda internship are you looking for?</div>
-                    <div class="imessage-bubble imessage-sent">investment banking</div>
+                    <div class="imessage-bubble imessage-sent">Investment banking</div>
                     <div class="imessage-bubble imessage-received">I know a senior who was at GS last summer. I'll connect you right away!</div>
-                    <div class="imessage-bubble imessage-sent">amazing! thanks!</div>
+                    <div class="imessage-bubble imessage-sent">Amazing! Thanks!</div>
                 </div>
 
                 <div class="chat-container" id="chat-state-step1">
@@ -433,9 +446,9 @@
                 </div>
 
                 <div class="chat-container" id="chat-state-step2">
-                    <div class="imessage-bubble imessage-sent" style="opacity: 0.5;">Help me find a JPM IB intern from BC.</div>
-                    <div class="imessage-bubble imessage-received">One sec, searching far and wide for the best mentor...</div>
-                    <div class="imessage-bubble imessage-received">Done! James, a senior, interned at GS last summer. I'll connect you right away!</div>
+                    <div class="imessage-bubble imessage-sent" style="opacity: 0.5;">Help me find an IB intern from BC.</div>
+                    <div class="imessage-bubble imessage-received">Got it, searching...</div>
+                    <div class="imessage-bubble imessage-received">Target acquired! James, a senior, interned at GS last summer. I'll connect you right away!</div>
                 </div>
 
                  <div class="chat-container" id="chat-state-step3">
@@ -518,17 +531,22 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    // --- 1. HERO ANIMATION (SMOOTH & EXTENDED) ---
+    // --- 1. HERO ANIMATION (SMOOTH, WITH SNAP "RESISTANCE") ---
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
             start: "top top",
-            end: "+=4000", // Extended for smoother progression
+            end: "+=4000",
             pin: true,
-            scrub: 1.5, // Increased scrub for smoother feel
+            scrub: 1.5,
+            snap: {
+                snapTo: [0, 1],       // stick a bit at start & end
+                duration: 0.4,
+                delay: 0.02,
+                ease: "power2.inOut"
+            },
             onUpdate: (self) => {
                 const p = self.progress;
-                // Smoother scrollbar transitions
                 if (p <= 0.4) { 
                     sbChaos.style.transform = `scaleY(${p * 2.5})`;
                     sbFocus.style.transform = `scaleY(0)`;
@@ -540,12 +558,8 @@
         }
     });
 
-    // Extended timeline with breathing room between transitions
     heroTl
-        // Hold initial state longer
         .to({}, { duration: 0.15 })
-        
-        // Fade out first title smoothly
         .to("#text-looking", { 
             opacity: 0, 
             scale: 0.95, 
@@ -553,11 +567,7 @@
             duration: 0.2,
             ease: "power2.inOut"
         }, 0.15)
-        
-        // Breathing room
         .to({}, { duration: 0.05 })
-        
-        // Fade in second title
         .to("#text-onetext", { 
             opacity: 1, 
             scale: 1, 
@@ -565,8 +575,6 @@
             duration: 0.2,
             ease: "power2.inOut"
         }, 0.35)
-        
-        // Simultaneous phone/header transitions (overlapping for smoothness)
         .to("#header-bofa", { 
             opacity: 0, 
             duration: 0.15,
@@ -577,7 +585,6 @@
             duration: 0.15,
             ease: "power2.inOut"
         }, 0.15)
-        
         .to("#header-ai", { 
             opacity: 1, 
             duration: 0.2,
@@ -593,10 +600,7 @@
             duration: 0.25,
             ease: "power2.inOut"
         }, 0.3)
-        
-        // Extended hold at end
         .to({}, { duration: 0.3 });
-
 
     // --- 2. PHONE REPOSITIONING (SMOOTH GLIDE) ---
     const contentTl = gsap.timeline({
@@ -604,17 +608,17 @@
             trigger: "#section-content",
             start: "top bottom",
             end: "top top",
-            scrub: 1.5, // Smooth scrubbing
+            scrub: 1.5
         }
     });
 
     contentTl.to("#global-phone", {
-        x: "30vw",  
-        y: "5vh",    
-        scale: 1.4, 
-        rotation: 0, 
+        x: "30vw",
+        y: "5vh",
+        scale: 1.4,
+        rotation: 0,
         ease: "power2.inOut",
-        immediateRender: false // Prevents glitchy pre-calculation
+        immediateRender: false
     }, 0);
     
     contentTl.to("#hero-text", { 
@@ -625,19 +629,25 @@
     }, 0);
 
 
-    // --- 3. STEP-BY-STEP CONTENT ANIMATION (STAGGERED & SMOOTH) ---
+    // --- 3. STEP-BY-STEP CONTENT (WITH SNAP AT EACH STEP FOR "RESISTANCE") ---
     const stepsTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
             start: "top top", 
-            end: "+=5000", // Extended for smooth pacing
-            pin: true,       
+            end: "+=5000",
+            pin: true,
             scrub: 1.5,
+            snap: {
+                snapTo: [0, 0.33, 0.66, 1],  // Step 1, Step 2, Step 3, End
+                duration: 0.4,
+                delay: 0.02,
+                ease: "power2.inOut"
+            }
         }
     });
 
-    // --- STEP 1: Reveal ---
     stepsTl
+        // STEP 1
         .to("#card-step1", { 
             opacity: 1, 
             y: 0, 
@@ -655,19 +665,18 @@
             duration: 0.12,
             ease: "power2.inOut"
         }, 0.15)
-        // Hold Step 1
         .to({}, { duration: 0.25 })
         
-        // --- TRANSITION 1 → 2 ---
+        // TRANSITION TO STEP 2
         .to("#card-step1", { 
             opacity: 0, 
             y: -30, 
             duration: 0.1,
             ease: "power2.in"
         }, 0.43)
-        .to({}, { duration: 0.05 }) // Gap for clarity
+        .to({}, { duration: 0.05 })
         
-        // --- STEP 2: Reveal ---
+        // STEP 2
         .to("#card-step2", { 
             opacity: 1, 
             y: 0, 
@@ -685,19 +694,18 @@
             duration: 0.12,
             ease: "power2.inOut"
         }, 0.6)
-        // Hold Step 2
         .to({}, { duration: 0.25 })
         
-        // --- TRANSITION 2 → 3 ---
+        // TRANSITION TO STEP 3
         .to("#card-step2", { 
             opacity: 0, 
             y: -30, 
             duration: 0.1,
             ease: "power2.in"
         }, 0.85)
-        .to({}, { duration: 0.05 }) // Gap for clarity
+        .to({}, { duration: 0.05 })
         
-        // --- STEP 3: Reveal ---
+        // STEP 3
         .to("#card-step3", { 
             opacity: 1, 
             y: 0, 
@@ -725,10 +733,9 @@
             duration: 0.12,
             ease: "power2.inOut"
         }, 1.05)
-        // Hold Step 3 longer
-        .to({}, { duration: 1 });
+        .to({}, { duration: 1 }); // extra hold on Step 3
 
-    // --- 4. PHONE EXIT TO CTA (BUTTER SMOOTH) ---
+    // --- 4. PHONE EXIT TO CTA ---
     gsap.to(sbJoin, {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -740,18 +747,17 @@
         ease: "power2.out"
     });
 
-    // Smooth exit animation
     gsap.to("#global-phone", {
         scrollTrigger: {
             trigger: "#section-cta",
             start: "top bottom", 
             end: "top center", 
-            scrub: 1.5 // Smooth scrubbing
+            scrub: 1.5
         },
         y: "-100vh", 
         opacity: 0,
         ease: "power2.in",
-        immediateRender: false // Prevents glitchy pre-calculation
+        immediateRender: false
     });
 
     // --- 5. FORM SUBMISSION ---
