@@ -8,9 +8,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Vintage serif + typewriter mono -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <!-- (Inter still available if you want later) -->
   <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
   
   <!-- GSAP -->
@@ -26,7 +24,7 @@
       --matcha-deep: #4A5A38;
       --matcha-rich: #2C3A1F;
       
-      --bg-light: #f5f1e7;   /* paper-ish */
+      --bg-light: #f4ebdc;
       --bg-dark: #11170f; 
       --text-white: #f8fafc;
       --text-muted: #9a9da0;
@@ -49,9 +47,30 @@
     
     body { 
       font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
-      background-color: var(--bg-light);
       color: var(--text-dark);
       overflow-x: hidden;
+      background-color: var(--bg-light);
+      background-image:
+        radial-gradient(circle at 0 0, rgba(255,255,255,0.6), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(214,196,159,0.7), transparent 55%),
+        linear-gradient(180deg, rgba(0,0,0,0.06), transparent 40%),
+        linear-gradient(90deg, rgba(0,0,0,0.04), transparent 40%);
+      background-blend-mode: multiply;
+    }
+
+    /* subtle paper grain overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.3;
+      mix-blend-mode: multiply;
+      background-image:
+        linear-gradient(0deg, rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 100% 3px, 3px 100%;
     }
 
     .container {
@@ -59,6 +78,7 @@
       margin: 0 auto;
       padding: 0 24px;
       position: relative;
+      z-index: 1;
     }
 
     /* --- CUSTOM SCROLLBAR --- */
@@ -361,15 +381,9 @@
     }
 
     /* Chat states for animation – start with Step1 visible */
-    #chat-state-step1 {
-      z-index: 5;
-      opacity: 1;
-    }
+    #chat-state-step1 { z-index: 5; opacity: 1; }
     #chat-state-step2,
-    #chat-state-step3 {
-      z-index: 4;
-      opacity: 0;
-    }
+    #chat-state-step3 { z-index: 4; opacity: 0; }
 
     .imessage-bubble {
       max-width: 280px;
@@ -398,12 +412,16 @@
     .network-hero {
       height: 100vh;
       position: relative;
-      background: radial-gradient(circle at 20% 0%, #1f261a, #050806);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(244,235,220,0.85), transparent 55%),
+        radial-gradient(circle at 85% 100%, rgba(198,215,179,0.45), transparent 55%),
+        linear-gradient(135deg, #222115 0%, #13140f 40%, #10110c 100%);
       color: #f8fafc;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 1;
     }
 
     .network-hero::before {
@@ -414,7 +432,7 @@
         radial-gradient(circle at 10% 20%, rgba(198,215,179,0.22), transparent 60%),
         radial-gradient(circle at 80% 80%, rgba(152,170,128,0.18), transparent 60%),
         linear-gradient(135deg, rgba(0,0,0,0.35), transparent 40%, rgba(0,0,0,0.5));
-      opacity: 1;
+      opacity: 0.95;
       pointer-events: none;
       mix-blend-mode: soft-light;
     }
@@ -457,6 +475,7 @@
       font-weight: 400;
       letter-spacing: 0.04em;
       margin-bottom: 14px;
+      min-height: 3.1em; /* reserve space for typewriter */
     }
 
     .network-sub {
@@ -465,6 +484,7 @@
       max-width: 520px;
       margin: 0 auto;
       line-height: 1.7;
+      min-height: 3.2em;
     }
 
     /* Typewriter cursor */
@@ -504,7 +524,6 @@
       height: 140%;
       max-width: none;
       max-height: none;
-      opacity: 0.6;
       transform-origin: 50% 50%;
     }
 
@@ -625,11 +644,7 @@
       place-items: center;
     }
     
-    .content-right {
-      width: 50%;
-      position: relative;
-      height: 100%;
-    }
+    .content-right { width: 50%; position: relative; height: 100%; }
 
     .card {
       background: #fbf7ec;
@@ -905,7 +920,7 @@
     <div class="network-inner" id="network-inner">
       <div class="network-pill" id="network-pill">
         <span class="network-pill-dot"></span>
-        Boston College · Internships
+        matcha match · Boston College
       </div>
       <h1 class="network-headline">
         <span id="headline-typed"></span><span class="typing-cursor" id="headline-cursor"></span>
@@ -917,7 +932,7 @@
 
     <div class="network-scroll-hint">
       <div class="network-scroll-dot"></div>
-      SCROLL TO REVEAL YOUR NETWORK
+      SCROLL TO LEARN HOW
     </div>
   </section>
 
@@ -995,17 +1010,7 @@
       gsap.set(scaler, { scale: targetScale });
     }
 
-    window.addEventListener('load', resizePhone);
     window.addEventListener('resize', resizePhone);
-    resizePhone();
-
-    /* --- SCROLLBAR ELEMENTS --- */
-    const sbChaos = document.getElementById('fill-chaos');
-    const sbFocus = document.getElementById('fill-focus');
-    const sbStep1 = document.getElementById('fill-step1');
-    const sbStep2 = document.getElementById('fill-step2');
-    const sbStep3 = document.getElementById('fill-step3');
-    const sbJoin  = document.getElementById('fill-join');
 
     /* --- TYPEWRITER SETUP FOR NETWORK TEXT --- */
     const headlineSpan = document.getElementById("headline-typed");
@@ -1015,106 +1020,136 @@
     const fullHeadline = "Your school already has the network.";
     const fullSub = "We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.";
 
-    // Initialize empty
     headlineSpan.textContent = "";
     subSpan.textContent = "";
 
-    /* --- NETWORK HERO TIMELINE (big entrance + typewriter) --- */
-    const networkTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#network-hero",
-        start: "top top",
-        end: "+=3500",
-        scrub: 1,
-        pin: true,
-        anticipatePin: 1,
-        onUpdate: (self) => {
-          const p = self.progress;
+    function typeText(targetEl, text, speed, doneFlagSetter) {
+      let i = 0;
+      targetEl.textContent = "";
+      const interval = setInterval(() => {
+        targetEl.textContent = text.slice(0, i);
+        i++;
+        if (i > text.length) {
+          clearInterval(interval);
+          if (doneFlagSetter) doneFlagSetter();
+        }
+      }, speed);
+    }
 
-          // Fill "Start" bar
-          sbChaos.style.transform = `scaleY(${p})`;
+    let headlineTyped = false;
+    let subTyped = false;
 
-          // Typewriter windows
-          const t1 = Math.min(Math.max((p - 0.12) / 0.35, 0), 1);
-          const t2 = Math.min(Math.max((p - 0.32) / 0.35, 0), 1);
+    function startHeadlineTyping() {
+      if (headlineTyped) return;
+      headlineTyped = true;
+      typeText(headlineSpan, fullHeadline, 40);
+    }
 
-          const headlineChars = Math.floor(fullHeadline.length * t1);
-          const subChars = Math.floor(fullSub.length * t2);
+    function startSubTyping() {
+      if (subTyped) return;
+      subTyped = true;
+      typeText(subSpan, fullSub, 20, () => {
+        if (cursor) cursor.classList.add("cursor-complete");
+      });
+    }
 
-          headlineSpan.textContent = fullHeadline.slice(0, headlineChars);
-          subSpan.textContent = fullSub.slice(0, subChars);
+    function fadeOutHero() {
+      gsap.to("#network-hero", {
+        opacity: 0,
+        duration: 1,
+        ease: "power2.inOut"
+      });
+    }
 
-          if (cursor) {
-            if (headlineChars >= fullHeadline.length && subChars >= fullSub.length) {
-              cursor.classList.add("cursor-complete");
-            } else {
-              cursor.classList.remove("cursor-complete");
-            }
-          }
+    /* --- INITIAL LOAD: FADE IN NETWORK BEFORE ANY SCROLL --- */
+    window.addEventListener('load', () => {
+      resizePhone();
+
+      gsap.set("#network-graph", { scale: 0.85, opacity: 0, rotate: -4 });
+      gsap.set(".net-node", { opacity: 0, scale: 0.6 });
+      gsap.set(".net-link", { opacity: 0 });
+
+      const introTl = gsap.timeline();
+      introTl
+        .to("#network-graph", {
+          scale: 1.05,
+          opacity: 0.75,
+          rotate: 0,
+          duration: 1.2,
+          ease: "power3.out"
+        }, 0)
+        .to(".net-node", {
+          opacity: 1,
+          scale: 1,
+          stagger: 0.05,
+          duration: 0.8,
+          ease: "back.out(1.7)"
+        }, 0.4)
+        .to(".net-link", {
+          opacity: 0.55,
+          stagger: 0.03,
+          duration: 0.6,
+          ease: "power1.out"
+        }, 0.5)
+        .add(() => {
+          // continuous glow / breathing motion
+          gsap.to(".net-node", {
+            opacity: (i) => (i % 2 === 0 ? 0.35 : 0.8),
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+          gsap.to(".net-link", {
+            opacity: 0.25,
+            duration: 3.2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+        });
+    });
+
+    /* --- SCROLLBAR ELEMENTS --- */
+    const sbChaos = document.getElementById('fill-chaos');
+    const sbFocus = document.getElementById('fill-focus');
+    const sbStep1 = document.getElementById('fill-step1');
+    const sbStep2 = document.getElementById('fill-step2');
+    const sbStep3 = document.getElementById('fill-step3');
+    const sbJoin  = document.getElementById('fill-join');
+
+    /* --- HERO PIN + PHASED SCROLL GATES --- */
+    let heroPhase = 0; // 0: idle, 1: headline typed, 2: subtitle typed, 3: fading
+
+    ScrollTrigger.create({
+      trigger: "#network-hero",
+      start: "top top",
+      end: "+=3200",
+      pin: true,
+      scrub: 1,
+      anticipatePin: 1,
+      onUpdate: (self) => {
+        const p = self.progress;
+        sbChaos.style.transform = `scaleY(${p})`;
+
+        // First scroll → type headline
+        if (p > 0.05 && heroPhase === 0) {
+          heroPhase = 1;
+          startHeadlineTyping();
+        }
+
+        // More scroll → type subtitle
+        if (p > 0.4 && heroPhase === 1) {
+          heroPhase = 2;
+          startSubTyping();
+        }
+
+        // Final stretch → fade hero out before leaving
+        if (p > 0.8 && heroPhase === 2) {
+          heroPhase = 3;
+          fadeOutHero();
         }
       }
-    });
-
-    networkTl
-      // Network graph rises in dramatically
-      .from("#network-graph", {
-        scale: 0.7,
-        opacity: 0,
-        rotate: -4,
-        duration: 0.7,
-        ease: "power2.out"
-      }, 0)
-      // Subtle zoom past 1 for drama
-      .to("#network-graph", {
-        scale: 1.05,
-        duration: 0.6,
-        ease: "power1.inOut"
-      }, 0.4)
-      // Bring in the pill + text container
-      .from("#network-inner", {
-        opacity: 0,
-        y: 24,
-        duration: 0.6,
-        ease: "power2.out"
-      }, 0.2)
-      // Nodes & links flicker on
-      .from(".net-node", {
-        opacity: 0,
-        scale: 0,
-        transformOrigin: "50% 50%",
-        stagger: 0.06,
-        duration: 0.6,
-        ease: "back.out(1.8)"
-      }, 0.25)
-      .from(".net-link", {
-        opacity: 0,
-        stagger: 0.04,
-        duration: 0.5,
-        ease: "power1.out"
-      }, 0.32)
-      // Hold the scene for a bit while text finishes typing
-      .to({}, { duration: 0.6 })
-      // Fade the whole hero out near the end of the scroll
-      .to("#network-hero", {
-        opacity: 0,
-        duration: 0.9,
-        ease: "power2.inOut"
-      }, 1.4);
-
-    // Gentle ambient motion
-    gsap.to(".net-node", {
-      y: (i) => (i % 2 === 0 ? -4 : 4),
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut"
-    });
-    gsap.to(".net-link", {
-      opacity: 0.35,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut"
     });
 
     /* --- INITIAL PHONE POSITION & FADE-IN FOR HOW IT WORKS --- */
