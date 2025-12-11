@@ -5,28 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matcha Match | Your Career, Brewed.</title>
   
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Vintage serif + typewriter mono -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- (Inter still available if you want later) -->
   <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
   
+  <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
   <style>
     /* --- RESET & VARIABLES --- */
     :root {
-      --matcha-light: #C6D7B3;
+      --matcha-light: #D8E2C4;
       --matcha-medium: #98AA80;
       --matcha-dark: #6E7F56;
       --matcha-deep: #4A5A38;
       --matcha-rich: #2C3A1F;
       
-      --bg-light: #f8fafc; 
-      --bg-dark: var(--matcha-rich); 
+      --bg-light: #f5f1e7;   /* paper-ish */
+      --bg-dark: #11170f; 
       --text-white: #f8fafc;
-      --text-muted: #cbd5e1;
-      --text-dark: var(--matcha-rich);
+      --text-muted: #9a9da0;
+      --text-dark: #222018;
       --accent: var(--matcha-medium);
 
       --imessage-gray: #e9e9eb;
@@ -44,7 +48,7 @@
     html { scroll-behavior: smooth; }
     
     body { 
-      font-family: 'Inter', sans-serif;
+      font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
       background-color: var(--bg-light);
       color: var(--text-dark);
       overflow-x: hidden;
@@ -74,7 +78,7 @@
       font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
       margin-bottom: 4px;
       color: var(--text-muted);
       opacity: 0.5;
@@ -154,7 +158,7 @@
     #phone-scaler {
       transform-origin: center center;
       will-change: transform;
-      opacity: 0; /* faded in when How it works starts */
+      opacity: 0; /* fade in when How it works starts */
       transition: opacity 0.3s ease;
     }
 
@@ -171,7 +175,7 @@
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       width: 140%; height: 100%;
-      background: radial-gradient(circle, rgba(198, 215, 179, 0.3) 0%, transparent 60%);
+      background: radial-gradient(circle, rgba(198,215,179,0.28) 0%, transparent 60%);
       filter: blur(50px);
       opacity: 0; 
     }
@@ -180,9 +184,10 @@
       width: 100%; height: 100%;
       background: #000;
       border-radius: 54px; 
-      box-shadow: 0 0 0 1px #333,
-                  0 0 0 3px #1a1a1a,
-                  0 25px 70px -10px rgba(0,0,0,0.9);
+      box-shadow:
+        0 0 0 1px #333,
+        0 0 0 3px #1a1a1a,
+        0 25px 70px -10px rgba(0,0,0,0.9);
       position: relative;
       overflow: hidden;
     }
@@ -331,8 +336,8 @@
       margin-top: 6px;
     }
 
-    #header-bofa { opacity: 1; z-index: 12; }
-    #header-ai { opacity: 0; z-index: 11; }
+    /* Only MatchAI at first */
+    #header-ai { opacity: 1; z-index: 12; }
     #header-james { opacity: 0; z-index: 11; }
 
     .screen-body-container {
@@ -355,12 +360,15 @@
       font-family: 'SF Pro Display', sans-serif;
     }
 
-    #chat-state-bofa { z-index: 5; opacity: 1; }
-    #chat-state-ai-initial { z-index: 4; opacity: 0; }
-    #chat-state-step1,
+    /* Chat states for animation – start with Step1 visible */
+    #chat-state-step1 {
+      z-index: 5;
+      opacity: 1;
+    }
     #chat-state-step2,
     #chat-state-step3 {
-      z-index: 3; opacity: 0;
+      z-index: 4;
+      opacity: 0;
     }
 
     .imessage-bubble {
@@ -390,7 +398,7 @@
     .network-hero {
       height: 100vh;
       position: relative;
-      background: radial-gradient(circle at 20% 0%, #334327, #111a10);
+      background: radial-gradient(circle at 20% 0%, #1f261a, #050806);
       color: #f8fafc;
       overflow: hidden;
       display: flex;
@@ -403,10 +411,12 @@
       position: absolute;
       inset: -30%;
       background:
-        radial-gradient(circle at 10% 20%, rgba(198,215,179,0.18), transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(152,170,128,0.20), transparent 60%);
-      opacity: 0.9;
+        radial-gradient(circle at 10% 20%, rgba(198,215,179,0.22), transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(152,170,128,0.18), transparent 60%),
+        linear-gradient(135deg, rgba(0,0,0,0.35), transparent 40%, rgba(0,0,0,0.5));
+      opacity: 1;
       pointer-events: none;
+      mix-blend-mode: soft-light;
     }
 
     .network-inner {
@@ -424,10 +434,10 @@
       padding: 6px 14px;
       border-radius: 999px;
       background: rgba(15, 23, 15, 0.7);
-      border: 1px solid rgba(198,215,179,0.5);
+      border: 1px solid rgba(198,215,179,0.7);
       color: var(--matcha-light);
       font-size: 0.8rem;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       margin-bottom: 18px;
     }
@@ -437,22 +447,46 @@
       height: 6px;
       border-radius: 999px;
       background: #7dd66f;
-      box-shadow: 0 0 12px rgba(125,214,111,0.8);
+      box-shadow: 0 0 12px rgba(125,214,111,0.9);
     }
 
     .network-headline {
-      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-family: 'DM Serif Display', 'Times New Roman', serif;
+      font-size: clamp(2.6rem, 5vw, 3.8rem);
       line-height: 1.1;
-      font-weight: 700;
+      font-weight: 400;
+      letter-spacing: 0.04em;
       margin-bottom: 14px;
     }
 
     .network-sub {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--matcha-light);
-      max-width: 480px;
+      max-width: 520px;
       margin: 0 auto;
-      line-height: 1.6;
+      line-height: 1.7;
+    }
+
+    /* Typewriter cursor */
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: currentColor;
+      margin-left: 4px;
+      animation: cursorBlink 0.85s steps(2, start) infinite;
+      vertical-align: bottom;
+    }
+
+    .cursor-complete {
+      animation: none;
+      opacity: 1;
+    }
+
+    @keyframes cursorBlink {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
     }
 
     .network-graph-wrapper {
@@ -466,28 +500,28 @@
     }
 
     .network-graph {
-      width: 120%;
-      height: 120%;
+      width: 140%;
+      height: 140%;
       max-width: none;
       max-height: none;
-      opacity: 0.5;
+      opacity: 0.6;
       transform-origin: 50% 50%;
     }
 
     .net-node {
-      fill: rgba(198,215,179, 0.85);
-      filter: drop-shadow(0 0 12px rgba(198,215,179,0.8));
+      fill: rgba(198,215,179, 0.8);
+      filter: drop-shadow(0 0 12px rgba(198,215,179,0.9));
     }
 
     .net-node-main {
       fill: #ffffff;
       stroke: rgba(198,215,179,0.9);
       stroke-width: 2;
-      filter: drop-shadow(0 0 20px rgba(255,255,255,0.9));
+      filter: drop-shadow(0 0 22px rgba(255,255,255,1));
     }
 
     .net-link {
-      stroke: rgba(180,199,160,0.55);
+      stroke: rgba(180,199,160,0.7);
       stroke-width: 1.4;
       stroke-linecap: round;
     }
@@ -497,10 +531,10 @@
       bottom: 30px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(226,232,240,0.85);
+      color: rgba(226,232,240,0.9);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -511,7 +545,7 @@
       width: 6px;
       height: 14px;
       border-radius: 999px;
-      border: 1px solid rgba(226,232,240,0.6);
+      border: 1px solid rgba(226,232,240,0.7);
       position: relative;
       overflow: hidden;
     }
@@ -524,29 +558,29 @@
       right: 2px;
       height: 4px;
       border-radius: 999px;
-      background: rgba(226,232,240,0.9);
+      background: rgba(226,232,240,0.95);
       animation: scrollDot 1.4s ease-in-out infinite;
     }
 
     @keyframes scrollDot {
       0% { transform: translateY(0); opacity: 1; }
-      60% { transform: translateY(4px); opacity: 0.2; }
+      60% { transform: translateY(4px); opacity: 0.25; }
       100% { transform: translateY(0); opacity: 1; }
     }
 
     @media (max-width: 900px) {
       .network-graph {
-        width: 150%;
-        height: 150%;
+        width: 180%;
+        height: 180%;
       }
     }
 
     @media (max-width: 768px) {
       .network-headline {
-        font-size: 2.1rem;
+        font-size: 2.2rem;
       }
       .network-sub {
-        font-size: 1rem;
+        font-size: 0.98rem;
       }
     }
 
@@ -558,14 +592,21 @@
       padding: 120px 0;
       z-index: 40;
       overflow: hidden;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 -25px 60px -40px rgba(0,0,0,0.4);
     }
 
-    .reveal-header h2 { color: var(--matcha-rich); }
+    .reveal-header h2 {
+      font-family: 'DM Serif Display', 'Times New Roman', serif;
+      color: var(--matcha-rich);
+      letter-spacing: 0.04em;
+    }
 
     .reveal-header p {
       color: var(--matcha-deep);
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       line-height: 1.5;
+      margin-top: 12px;
       margin-bottom: 20px;
     }
 
@@ -574,6 +615,7 @@
       align-items: flex-start;
       justify-content: space-between;
       margin-top: 20px;
+      gap: 40px;
     }
 
     .content-left { 
@@ -590,11 +632,11 @@
     }
 
     .card {
-      background: #fff;
+      background: #fbf7ec;
       padding: 32px;
       border-radius: 24px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 10px 30px -5px rgba(44, 58, 31, 0.08);
+      border: 1px solid #e2ddcf;
+      box-shadow: 0 14px 40px -18px rgba(0,0,0,0.25);
       opacity: 0;
       transform: translateY(30px);
       grid-area: 1 / 1;
@@ -602,29 +644,31 @@
     }
     
     .card h3 {
-      font-size: 1.5rem;
+      font-family: 'DM Serif Display', 'Times New Roman', serif;
+      font-size: 1.6rem;
       margin-bottom: 12px;
       color: var(--matcha-rich);
-      font-weight: 700;
+      font-weight: 400;
+      letter-spacing: 0.03em;
     }
     .card p {
       color: var(--matcha-deep);
-      font-size: 1.05rem;
-      line-height: 1.6;
+      font-size: 0.95rem;
+      line-height: 1.7;
     }
     .step-num {
       font-size: 0.8rem;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--matcha-medium);
       text-transform: uppercase;
       margin-bottom: 8px;
       display: block;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.16em;
     }
 
     /* CTA */
     .cta {
-      background: var(--matcha-rich);
+      background: #191f14;
       color: var(--text-white);
       text-align: center;
       padding: 120px 0 160px;
@@ -632,6 +676,11 @@
       position: relative;
     }
     
+    .cta h2 {
+      font-family: 'DM Serif Display', 'Times New Roman', serif;
+      letter-spacing: 0.08em;
+    }
+
     .waitlist-group {
       max-width: 400px;
       margin: 0 auto;
@@ -640,38 +689,46 @@
       gap: 12px;
     }
     .waitlist-input {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.16);
       padding: 16px 20px;
-      border-radius: 12px;
+      border-radius: 8px;
       color: #fff;
-      font-size: 1rem;
+      font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: 'IBM Plex Mono', ui-monospace;
     }
-    .waitlist-input:focus { border-color: var(--matcha-light); }
-    .waitlist-input::placeholder { color: rgba(255,255,255,0.4); }
+    .waitlist-input:focus {
+      border-color: var(--matcha-light);
+      background: rgba(0,0,0,0.3);
+    }
+    .waitlist-input::placeholder { color: rgba(255,255,255,0.5); }
     
     .btn-waitlist {
       background: var(--matcha-light);
       color: var(--matcha-rich);
       border: none;
-      padding: 16px;
-      border-radius: 12px;
+      padding: 14px;
+      border-radius: 8px;
       font-weight: 700;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 0.95rem;
       transition: all 0.2s;
       margin-top: 8px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'IBM Plex Mono', ui-monospace;
     }
     .btn-waitlist:hover {
       background: #fff;
-      transform: translateY(-2px);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px -16px rgba(0,0,0,0.9);
     }
     
     #form-status {
       margin-top: 20px;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       height: 20px;
       font-weight: 500;
     }
@@ -679,30 +736,39 @@
     .status-error { color: #f87171; }
 
     footer {
-      background: #1a2312;
+      background: #0b0f0a;
       color: var(--matcha-medium);
       text-align: center;
-      padding: 40px;
-      font-size: 0.9rem;
+      padding: 32px;
+      font-size: 0.85rem;
       position: relative;
       z-index: 60;
+      font-family: 'IBM Plex Mono', ui-monospace;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
     }
 
     /* Responsive tweaks */
-    @media (max-width: 768px) {
-      .split-layout { flex-direction: column; }
+    @media (max-width: 900px) {
+      .split-layout {
+        flex-direction: column;
+        gap: 32px;
+      }
       .content-left {
         width: 100%;
         height: auto;
-        display: block;
-        padding-bottom: 50px;
+        padding-bottom: 20px;
       }
-      .card {
-        margin-bottom: 40px;
-        opacity: 1;
-        transform: translateY(0);
+      .content-right {
+        display: none;
       }
-      .content-right { display: none; }
+      .content-section {
+        padding-top: 80px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .cta { padding-top: 80px; }
     }
   </style>
 </head>
@@ -732,7 +798,7 @@
     </div>
   </div>
 
-  <!-- FIXED PHONE (appears at How it works) -->
+  <!-- FIXED PHONE (appears starting at How it works) -->
   <div class="phone-wrapper-fixed">
     <div id="phone-scaler">
       <div class="phone-stage" id="global-phone">
@@ -753,12 +819,7 @@
 
             <div class="dynamic-island"></div>
             
-            <!-- Headers -->
-            <div class="screen-header" id="header-bofa">
-              <img src="bofa-logo.png" alt="BofA" class="header-profile-pic">
-              <span class="header-name">BofA</span>
-            </div>
-
+            <!-- Chat headers -->
             <div class="screen-header" id="header-ai">
               <div class="header-profile-pic" style="background: var(--matcha-medium); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:20px;">🍵</div>
               <span class="header-name">matchAI</span>
@@ -770,35 +831,19 @@
             </div>
 
             <div class="screen-body-container">
-              <!-- BofA chat (not used now but kept if you want it later) -->
-              <div class="chat-container" id="chat-state-bofa">
-                <div class="imessage-bubble imessage-received">⚠️ Low balance alert.</div>
-                <div class="imessage-bubble imessage-received">Your checking account: $2.17.</div>
-                <div class="imessage-bubble imessage-sent">...you didn’t have to say it out loud.</div>
-                <div class="imessage-bubble imessage-received">You need an income stream bro</div>
-                <div class="imessage-bubble imessage-sent">Alright alright, I’ll look for an internship 😭</div>
-              </div>
-
-              <!-- AI initial chat -->
-              <div class="chat-container" id="chat-state-ai-initial">
-                <div class="imessage-bubble imessage-sent">I need a job. Pls help.</div>
-                <div class="imessage-bubble imessage-received">That's my cup of tea 😉 What kinda internship are you looking for?</div>
-                <div class="imessage-bubble imessage-sent">Investment banking</div>
-                <div class="imessage-bubble imessage-received">I know a senior who was at GS last summer. I'll connect you right away!</div>
-                <div class="imessage-bubble imessage-sent">Amazing! Thanks!</div>
-              </div>
-
-              <!-- Steps chats -->
+              <!-- Step 1: first and only starting chat -->
               <div class="chat-container" id="chat-state-step1">
                 <div class="imessage-bubble imessage-sent">Help me find an IB intern from BC.</div>
               </div>
 
+              <!-- Step 2: AI searching + match -->
               <div class="chat-container" id="chat-state-step2">
                 <div class="imessage-bubble imessage-sent" style="opacity:0.5;">Help me find an IB intern from BC.</div>
                 <div class="imessage-bubble imessage-received">Got it, searching...</div>
                 <div class="imessage-bubble imessage-received">Target acquired! James, a senior, interned at GS last summer. I'll connect you right away!</div>
               </div>
 
+              <!-- Step 3: intro to James -->
               <div class="chat-container" id="chat-state-step3">
                 <div class="imessage-bubble imessage-sent">Hey James, it's Bob from matcha match!</div>
                 <div class="imessage-bubble imessage-received">Howdy, happy to connect!</div>
@@ -857,22 +902,22 @@
       </svg>
     </div>
 
-    <div class="network-inner">
+    <div class="network-inner" id="network-inner">
       <div class="network-pill" id="network-pill">
         <span class="network-pill-dot"></span>
         Boston College · Internships
       </div>
-      <h1 class="network-headline" id="network-headline">
-        Your school already has the network.
+      <h1 class="network-headline">
+        <span id="headline-typed"></span><span class="typing-cursor" id="headline-cursor"></span>
       </h1>
-      <p class="network-sub" id="network-sub">
-        We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.
+      <p class="network-sub">
+        <span id="sub-typed"></span>
       </p>
     </div>
 
     <div class="network-scroll-hint">
       <div class="network-scroll-dot"></div>
-      SCROLL TO REVEAL YOUR CONNECTIONS
+      SCROLL TO REVEAL YOUR NETWORK
     </div>
   </section>
 
@@ -880,7 +925,7 @@
   <section class="content-section" id="section-content">
     <div class="container">
       <div class="reveal-header">
-        <h2 style="text-align:left; font-size:2.5rem; margin-bottom:20px; max-width:500px;">How it works</h2>
+        <h2 style="text-align:left; font-size:2.5rem; max-width:500px;">How it works</h2>
         <p style="text-align:left; max-width:500px;">
           Real human connection, powered by AI. We bridge the gap between ambition and experience.
         </p>
@@ -891,7 +936,7 @@
           <div class="card step-card" id="card-step1">
             <span class="step-num">Step 01</span>
             <h3>Text Your Goal</h3>
-            <p>Tell our AI what you're looking for. "Help me find a JPM IB intern from BC." Simple as that.</p>
+            <p>Tell our AI what you're looking for. “Help me find a JPM IB intern from BC.” Simple as that.</p>
           </div>
           <div class="card step-card" id="card-step2">
             <span class="step-num">Step 02</span>
@@ -912,8 +957,8 @@
   <!-- CTA -->
   <section class="cta" id="section-cta">
     <div class="container reveal-cta">
-      <h2 style="font-size:3rem; margin-bottom:10px;">Your future is waiting.</h2>
-      <p style="color:var(--matcha-light); margin-bottom:40px; font-size:1.2rem;">
+      <h2 style="font-size:2.4rem; margin-bottom:10px;">Your future is waiting.</h2>
+      <p style="color:var(--matcha-light); margin-bottom:40px; font-size:1.1rem;">
         Join the exclusive network for Boston College students.
       </p>
       
@@ -927,7 +972,7 @@
   </section>
 
   <footer>
-    &copy; 2025 Matcha Match. Your career, brewed perfectly.
+    &copy; 2025 Matcha Match · Your career, brewed.
   </footer>
 
   <script>
@@ -962,68 +1007,101 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    /* --- NETWORK HERO TIMELINE (fills screen, text overlays) --- */
+    /* --- TYPEWRITER SETUP FOR NETWORK TEXT --- */
+    const headlineSpan = document.getElementById("headline-typed");
+    const subSpan = document.getElementById("sub-typed");
+    const cursor = document.getElementById("headline-cursor");
+
+    const fullHeadline = "Your school already has the network.";
+    const fullSub = "We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.";
+
+    // Initialize empty
+    headlineSpan.textContent = "";
+    subSpan.textContent = "";
+
+    /* --- NETWORK HERO TIMELINE (big entrance + typewriter) --- */
     const networkTl = gsap.timeline({
       scrollTrigger: {
         trigger: "#network-hero",
         start: "top top",
-        end: "+=2000",
+        end: "+=3500",
         scrub: 1,
         pin: true,
         anticipatePin: 1,
         onUpdate: (self) => {
           const p = self.progress;
-          sbChaos.style.transform = `scaleY(${p})`;   // fill "Start"
-          sbFocus.style.transform = `scaleY(0)`;      // keep "Match" empty until How it works
+
+          // Fill "Start" bar
+          sbChaos.style.transform = `scaleY(${p})`;
+
+          // Typewriter windows
+          const t1 = Math.min(Math.max((p - 0.12) / 0.35, 0), 1);
+          const t2 = Math.min(Math.max((p - 0.32) / 0.35, 0), 1);
+
+          const headlineChars = Math.floor(fullHeadline.length * t1);
+          const subChars = Math.floor(fullSub.length * t2);
+
+          headlineSpan.textContent = fullHeadline.slice(0, headlineChars);
+          subSpan.textContent = fullSub.slice(0, subChars);
+
+          if (cursor) {
+            if (headlineChars >= fullHeadline.length && subChars >= fullSub.length) {
+              cursor.classList.add("cursor-complete");
+            } else {
+              cursor.classList.remove("cursor-complete");
+            }
+          }
         }
       }
     });
 
     networkTl
-      .from("#network-pill", {
+      // Network graph rises in dramatically
+      .from("#network-graph", {
+        scale: 0.7,
         opacity: 0,
-        y: 20,
-        duration: 0.4,
+        rotate: -4,
+        duration: 0.7,
         ease: "power2.out"
       }, 0)
-      .from("#network-headline", {
+      // Subtle zoom past 1 for drama
+      .to("#network-graph", {
+        scale: 1.05,
+        duration: 0.6,
+        ease: "power1.inOut"
+      }, 0.4)
+      // Bring in the pill + text container
+      .from("#network-inner", {
         opacity: 0,
-        y: 40,
-        duration: 0.5,
+        y: 24,
+        duration: 0.6,
         ease: "power2.out"
-      }, 0.05)
-      .from("#network-sub", {
-        opacity: 0,
-        y: 30,
-        duration: 0.5,
-        ease: "power2.out"
-      }, 0.15)
+      }, 0.2)
+      // Nodes & links flicker on
       .from(".net-node", {
         opacity: 0,
         scale: 0,
         transformOrigin: "50% 50%",
         stagger: 0.06,
-        duration: 0.5,
-        ease: "back.out(1.7)"
+        duration: 0.6,
+        ease: "back.out(1.8)"
       }, 0.25)
       .from(".net-link", {
         opacity: 0,
         stagger: 0.04,
-        duration: 0.4,
+        duration: 0.5,
         ease: "power1.out"
-      }, 0.3)
-      .to("#network-graph", {
-        scale: 0.95,
-        duration: 0.8,
-        ease: "power1.inOut"
-      }, 0.7)
+      }, 0.32)
+      // Hold the scene for a bit while text finishes typing
+      .to({}, { duration: 0.6 })
+      // Fade the whole hero out near the end of the scroll
       .to("#network-hero", {
         opacity: 0,
-        duration: 0.8,
+        duration: 0.9,
         ease: "power2.inOut"
-      }, 1.2);
+      }, 1.4);
 
-    // gentle floating motion for nodes/links (ambient)
+    // Gentle ambient motion
     gsap.to(".net-node", {
       y: (i) => (i % 2 === 0 ? -4 : 4),
       duration: 3,
@@ -1079,7 +1157,7 @@
         anticipatePin: 1,
         onUpdate: (self) => {
           const p = self.progress;
-          sbFocus.style.transform = `scaleY(${p})`;   // fill "Match" bar
+          sbFocus.style.transform = `scaleY(${p})`;
         }
       }
     });
@@ -1089,21 +1167,14 @@
       .to("#card-step1", { 
         opacity: 1, 
         y: 0, 
-        duration: 0.2,
+        duration: 0.25,
         ease: "power2.out"
       }, 0.1)
       .to(sbStep1, { scaleY: 1, duration: 0.15, ease: "power1.out" }, 0.1)
-      .to("#chat-state-ai-initial", { 
-        opacity: 0, 
-        duration: 0.2,
-        ease: "power2.inOut"
-      }, 0.1)
-      .to("#chat-state-step1", { 
-        opacity: 1, 
-        duration: 0.25,
-        ease: "power2.inOut"
-      }, 0.25)
-      .to({}, { duration: 0.4 })
+      .set("#header-ai", { opacity: 1 }, 0.1)
+      .set("#chat-state-step1", { opacity: 1 }, 0.1)
+      .to({}, { duration: 0.5 })
+
       // STEP 2
       .to("#card-step1", { 
         opacity: 0, 
@@ -1128,7 +1199,8 @@
         duration: 0.25,
         ease: "power2.inOut"
       }, ">")
-      .to({}, { duration: 0.4 })
+      .to({}, { duration: 0.5 })
+
       // STEP 3
       .to("#card-step2", { 
         opacity: 0, 
@@ -1143,16 +1215,16 @@
         ease: "power2.out"
       })
       .to(sbStep3, { scaleY: 1, duration: 0.15, ease: "power1.out" }, "<0.05")
-      .to("#header-ai", { 
-        opacity: 0, 
-        duration: 0.2,
-        ease: "power2.inOut"
-      }, "<")
       .to("#chat-state-step2", { 
         opacity: 0, 
         duration: 0.2,
         ease: "power2.inOut"
       }, "<")
+      .to("#header-ai", { 
+        opacity: 0, 
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, ">-0.05")
       .to("#header-james", { 
         opacity: 1, 
         duration: 0.25,
@@ -1190,7 +1262,7 @@
       immediateRender: false
     });
 
-    /* --- FORM SUBMISSION (fake) --- */
+    /* --- FORM SUBMISSION (mock) --- */
     const form = document.getElementById("waitlist-form");
     async function handleSubmit(event) {
       event.preventDefault();
