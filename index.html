@@ -137,7 +137,7 @@
         perspective: 1000px;
     }
 
-    /* NEW: Scaler Wrapper */
+    /* Scaler Wrapper */
     #phone-scaler {
         transform-origin: center center;
         will-change: transform;
@@ -381,7 +381,9 @@
     .hero-content {
       text-align: center;
       z-index: 40; 
-      position: absolute; top: 8%; width: 100%;
+      position: absolute; 
+      top: 3%; /* Moved higher up */
+      width: 100%;
       padding: 0 20px;
     }
 
@@ -391,17 +393,24 @@
 
     .hero-title {
       grid-area: 1 / 1;
-      font-size: clamp(2.5rem, 5vmin, 4.5rem);
+      /* Increased font size */
+      font-size: clamp(3rem, 7vmin, 6.5rem);
       line-height: 1.1; font-weight: 700; margin: 0;
       background-image: linear-gradient(to bottom right, #fff 30%, var(--matcha-light) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       opacity: 0; scale: 0.9; filter: blur(10px); 
     }
 
-    .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.1rem; color: var(--matcha-medium); }
+    .hero-subtitle { 
+        max-width: 480px; 
+        margin: 0 auto 4px; /* Adjusted margin */
+        font-size: 1.2rem; 
+        color: var(--matcha-medium); 
+    }
     #text-sub {
         opacity: 0;
-        transform: translateY(10px);
+        /* Start slightly above to slide down */
+        transform: translateY(-20px);
     }
 
     /* Content */
@@ -410,9 +419,19 @@
       padding: 120px 0; z-index: 40; overflow: hidden; 
     }
     .reveal-header h2 { color: var(--matcha-rich); }
-    .reveal-header p { color: var(--matcha-deep); font-size: 1.2rem; line-height: 1.5; }
+    .reveal-header p { 
+        color: var(--matcha-deep); 
+        font-size: 1.2rem; 
+        line-height: 1.5; 
+        margin-bottom: 20px; /* Reduced margin to pull cards up */
+    }
 
-    .split-layout { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 60px; }
+    .split-layout { 
+        display: flex; 
+        align-items: flex-start; 
+        justify-content: space-between; 
+        margin-top: 20px; /* Reduced margin to pull cards up */
+    }
     
     .content-left { 
         width: 45%; 
@@ -466,8 +485,8 @@
         .content-left { width: 100%; height: auto; display: block; padding-bottom: 50px;}
         .card { margin-bottom: 40px; opacity: 1; transform: translateY(0); }
         .content-right { display: none; }
-        .hero-content { top: 12%; }
-        .hero-title { font-size: 2.5rem; }
+        .hero-content { top: 10%; }
+        .hero-title { font-size: 3rem; }
     }
   </style>
 </head>
@@ -573,11 +592,11 @@
 
   <section class="hero" id="hero-section">
       <div class="hero-content container" id="hero-text"> 
+        <p class="hero-subtitle" id="text-sub">with matcha match...</p>
         <div class="heading-swapper">
             <h1 class="hero-title" id="text-looking" style="opacity: 1; scale: 1; filter: blur(0px);">looking for an internship?</h1>
             <h1 class="hero-title" id="text-onetext">you're ONE TEXT away</h1>
         </div>
-        <p class="hero-subtitle" id="text-sub">with matcha match...</p>
       </div>
   </section>
 
@@ -585,7 +604,7 @@
     <div class="container">
       <div class="reveal-header">
         <h2 style="text-align:left; font-size: 2.5rem; margin-bottom: 20px; max-width: 500px;">How it works</h2>
-        <p style="text-align:left; max-width:500px; margin-bottom: 40px;">Real human connection, powered by AI. We bridge the gap between ambition and experience.</p>
+        <p style="text-align:left; max-width:500px;">Real human connection, powered by AI. We bridge the gap between ambition and experience.</p>
       </div>
       
       <div class="split-layout">
@@ -700,7 +719,13 @@
             duration: 0.2,
             ease: "power2.inOut"
         }, 0.15)
-        .to({}, { duration: 0.05 })
+        // Animating Subtitle IN before second text
+        .to("#text-sub", {
+            opacity: 1,
+            y: 0,
+            duration: 0.3,
+            ease: "power2.out"
+        }, 0.3)
         .to("#text-onetext", { 
             opacity: 1, 
             scale: 1, 
@@ -708,12 +733,6 @@
             duration: 0.2,
             ease: "power2.inOut"
         }, 0.35)
-        .to("#text-sub", {
-            opacity: 1,
-            y: 0,
-            duration: 0.25,
-            ease: "power2.out"
-        }, 0.4)
         .to("#header-bofa", { 
             opacity: 0, 
             duration: 0.15,
