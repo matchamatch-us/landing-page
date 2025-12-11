@@ -130,19 +130,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding-top: 5vh; 
         transform: translateZ(0);
         -webkit-transform: translateZ(0);
         backface-visibility: hidden;
         perspective: 1000px;
     }
 
+    /* #global-phone gets scaled via GSAP based on viewport so proportions stay constant */
     .phone-stage {
         position: relative;
-        width: auto;
-        height: 65vmin;          /* scales with viewport, keeps bubbles:phone ratio consistent */
-        max-height: 780px;
-        aspect-ratio: 9 / 19.5; 
+        width: 360px;          /* base design size */
+        height: 780px;
+        max-width: 90vw;
         will-change: transform;
         transform-style: preserve-3d;
     }
@@ -166,39 +165,36 @@
     }
 
     .dynamic-island {
-        position: absolute;
-        top: 16px; left: 50%; transform: translateX(-50%);
-        width: 32%; height: 18px; background: #000; border-radius: 10px; z-index: 14;
+        position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+        width: 32%; height: 18px; background: #000; border-radius: 999px; z-index: 50;
     }
 
     /* --- IPHONE SCREEN & CHAT STYLES --- */
     .screen {
         position: absolute;
-        inset: 6px;
+        inset: 12px;
         overflow: hidden;
-        border-radius: 40px;
+        border-radius: 44px;
         background: #fff;
         display: flex;
         flex-direction: column;
+        font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     }
 
-    /* Status bar */
+    /* Status bar mimicking iOS */
     .status-bar {
-        position: absolute;
-        top: 8px;
-        left: 0;
-        right: 0;
-        padding: 0 22px;
+        height: 30px;
+        padding: 6px 18px 2px;
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        font-family: 'SF Pro Display', sans-serif;
+        justify-content: space-between;
         font-size: 11px;
-        font-weight: 500;
         color: #111;
-        opacity: 0.9;
-        z-index: 12;
-        pointer-events: none;
+        font-weight: 600;
+    }
+
+    .status-time {
+        letter-spacing: 0.02em;
     }
 
     .status-icons {
@@ -207,111 +203,111 @@
         gap: 6px;
     }
 
-    /* signal bars */
-    .status-signal {
-        display: flex;
-        align-items: flex-end;
-        gap: 1px;
-    }
-    .status-signal span {
-        width: 2px;
-        border-radius: 1px;
-        background: #111;
-    }
-    .status-signal span:nth-child(1) { height: 3px; opacity: 0.5; }
-    .status-signal span:nth-child(2) { height: 5px; opacity: 0.7; }
-    .status-signal span:nth-child(3) { height: 7px; opacity: 0.85; }
-    .status-signal span:nth-child(4) { height: 9px; }
-
-    /* wifi */
-    .status-wifi {
-        width: 13px;
-        height: 9px;
-        border-radius: 9px 9px 0 0;
-        border: 1.5px solid #111;
-        border-bottom: none;
+    .status-signal,
+    .status-wifi,
+    .status-battery {
+        display: inline-block;
         position: relative;
-        box-sizing: border-box;
-        opacity: 0.9;
     }
-    .status-wifi::after {
+
+    .status-signal {
+        width: 18px;
+        height: 10px;
+    }
+    .status-signal::before,
+    .status-signal::after {
         content: "";
         position: absolute;
-        left: 3px;
-        right: 3px;
-        bottom: -1px;
-        height: 1.5px;
-        border-radius: 10px;
+        bottom: 0;
+        width: 3px;
+        border-radius: 2px;
         background: #111;
-        opacity: 0.65;
+    }
+    .status-signal::before {
+        left: 3px;
+        height: 6px;
+    }
+    .status-signal::after {
+        left: 9px;
+        height: 9px;
     }
 
-    /* battery */
+    .status-wifi {
+        width: 14px;
+        height: 10px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 1.5px #111 inset;
+        transform: scaleX(1.2);
+    }
+
     .status-battery {
-        width: 20px;
+        width: 22px;
         height: 10px;
         border-radius: 3px;
         border: 1.5px solid #111;
-        position: relative;
         box-sizing: border-box;
-    }
-    .status-battery::after {
-        content: "";
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        right: 4px;
-        bottom: 2px;
-        border-radius: 2px;
-        background: #111;
     }
     .status-battery::before {
         content: "";
         position: absolute;
+        top: 1.2px;
+        left: 2px;
+        right: 2px;
+        bottom: 1.2px;
+        border-radius: 2px;
+        background: #111;
+    }
+    .status-battery::after {
+        content: "";
+        position: absolute;
         right: -3px;
-        top: 3px;
+        top: 2.5px;
         width: 2px;
-        height: 4px;
+        height: 5px;
         border-radius: 1px;
         background: #111;
     }
-    
-    .screen-header {
-        position: absolute;
-        top: 48px; 
-        left: 0;
-        right: 0;
-        height: 56px; 
-        display: flex;
-        flex-direction: column; 
-        align-items: center;
-        justify-content: center;
-        background: rgba(245, 245, 247, 0.96); 
+
+    /* Header stack below status bar */
+    .header-stack {
+        position: relative;
+        height: 64px;
+        background: rgba(245, 245, 247, 0.96);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-bottom: 1px solid rgba(0,0,0,0.08);
-        z-index: 11;
+        flex-shrink: 0;
+    }
+
+    .chat-header {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
         transition: opacity 0.3s ease;
     }
 
     .header-profile-pic {
-        width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+        width: 32px; height: 32px; border-radius: 50%; object-fit: contain;
+        display: flex; align-items: center; justify-content: center;
     }
     .header-name {
-        font-size: 11px; color: #000; font-family: 'SF Pro Display', sans-serif; font-weight: 500; margin-top: 4px;
+        font-size: 11px; color: #000; font-weight: 500; margin-top: 4px;
     }
 
     /* Initial header states */
-    #header-bofa { opacity: 1; z-index: 12; }
-    #header-ai { opacity: 0; z-index: 11; }
-    #header-james { opacity: 0; z-index: 11; }
+    #header-bofa { opacity: 1; z-index: 3; }
+    #header-ai { opacity: 0; z-index: 2; }
+    #header-james { opacity: 0; z-index: 2; }
 
     .screen-body-container {
         position: relative;
         flex-grow: 1;
         background: #fff;
         overflow: hidden;
-        margin-top: 110px; /* below header */
     }
 
     .chat-container {
@@ -323,7 +319,7 @@
         padding: 15px 12px 30px;
         gap: 8px; 
         overflow-y: auto;
-        font-family: 'SF Pro Display', sans-serif;
+        font-size: 14px;
     }
 
     /* Chat states for animation */
@@ -336,7 +332,6 @@
     .imessage-bubble {
         max-width: 75%;
         padding: 8px 14px; 
-        font-size: clamp(0.85rem, 1.1vmin, 1rem);
         line-height: 1.3;
         position: relative;
         word-wrap: break-word;
@@ -369,7 +364,7 @@
     .hero-content {
       text-align: center;
       z-index: 40; 
-      position: absolute; top: 5%; width: 100%;
+      position: absolute; top: 7%; width: 100%;
       padding: 0 20px;
     }
 
@@ -379,20 +374,23 @@
 
     .hero-title {
       grid-area: 1 / 1;
-      font-size: clamp(2.5rem, 5vmin, 4.5rem);
+      font-size: clamp(2.5rem, 5vw, 4.5rem); 
       line-height: 1.1; font-weight: 700; margin: 0;
       background-image: linear-gradient(to bottom right, #fff 30%, var(--matcha-light) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       opacity: 0; scale: 0.9; filter: blur(10px); 
     }
 
-    .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.1rem; color: var(--matcha-medium); }
-    #text-sub {
-        opacity: 0;
-        transform: translateY(10px);
+    /* Subtitle only appears on second hero state */
+    .hero-subtitle { 
+      max-width: 480px; 
+      margin: 4px auto 0; 
+      font-size: 1.1rem; 
+      color: var(--matcha-medium); 
+      opacity: 0;
+      transform: translateY(6px);
     }
 
-    /* Content */
     .content-section {
       position: relative; background: var(--bg-light); color: var(--text-dark);
       padding: 120px 0; z-index: 40; overflow: hidden; 
@@ -448,26 +446,13 @@
 
     footer { background: #1a2312; color: var(--matcha-medium); text-align: center; padding: 40px; font-size: 0.9rem; position: relative; z-index: 60; }
 
-    /* --- RESPONSIVE FIX FOR SHORTER VIEWPORT HEIGHTS --- */
-    @media (max-height: 850px) {
-        .phone-wrapper-fixed {
-            padding-top: 10vh;
-        }
-        .phone-stage {
-            height: 65vmin;
-        }
-        .hero-content {
-            top: 4%;
-        }
-    }
-
     @media (max-width: 768px) {
         .custom-scrollbar { display: none; }
         .split-layout { flex-direction: column; }
         .content-left { width: 100%; height: auto; display: block; padding-bottom: 50px;}
         .card { margin-bottom: 40px; opacity: 1; transform: translateY(0); }
         .content-right { display: none; }
-        .hero-content { top: 12%; }
+        .hero-content { top: 10%; }
         .hero-title { font-size: 2.5rem; }
     }
   </style>
@@ -501,36 +486,35 @@
       <div class="phone-stage" id="global-phone">
         <div class="phone-glow" id="phone-glow"></div>
         <div class="phone-device">
+          <div class="dynamic-island"></div>
           <div class="screen">
             
             <!-- Status bar -->
             <div class="status-bar">
-              <div class="status-time">9:41</div>
+              <span class="status-time">9:41</span>
               <div class="status-icons">
-                <div class="status-signal">
-                  <span></span><span></span><span></span><span></span>
-                </div>
-                <div class="status-wifi"></div>
-                <div class="status-battery"></div>
+                <span class="status-signal"></span>
+                <span class="status-wifi"></span>
+                <span class="status-battery"></span>
               </div>
             </div>
 
-            <div class="dynamic-island"></div>
-            
-            <!-- BofA header -->
-            <div class="screen-header" id="header-bofa">
-                <img src="bofa-logo.png" alt="BofA" class="header-profile-pic">
-                <span class="header-name">BofA</span>
-            </div>
+            <!-- Header stack -->
+            <div class="header-stack">
+              <div class="chat-header" id="header-bofa">
+                  <img src="bofa-logo.png" alt="BofA" class="header-profile-pic">
+                  <span class="header-name">BofA</span>
+              </div>
 
-            <div class="screen-header" id="header-ai">
-                <div class="header-profile-pic" style="background: var(--matcha-medium); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">🍵</div>
-                <span class="header-name">matchAI</span>
-            </div>
+              <div class="chat-header" id="header-ai">
+                  <div class="header-profile-pic" style="background: var(--matcha-medium); color: white; font-weight: bold; font-size: 18px;">🍵</div>
+                  <span class="header-name">matchAI</span>
+              </div>
 
-            <div class="screen-header" id="header-james">
-                <div class="header-profile-pic" style="background: #98AA80; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">J</div>
-                <span class="header-name">James</span>
+              <div class="chat-header" id="header-james">
+                  <div class="header-profile-pic" style="background: #98AA80; color: white; font-weight: bold;">J</div>
+                  <span class="header-name">James</span>
+              </div>
             </div>
 
             <div class="screen-body-container">
@@ -579,7 +563,8 @@
             <h1 class="hero-title" id="text-looking" style="opacity: 1; scale: 1; filter: blur(0px);">looking for an internship?</h1>
             <h1 class="hero-title" id="text-onetext">you're ONE TEXT away</h1>
         </div>
-        <p class="hero-subtitle" id="text-sub">with matcha match...</p>
+        <!-- Subtitle only for second hero state -->
+        <p class="hero-subtitle" id="subtitle-matcha">with matcha match...</p>
       </div>
   </section>
 
@@ -634,7 +619,7 @@
   <script>
     gsap.registerPlugin(ScrollTrigger);
 
-    // --- SCROLLBAR ELEMENTS ---
+    // --- ELEMENTS FOR SCROLLBAR ---
     const sbChaos = document.getElementById('fill-chaos');
     const sbFocus = document.getElementById('fill-focus');
     const sbStep1 = document.getElementById('fill-step1');
@@ -642,15 +627,38 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    // --- 1. HERO ANIMATION ---
+    // Helper to scale phone so proportions stay constant regardless of viewport
+    function getPhoneScale() {
+      const baseWidth = 360;
+      const baseHeight = 780;
+
+      // phone should take up ~35% of viewport width and ~70% of height
+      const scaleW = (window.innerWidth * 0.35) / baseWidth;
+      const scaleH = (window.innerHeight * 0.7) / baseHeight;
+
+      return Math.min(scaleW, scaleH, 1.1); // clamp so it never gets absurdly large
+    }
+
+    function applyPhoneScale() {
+      const s = getPhoneScale();
+      gsap.set("#global-phone", { scale: s, transformOrigin: "center center" });
+      ScrollTrigger.refresh();
+    }
+
+    // --- 1. HERO ANIMATION (SMOOTH, WITH SNAP "RESISTANCE") ---
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
             start: "top top",
-            end: "+=3000",
+            end: "+=4000",
             pin: true,
-            scrub: 1,
-            anticipatePin: 1,
+            scrub: 1.5,
+            snap: {
+                snapTo: [0, 1],
+                duration: 0.4,
+                delay: 0.02,
+                ease: "power2.inOut"
+            },
             onUpdate: (self) => {
                 const p = self.progress;
                 if (p <= 0.4) { 
@@ -681,12 +689,13 @@
             duration: 0.2,
             ease: "power2.inOut"
         }, 0.35)
-        .to("#text-sub", {
+        // subtitle "with matcha match..." appears with second heading
+        .to("#subtitle-matcha", {
             opacity: 1,
             y: 0,
             duration: 0.25,
             ease: "power2.out"
-        }, 0.4)
+        }, 0.38)
         .to("#header-bofa", { 
             opacity: 0, 
             duration: 0.15,
@@ -712,22 +721,21 @@
             duration: 0.25,
             ease: "power2.inOut"
         }, 0.3)
-        .to({}, { duration: 0.4 });
+        .to({}, { duration: 0.3 });
 
-    // --- 2. PHONE REPOSITIONING INTO "HOW IT WORKS" ---
+    // --- 2. PHONE REPOSITIONING (SMOOTH GLIDE; ONLY X/Y, SCALE IS GLOBAL) ---
     const contentTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
             start: "top bottom",
             end: "top top",
-            scrub: 1,
+            scrub: 1.5
         }
     });
 
     contentTl.to("#global-phone", {
         x: "30vw",
         y: "5vh",
-        scale: 1.4,
         rotation: 0,
         ease: "power2.inOut",
         immediateRender: false
@@ -740,15 +748,21 @@
         immediateRender: false 
     }, 0);
 
-    // --- 3. STEP-BY-STEP CONTENT ---
+
+    // --- 3. STEP-BY-STEP CONTENT (WITH SNAP AT EACH STEP) ---
     const stepsTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
             start: "top top", 
-            end: "+=3500",
+            end: "+=5000",
             pin: true,
-            scrub: 1,
-            anticipatePin: 1
+            scrub: 1.5,
+            snap: {
+                snapTo: [0, 0.33, 0.66, 1],
+                duration: 0.4,
+                delay: 0.02,
+                ease: "power2.inOut"
+            }
         }
     });
 
@@ -757,83 +771,89 @@
         .to("#card-step1", { 
             opacity: 1, 
             y: 0, 
-            duration: 0.2,
+            duration: 0.12,
             ease: "power2.out"
-        }, 0.1)
-        .to(sbStep1, { scaleY: 1, duration: 0.15, ease: "power1.out" }, 0.1)
+        }, 0.08)
+        .to(sbStep1, { scaleY: 1, duration: 0.08 }, 0.08)
         .to("#chat-state-ai-initial", { 
             opacity: 0, 
-            duration: 0.2,
+            duration: 0.1,
             ease: "power2.inOut"
-        }, 0.1)
+        }, 0.08)
         .to("#chat-state-step1", { 
             opacity: 1, 
-            duration: 0.25,
+            duration: 0.12,
             ease: "power2.inOut"
-        }, 0.25)
-        .to({}, { duration: 0.4 })
+        }, 0.15)
+        .to({}, { duration: 0.25 })
         
-        // STEP 2
+        // TRANSITION TO STEP 2
         .to("#card-step1", { 
             opacity: 0, 
             y: -30, 
-            duration: 0.2,
+            duration: 0.1,
             ease: "power2.in"
-        })
+        }, 0.43)
+        .to({}, { duration: 0.05 })
+        
+        // STEP 2
         .to("#card-step2", { 
             opacity: 1, 
             y: 0, 
-            duration: 0.25,
+            duration: 0.12,
             ease: "power2.out"
-        })
-        .to(sbStep2, { scaleY: 1, duration: 0.15, ease: "power1.out" }, "<0.05")
+        }, 0.53)
+        .to(sbStep2, { scaleY: 1, duration: 0.08 }, 0.53)
         .to("#chat-state-step1", { 
             opacity: 0, 
-            duration: 0.2,
+            duration: 0.1,
             ease: "power2.inOut"
-        }, "<")
+        }, 0.53)
         .to("#chat-state-step2", { 
             opacity: 1, 
-            duration: 0.25,
+            duration: 0.12,
             ease: "power2.inOut"
-        }, ">")
-        .to({}, { duration: 0.4 })
+        }, 0.6)
+        .to({}, { duration: 0.25 })
         
-        // STEP 3
+        // TRANSITION TO STEP 3
         .to("#card-step2", { 
             opacity: 0, 
             y: -30, 
-            duration: 0.2,
+            duration: 0.1,
             ease: "power2.in"
-        })
+        }, 0.85)
+        .to({}, { duration: 0.05 })
+        
+        // STEP 3
         .to("#card-step3", { 
             opacity: 1, 
             y: 0, 
-            duration: 0.25,
+            duration: 0.12,
             ease: "power2.out"
-        })
-        .to(sbStep3, { scaleY: 1, duration: 0.15, ease: "power1.out" }, "<0.05")
+        }, 0.95)
+        .to(sbStep3, { scaleY: 1, duration: 0.08 }, 0.95)
         .to("#header-ai", { 
             opacity: 0, 
-            duration: 0.2,
+            duration: 0.1,
             ease: "power2.inOut"
-        }, "<")
+        }, 0.95)
         .to("#chat-state-step2", { 
             opacity: 0, 
-            duration: 0.2,
+            duration: 0.1,
             ease: "power2.inOut"
-        }, "<")
+        }, 0.95)
         .to("#header-james", { 
             opacity: 1, 
-            duration: 0.25,
+            duration: 0.12,
             ease: "power2.inOut"
-        }, ">")
+        }, 1.0)
         .to("#chat-state-step3", { 
             opacity: 1, 
-            duration: 0.25,
+            duration: 0.12,
             ease: "power2.inOut"
-        }, ">")
-        .to({}, { duration: 0.7 });
+        }, 1.05)
+        .to({}, { duration: 1 });
 
     // --- 4. PHONE EXIT TO CTA ---
     gsap.to(sbJoin, {
@@ -852,7 +872,7 @@
             trigger: "#section-cta",
             start: "top bottom", 
             end: "top center", 
-            scrub: 1
+            scrub: 1.5
         },
         y: "-100vh", 
         opacity: 0,
@@ -880,6 +900,10 @@
     }
     
     form.addEventListener("submit", handleSubmit);
+
+    // Apply phone scale on load & resize so proportions stay consistent
+    window.addEventListener("load", applyPhoneScale);
+    window.addEventListener("resize", applyPhoneScale);
 
   </script>
 
