@@ -128,9 +128,9 @@
         z-index: 50; 
         pointer-events: none;
         display: flex;
-        align-items: center;
+        /* UPDATED: pin phone a bit lower instead of dead-center */
+        align-items: flex-start;        /* was center */
         justify-content: center;
-        /* Padding handled by JS centering/scaling now */
         transform: translateZ(0);
         -webkit-transform: translateZ(0);
         backface-visibility: hidden;
@@ -141,17 +141,16 @@
     #phone-scaler {
         transform-origin: center center;
         will-change: transform;
-        /* Start hidden to prevent FOUC before JS resize */
         opacity: 0; 
         transition: opacity 0.3s ease;
+        /* UPDATED: create consistent gap above title */
+        margin-top: 18vh;               /* pushes phone down ~18% of viewport */
     }
 
     .phone-stage {
         position: relative;
-        /* FIXED PIXEL SIZE FOR LOCKED PROPORTIONS */
         width: 400px; 
         height: 860px;
-        
         will-change: transform;
         transform-style: preserve-3d;
     }
@@ -177,8 +176,8 @@
     .dynamic-island {
         position: absolute;
         top: 16px; left: 50%; transform: translateX(-50%);
-        width: 126px; /* Fixed px */
-        height: 36px; /* Fixed px */
+        width: 126px;
+        height: 36px;
         background: #000; border-radius: 20px; z-index: 14;
     }
 
@@ -204,7 +203,7 @@
         justify-content: space-between;
         align-items: center;
         font-family: 'SF Pro Display', sans-serif;
-        font-size: 16px; /* Fixed px */
+        font-size: 16px;
         font-weight: 600;
         color: #111;
         opacity: 0.9;
@@ -218,7 +217,6 @@
         gap: 8px;
     }
 
-    /* signal bars */
     .status-signal {
         display: flex;
         align-items: flex-end;
@@ -235,7 +233,6 @@
     .status-signal span:nth-child(3) { height: 9px; opacity: 0.85; }
     .status-signal span:nth-child(4) { height: 12px; }
 
-    /* wifi */
     .status-wifi {
         width: 18px;
         height: 12px;
@@ -258,7 +255,6 @@
         opacity: 0.65;
     }
 
-    /* battery */
     .status-battery {
         width: 26px;
         height: 13px;
@@ -313,7 +309,6 @@
         font-size: 13px; color: #000; font-family: 'SF Pro Display', sans-serif; font-weight: 500; margin-top: 6px;
     }
 
-    /* Initial header states */
     #header-bofa { opacity: 1; z-index: 12; }
     #header-ai { opacity: 0; z-index: 11; }
     #header-james { opacity: 0; z-index: 11; }
@@ -323,7 +318,7 @@
         flex-grow: 1;
         background: #fff;
         overflow: hidden;
-        margin-top: 140px; /* below header */
+        margin-top: 140px;
     }
 
     .chat-container {
@@ -338,7 +333,6 @@
         font-family: 'SF Pro Display', sans-serif;
     }
 
-    /* Chat states for animation */
     #chat-state-bofa { z-index: 5; opacity: 1; }
     #chat-state-ai-initial { z-index: 4; opacity: 0; }
     #chat-state-step1, #chat-state-step2, #chat-state-step3 {
@@ -346,9 +340,9 @@
     }
 
     .imessage-bubble {
-        max-width: 280px; /* Fixed pixel width */
+        max-width: 280px;
         padding: 10px 16px; 
-        font-size: 17px; /* Fixed pixel size (standard iOS) */
+        font-size: 17px;
         line-height: 1.35;
         position: relative;
         word-wrap: break-word;
@@ -382,7 +376,7 @@
       text-align: center;
       z-index: 40; 
       position: absolute; 
-      top: 3%; /* Moved higher up */
+      top: 5%;               /* a tad lower than 3% so it breathes above phone */
       width: 100%;
       padding: 0 20px;
     }
@@ -393,8 +387,7 @@
 
     .hero-title {
       grid-area: 1 / 1;
-      /* Increased font size */
-      font-size: clamp(3rem, 7vmin, 6.5rem);
+      font-size: clamp(3.1rem, 7vmin, 6.5rem);
       line-height: 1.1; font-weight: 700; margin: 0;
       background-image: linear-gradient(to bottom right, #fff 30%, var(--matcha-light) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -403,17 +396,15 @@
 
     .hero-subtitle { 
         max-width: 480px; 
-        margin: 0 auto 4px; /* Adjusted margin */
+        margin: 0 auto 4px;
         font-size: 1.2rem; 
         color: var(--matcha-medium); 
     }
     #text-sub {
         opacity: 0;
-        /* Start slightly above to slide down */
         transform: translateY(-20px);
     }
 
-    /* Content */
     .content-section {
       position: relative; background: var(--bg-light); color: var(--text-dark);
       padding: 120px 0; z-index: 40; overflow: hidden; 
@@ -423,14 +414,14 @@
         color: var(--matcha-deep); 
         font-size: 1.2rem; 
         line-height: 1.5; 
-        margin-bottom: 20px; /* Reduced margin to pull cards up */
+        margin-bottom: 20px;
     }
 
     .split-layout { 
         display: flex; 
         align-items: flex-start; 
         justify-content: space-between; 
-        margin-top: 20px; /* Reduced margin to pull cards up */
+        margin-top: 20px;
     }
     
     .content-left { 
@@ -454,7 +445,6 @@
     .card p { color: var(--matcha-deep); font-size: 1.05rem; line-height: 1.6; }
     .step-num { font-size: 0.8rem; font-weight: 700; color: var(--matcha-medium); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 0.05em; }
 
-    /* CTA */
     .cta { background: var(--matcha-rich); color: var(--text-white); text-align: center; padding: 120px 0 160px; z-index: 60; position: relative; }
     
     .waitlist-group { max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
@@ -649,29 +639,29 @@
   </footer>
 
   <script>
-    /* --- NEW RESIZE LOGIC (LOCK PROPORTIONS) --- */
+    /* --- RESIZE LOGIC (LOCK PROPORTIONS & KEEP PHONE BELOW TITLE) --- */
     function resizePhone() {
         const scaler = document.getElementById('phone-scaler');
-        const baseHeight = 860; // Our fixed pixel height
-        const baseWidth = 400;  // Our fixed pixel width
+        const baseHeight = 860;
+        const baseWidth = 400;
         
-        // Available space
         const vh = window.innerHeight;
         const vw = window.innerWidth;
         
-        // Target: fit within 75% of height, but don't overflow width
-        let targetScale = (vh * 0.70) / baseHeight;
+        // UPDATED: slightly smaller relative height so heading feels larger
+        let targetScale = (vh * 0.65) / baseHeight;   // was 0.70
         
-        // Prevent it from being too wide on mobile
         if ((baseWidth * targetScale) > (vw * 0.9)) {
             targetScale = (vw * 0.9) / baseWidth;
         }
 
-        // Apply scale
         gsap.set(scaler, { scale: targetScale, opacity: 1 });
+        // UPDATED: keep ScrollTrigger in sync with new geometry
+        if (window.ScrollTrigger) {
+          ScrollTrigger.refresh();
+        }
     }
 
-    // Run on load and resize
     window.addEventListener('load', resizePhone);
     window.addEventListener('resize', resizePhone);
     resizePhone();
@@ -680,7 +670,6 @@
     /* --- EXISTING ANIMATIONS --- */
     gsap.registerPlugin(ScrollTrigger);
 
-    // --- SCROLLBAR ELEMENTS ---
     const sbChaos = document.getElementById('fill-chaos');
     const sbFocus = document.getElementById('fill-focus');
     const sbStep1 = document.getElementById('fill-step1');
@@ -688,7 +677,6 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    // --- 1. HERO ANIMATION ---
     const heroTl = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero",
@@ -719,7 +707,6 @@
             duration: 0.2,
             ease: "power2.inOut"
         }, 0.15)
-        // Animating Subtitle IN before second text
         .to("#text-sub", {
             opacity: 1,
             y: 0,
@@ -760,7 +747,6 @@
         }, 0.3)
         .to({}, { duration: 0.4 });
 
-    // --- 2. PHONE REPOSITIONING INTO "HOW IT WORKS" ---
     const contentTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
@@ -770,11 +756,10 @@
         }
     });
 
-    // Note: This animates the INNER stage. The SCALER wrapper remains controlled by resizePhone()
     contentTl.to("#global-phone", {
         x: "30vw",
         y: "5vh",
-        scale: 1.4, // This multiplies on top of the base JS scale
+        scale: 1.4,
         rotation: 0,
         ease: "power2.inOut",
         immediateRender: false
@@ -787,7 +772,6 @@
         immediateRender: false 
     }, 0);
 
-    // --- 3. STEP-BY-STEP CONTENT ---
     const stepsTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#section-content",
@@ -800,7 +784,6 @@
     });
 
     stepsTl
-        // STEP 1
         .to("#card-step1", { 
             opacity: 1, 
             y: 0, 
@@ -819,8 +802,6 @@
             ease: "power2.inOut"
         }, 0.25)
         .to({}, { duration: 0.4 })
-        
-        // STEP 2
         .to("#card-step1", { 
             opacity: 0, 
             y: -30, 
@@ -845,8 +826,6 @@
             ease: "power2.inOut"
         }, ">")
         .to({}, { duration: 0.4 })
-        
-        // STEP 3
         .to("#card-step2", { 
             opacity: 0, 
             y: -30, 
@@ -882,7 +861,6 @@
         }, ">")
         .to({}, { duration: 0.7 });
 
-    // --- 4. PHONE EXIT TO CTA ---
     gsap.to(sbJoin, {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -894,7 +872,6 @@
         ease: "power2.out"
     });
 
-    // Animate inner stage away
     gsap.to("#global-phone", {
         scrollTrigger: {
             trigger: "#section-cta",
@@ -908,7 +885,6 @@
         immediateRender: false
     });
 
-    // --- 5. FORM SUBMISSION ---
     const form = document.getElementById("waitlist-form");
     
     async function handleSubmit(event) {
