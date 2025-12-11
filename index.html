@@ -207,7 +207,7 @@
     }
 
     /* Initial header states */
-    #header-mom { opacity: 1; z-index: 12; }
+    #header-bofa { opacity: 1; z-index: 12; }
     #header-ai { opacity: 0; z-index: 11; }
     #header-james { opacity: 0; z-index: 11; }
 
@@ -232,7 +232,7 @@
     }
 
     /* Chat states for animation */
-    #chat-state-mom { z-index: 5; opacity: 1; }
+    #chat-state-bofa { z-index: 5; opacity: 1; }
     #chat-state-ai-initial { z-index: 4; opacity: 0; }
     #chat-state-step1, #chat-state-step2, #chat-state-step3 {
         z-index: 3; opacity: 0;
@@ -392,9 +392,11 @@
           <div class="dynamic-island"></div>
           <div class="screen">
             
-            <div class="screen-header" id="header-mom">
-                <div class="header-profile-pic" style="background: #ffb6c1; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">M</div>
-                <span class="header-name">Mom</span>
+            <!-- BofA header -->
+            <div class="screen-header" id="header-bofa">
+                <!-- Replace 'bofa-logo.png' with the actual path to your logo file -->
+                <img src="bofa-logo.png" alt="BofA" class="header-profile-pic">
+                <span class="header-name">BofA</span>
             </div>
 
             <div class="screen-header" id="header-ai">
@@ -409,23 +411,25 @@
 
             <div class="screen-body-container">
                 
-                <div class="chat-container" id="chat-state-mom">
-                    <div class="imessage-bubble imessage-sent">happy birthday mom!</div>
-                    <div class="imessage-bubble imessage-received">thank you son</div>
-                    <div class="imessage-bubble imessage-sent">what do you wish for?</div>
-                    <div class="imessage-bubble imessage-received">for a son who has the job</div>
+                <!-- Option 1: BofA roasting your balance -->
+                <div class="chat-container" id="chat-state-bofa">
+                    <div class="imessage-bubble imessage-received">⚠️ Low balance alert.</div>
+                    <div class="imessage-bubble imessage-received">Your checking account: $4.17.</div>
+                    <div class="imessage-bubble imessage-sent">...you didn’t have to say it out loud.</div>
+                    <div class="imessage-bubble imessage-received">You need an income stream, bestie.</div>
+                    <div class="imessage-bubble imessage-sent">Alright alright, I’ll get an internship 😭</div>
                 </div>
 
                 <div class="chat-container" id="chat-state-ai-initial">
                     <div class="imessage-bubble imessage-sent">I need a job. pls help.</div>
-                    <div class="imessage-bubble imessage-received">that's my cup of tea 😉. what kinda internship are you looking for?</div>
+                    <div class="imessage-bubble imessage-received">That's my cup of tea 😉 What kinda internship are you looking for?</div>
                     <div class="imessage-bubble imessage-sent">investment banking</div>
                     <div class="imessage-bubble imessage-received">I know a senior who was at GS last summer. I'll connect you right away!</div>
                     <div class="imessage-bubble imessage-sent">amazing! thanks!</div>
                 </div>
 
                 <div class="chat-container" id="chat-state-step1">
-                    <div class="imessage-bubble imessage-sent">Help me find a JPM IB intern from BC.</div>
+                    <div class="imessage-bubble imessage-sent">Help me find an IB intern from BC.</div>
                 </div>
 
                 <div class="chat-container" id="chat-state-step2">
@@ -436,7 +440,7 @@
 
                  <div class="chat-container" id="chat-state-step3">
                     <div class="imessage-bubble imessage-sent">Hey James, it's Bob from matcha match!</div>
-                    <div class="imessage-bubble imessage-sent">Howdy, happy to connect!</div>
+                    <div class="imessage-bubble imessage-received">Howdy, happy to connect!</div>
                 </div>
 
             </div>
@@ -563,12 +567,12 @@
         }, 0.35)
         
         // Simultaneous phone/header transitions (overlapping for smoothness)
-        .to("#header-mom", { 
+        .to("#header-bofa", { 
             opacity: 0, 
             duration: 0.15,
             ease: "power2.inOut"
         }, 0.15)
-        .to("#chat-state-mom", { 
+        .to("#chat-state-bofa", { 
             opacity: 0, 
             duration: 0.15,
             ease: "power2.inOut"
@@ -721,9 +725,8 @@
             duration: 0.12,
             ease: "power2.inOut"
         }, 1.05)
-        // *** NEW: HOLD STEP 3 LONGER ***
-        .to({}, { duration: 1 }); // this extra duration keeps Step 3 visible for more scroll
-
+        // Hold Step 3 longer
+        .to({}, { duration: 1 });
 
     // --- 4. PHONE EXIT TO CTA (BUTTER SMOOTH) ---
     gsap.to(sbJoin, {
