@@ -282,8 +282,6 @@
         display: grid; place-items: center; height: 120px; position: relative;
     }
     
-    .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.1rem; color: var(--matcha-medium); }
-
     .hero-title {
       grid-area: 1 / 1;
       font-size: clamp(2.5rem, 5vw, 4.5rem); 
@@ -292,6 +290,9 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       opacity: 0; scale: 0.9; filter: blur(10px); 
     }
+
+    .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.1rem; color: var(--matcha-medium); }
+
 
     /* Content */
     .content-section {
@@ -447,11 +448,11 @@
 
   <section class="hero" id="hero-section">
       <div class="hero-content container" id="hero-text"> 
+        <p class="hero-subtitle" id="text-sub">Skip the cold emails. Get matched with BC mentors who've been in your shoes.</p>
         <div class="heading-swapper">
             <h1 class="hero-title" id="text-looking" style="opacity: 1; scale: 1; filter: blur(0px);">looking for an internship?</h1>
             <h1 class="hero-title" id="text-onetext">you're ONE TEXT away</h1>
         </div>
-        <p class="hero-subtitle" id="text-sub">Skip the cold emails. Get matched with BC mentors who've been in your shoes.</p>
       </div>
   </section>
 
