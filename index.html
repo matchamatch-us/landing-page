@@ -135,7 +135,7 @@
       .custom-scrollbar { display: none; }
     }
 
-    /* --- FIXED PHONE --- */
+    /* --- FIXED PHONE (FIRST APPEARS IN HOW IT WORKS) --- */
     .phone-wrapper-fixed {
       position: fixed;
       top: 0; left: 0;
@@ -151,11 +151,10 @@
       perspective: 1000px;
     }
 
-    /* Scaler Wrapper */
     #phone-scaler {
       transform-origin: center center;
       will-change: transform;
-      opacity: 0; /* faded in by GSAP */
+      opacity: 0; /* faded in when How it works starts */
       transition: opacity 0.3s ease;
     }
 
@@ -198,7 +197,6 @@
       z-index: 14;
     }
 
-    /* --- IPHONE SCREEN & CHAT STYLES --- */
     .screen {
       position: absolute;
       inset: 6px;
@@ -388,7 +386,7 @@
       border-radius: 20px 20px 4px 20px;
     }
 
-    /* --- NETWORK HERO (NEW) --- */
+    /* --- FULLSCREEN NETWORK HERO --- */
     .network-hero {
       height: 100vh;
       position: relative;
@@ -405,17 +403,18 @@
       position: absolute;
       inset: -30%;
       background:
-        radial-gradient(circle at 10% 20%, rgba(198,215,179,0.15), transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(152,170,128,0.18), transparent 60%);
+        radial-gradient(circle at 10% 20%, rgba(198,215,179,0.18), transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(152,170,128,0.20), transparent 60%);
       opacity: 0.9;
       pointer-events: none;
     }
 
     .network-inner {
       position: relative;
-      z-index: 2;
-      text-align: left;
-      max-width: 520px;
+      z-index: 3;
+      text-align: center;
+      max-width: 640px;
+      padding: 0 24px;
     }
 
     .network-pill {
@@ -442,7 +441,7 @@
     }
 
     .network-headline {
-      font-size: clamp(2.3rem, 4vw, 3.4rem);
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
       line-height: 1.1;
       font-weight: 700;
       margin-bottom: 14px;
@@ -451,7 +450,8 @@
     .network-sub {
       font-size: 1.1rem;
       color: var(--matcha-light);
-      max-width: 380px;
+      max-width: 480px;
+      margin: 0 auto;
       line-height: 1.6;
     }
 
@@ -460,16 +460,18 @@
       inset: 0;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      padding-right: min(8vw, 120px);
+      justify-content: center;
       pointer-events: none;
       z-index: 1;
     }
 
     .network-graph {
-      width: min(620px, 70vw);
-      max-height: 70vh;
-      opacity: 0.85;
+      width: 120%;
+      height: 120%;
+      max-width: none;
+      max-height: none;
+      opacity: 0.5;
+      transform-origin: 50% 50%;
     }
 
     .net-node {
@@ -485,7 +487,7 @@
     }
 
     .net-link {
-      stroke: rgba(180,199,160,0.5);
+      stroke: rgba(180,199,160,0.55);
       stroke-width: 1.4;
       stroke-linecap: round;
     }
@@ -498,11 +500,11 @@
       font-size: 0.85rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(226,232,240,0.8);
+      color: rgba(226,232,240,0.85);
       display: flex;
       align-items: center;
       gap: 8px;
-      z-index: 2;
+      z-index: 3;
     }
 
     .network-scroll-dot {
@@ -533,17 +535,9 @@
     }
 
     @media (max-width: 900px) {
-      .network-graph-wrapper {
-        justify-content: center;
-        padding-right: 0;
-        align-items: flex-end;
-      }
-      .network-inner {
-        text-align: center;
-        align-items: center;
-      }
-      .network-sub {
-        margin: 0 auto;
+      .network-graph {
+        width: 150%;
+        height: 150%;
       }
     }
 
@@ -551,65 +545,12 @@
       .network-headline {
         font-size: 2.1rem;
       }
-      .network-graph {
-        width: 80vw;
+      .network-sub {
+        font-size: 1rem;
       }
     }
 
-    /* --- HERO (PHONE SECTION) --- */
-    .hero {
-      height: 100vh; 
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: radial-gradient(circle at 50% 50%, var(--matcha-rich), #1a2312); 
-      z-index: 10;
-    }
-
-    .hero-content {
-      text-align: center;
-      z-index: 40; 
-      position: absolute;
-      top: 3%;
-      width: 100%;
-      padding: 0 20px;
-    }
-
-    .heading-swapper {
-      display: grid;
-      place-items: center;
-      height: 120px;
-      position: relative;
-    }
-
-    .hero-title {
-      grid-area: 1 / 1;
-      font-size: clamp(3rem, 7vmin, 6.5rem);
-      line-height: 1.1;
-      font-weight: 700;
-      margin: 0;
-      background-image: linear-gradient(to bottom right, #fff 30%, var(--matcha-light) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      opacity: 0;
-      scale: 0.9;
-      filter: blur(10px);
-    }
-
-    .hero-subtitle { 
-      max-width: 480px; 
-      margin: 0 auto 4px;
-      font-size: 1.2rem; 
-      color: var(--matcha-medium); 
-    }
-
-    #text-sub {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-
-    /* --- CONTENT SECTIONS --- */
+    /* --- HOW IT WORKS SECTION --- */
     .content-section {
       position: relative;
       background: var(--bg-light);
@@ -762,8 +703,6 @@
         transform: translateY(0);
       }
       .content-right { display: none; }
-      .hero-content { top: 10%; }
-      .hero-title { font-size: 3rem; }
     }
   </style>
 </head>
@@ -793,7 +732,7 @@
     </div>
   </div>
 
-  <!-- FIXED PHONE (OVERLAY) -->
+  <!-- FIXED PHONE (appears at How it works) -->
   <div class="phone-wrapper-fixed">
     <div id="phone-scaler">
       <div class="phone-stage" id="global-phone">
@@ -831,7 +770,7 @@
             </div>
 
             <div class="screen-body-container">
-              <!-- BofA chat -->
+              <!-- BofA chat (not used now but kept if you want it later) -->
               <div class="chat-container" id="chat-state-bofa">
                 <div class="imessage-bubble imessage-received">⚠️ Low balance alert.</div>
                 <div class="imessage-bubble imessage-received">Your checking account: $2.17.</div>
@@ -871,21 +810,8 @@
     </div>
   </div>
 
-  <!-- NEW NETWORK GRAPH OPENER -->
+  <!-- FULLSCREEN NETWORK GRAPH OPENER -->
   <section class="network-hero" id="network-hero">
-    <div class="network-inner container">
-      <div class="network-pill" id="network-pill">
-        <span class="network-pill-dot"></span>
-        Boston College · Internships
-      </div>
-      <h1 class="network-headline" id="network-headline">
-        Your school already has the network.
-      </h1>
-      <p class="network-sub" id="network-sub">
-        We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.
-      </p>
-    </div>
-
     <div class="network-graph-wrapper">
       <svg class="network-graph" id="network-graph" viewBox="0 0 800 480" preserveAspectRatio="xMidYMid meet">
         <!-- links -->
@@ -931,24 +857,22 @@
       </svg>
     </div>
 
+    <div class="network-inner">
+      <div class="network-pill" id="network-pill">
+        <span class="network-pill-dot"></span>
+        Boston College · Internships
+      </div>
+      <h1 class="network-headline" id="network-headline">
+        Your school already has the network.
+      </h1>
+      <p class="network-sub" id="network-sub">
+        We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.
+      </p>
+    </div>
+
     <div class="network-scroll-hint">
       <div class="network-scroll-dot"></div>
       SCROLL TO REVEAL YOUR CONNECTIONS
-    </div>
-  </section>
-
-  <!-- EXISTING HERO (PHONE + HEADING) -->
-  <section class="hero" id="hero-section">
-    <div class="hero-content container" id="hero-text"> 
-      <p class="hero-subtitle" id="text-sub">with matcha match...</p>
-      <div class="heading-swapper">
-        <h1 class="hero-title" id="text-looking" style="opacity:1; scale:1; filter:blur(0);">
-          looking for an internship?
-        </h1>
-        <h1 class="hero-title" id="text-onetext">
-          you're ONE TEXT away
-        </h1>
-      </div>
     </div>
   </section>
 
@@ -1038,7 +962,7 @@
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
-    /* --- NETWORK HERO TIMELINE --- */
+    /* --- NETWORK HERO TIMELINE (fills screen, text overlays) --- */
     const networkTl = gsap.timeline({
       scrollTrigger: {
         trigger: "#network-hero",
@@ -1046,7 +970,12 @@
         end: "+=2000",
         scrub: 1,
         pin: true,
-        anticipatePin: 1
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          const p = self.progress;
+          sbChaos.style.transform = `scaleY(${p})`;   // fill "Start"
+          sbFocus.style.transform = `scaleY(0)`;      // keep "Match" empty until How it works
+        }
       }
     });
 
@@ -1085,22 +1014,16 @@
       }, 0.3)
       .to("#network-graph", {
         scale: 0.95,
-        transformOrigin: "50% 50%",
-        duration: 0.6,
+        duration: 0.8,
         ease: "power1.inOut"
       }, 0.7)
       .to("#network-hero", {
-        opacity: 0.0,
+        opacity: 0,
         duration: 0.8,
         ease: "power2.inOut"
-      }, 1.1)
-      .to("#phone-scaler", {
-        opacity: 1,
-        duration: 0.6,
-        ease: "power2.inOut"
-      }, 1.1);
+      }, 1.2);
 
-    // gentle floating motion for nodes/links (ambient, not scroll-tied)
+    // gentle floating motion for nodes/links (ambient)
     gsap.to(".net-node", {
       y: (i) => (i % 2 === 0 ? -4 : 4),
       duration: 3,
@@ -1116,103 +1039,36 @@
       ease: "sine.inOut"
     });
 
-    /* --- HERO (PHONE) ANIMATION --- */
-    const heroTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".hero",
-        start: "top top",
-        end: "+=3000",
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1,
-        onUpdate: (self) => {
-          const p = self.progress;
-          if (p <= 0.4) { 
-            sbChaos.style.transform = `scaleY(${p * 2.5})`;
-            sbFocus.style.transform = `scaleY(0)`;
-          } else {
-            sbChaos.style.transform = `scaleY(1)`;
-            sbFocus.style.transform = `scaleY(${(p - 0.4) * 1.66})`;
-          }
-        }
-      }
+    /* --- INITIAL PHONE POSITION & FADE-IN FOR HOW IT WORKS --- */
+    gsap.set("#global-phone", {
+      x: "30vw",
+      y: "5vh",
+      scale: 1.4
     });
 
-    heroTl
-      .to({}, { duration: 0.15 })
-      .to("#text-looking", { 
-        opacity: 0, 
-        scale: 0.95, 
-        filter: "blur(8px)", 
-        duration: 0.2,
-        ease: "power2.inOut"
-      }, 0.15)
-      .to("#text-sub", {
-        opacity: 1,
-        y: 0,
-        duration: 0.3,
-        ease: "power2.out"
-      }, 0.3)
-      .to("#text-onetext", { 
-        opacity: 1, 
-        scale: 1, 
-        filter: "blur(0px)", 
-        duration: 0.2,
-        ease: "power2.inOut"
-      }, 0.35)
-      .to("#header-bofa", { 
-        opacity: 0, 
-        duration: 0.15,
-        ease: "power2.inOut"
-      }, 0.15)
-      .to("#chat-state-bofa", { 
-        opacity: 0, 
-        duration: 0.15,
-        ease: "power2.inOut"
-      }, 0.15)
-      .to("#header-ai", { 
-        opacity: 1, 
-        duration: 0.2,
-        ease: "power2.inOut"
-      }, 0.3)
-      .to("#chat-state-ai-initial", { 
-        opacity: 1, 
-        duration: 0.2,
-        ease: "power2.inOut"
-      }, 0.3)
-      .to("#phone-glow", { 
-        opacity: 1, 
-        duration: 0.25,
-        ease: "power2.inOut"
-      }, 0.3)
-      .to({}, { duration: 0.4 });
-
-    /* PHONE REPOSITIONING INTO HOW-IT-WORKS */
-    const contentTl = gsap.timeline({
+    gsap.to("#phone-scaler", {
       scrollTrigger: {
         trigger: "#section-content",
         start: "top bottom",
-        end: "top top",
-        scrub: 1,
-      }
+        end: "top center",
+        scrub: 1
+      },
+      opacity: 1,
+      ease: "power2.out"
     });
 
-    contentTl.to("#global-phone", {
-      x: "30vw",
-      y: "5vh",
-      scale: 1.4,
-      rotation: 0,
-      ease: "power2.inOut",
-      immediateRender: false
-    }, 0)
-    .to("#hero-text", { 
-      opacity: 0, 
-      y: -50, 
-      ease: "power2.in",
-      immediateRender: false 
-    }, 0);
+    gsap.to("#phone-glow", {
+      scrollTrigger: {
+        trigger: "#section-content",
+        start: "top bottom",
+        end: "top center",
+        scrub: 1
+      },
+      opacity: 1,
+      ease: "power2.out"
+    });
 
-    /* STEP-BY-STEP CONTENT */
+    /* --- STEP-BY-STEP CONTENT (How it works) --- */
     const stepsTl = gsap.timeline({
       scrollTrigger: {
         trigger: "#section-content",
@@ -1220,7 +1076,11 @@
         end: "+=3500",
         pin: true,
         scrub: 1,
-        anticipatePin: 1
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          const p = self.progress;
+          sbFocus.style.transform = `scaleY(${p})`;   // fill "Match" bar
+        }
       }
     });
 
@@ -1305,7 +1165,7 @@
       }, ">")
       .to({}, { duration: 0.7 });
 
-    /* PHONE EXIT TO CTA */
+    /* --- PHONE EXIT TO CTA --- */
     gsap.to(sbJoin, {
       scrollTrigger: {
         trigger: "#section-cta",
@@ -1330,7 +1190,7 @@
       immediateRender: false
     });
 
-    /* FORM SUBMISSION */
+    /* --- FORM SUBMISSION (fake) --- */
     const form = document.getElementById("waitlist-form");
     async function handleSubmit(event) {
       event.preventDefault();
