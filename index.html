@@ -281,6 +281,8 @@
     .heading-swapper {
         display: grid; place-items: center; height: 120px; position: relative;
     }
+    
+    .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.1rem; color: var(--matcha-medium); }
 
     .hero-title {
       grid-area: 1 / 1;
@@ -290,8 +292,6 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       opacity: 0; scale: 0.9; filter: blur(10px); 
     }
-
-    .hero-subtitle { max-width: 480px; margin: 12px auto 0; font-size: 1.1rem; color: var(--matcha-medium); }
 
     /* Content */
     .content-section {
@@ -721,6 +721,7 @@
             duration: 0.12,
             ease: "power2.inOut"
         }, 1.05);
+        .to({}, { duration: 0.25 })
 
 
     // --- 4. PHONE EXIT TO CTA (BUTTER SMOOTH) ---
