@@ -5,71 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matcha Match | Your Career, Brewed.</title>
   
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
   
+  <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-  <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
 
   <style>
-    /* --- VARIABLES (NEW THEME) --- */
+    /* --- RESET & VARIABLES --- */
     :root {
-      --c-cream: #F3F0E7;
-      --c-green-light: #D6E0CD;
-      --c-green-mid: #94A684;
-      --c-green-deep: #4E603B;
-      --c-green-rich: #3A4A2A;
-      --c-green-dark: #252E1C; 
-      --c-accent: #E07A5F;
-
-      --font-serif: 'DM Serif Display', serif;
-      --font-mono: 'IBM Plex Mono', monospace;
-      --font-sans: 'Inter', sans-serif;
+      --matcha-light: #D8E2C4;
+      --matcha-medium: #98AA80;
+      --matcha-dark: #6E7F56;
+      --matcha-deep: #4A5A38;
+      --matcha-rich: #2C3A1F;
+      
+      --bg-light: #f4ebdc;  /* parchment */
+      --text-white: #f8fafc;
+      --text-muted: #9a9da0;
+      --text-dark: #222018;
 
       --imessage-gray: #e9e9eb;
-      --imessage-green: var(--c-green-deep);
+      --imessage-green: var(--matcha-deep);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    /* Hide scrollbar for Chrome/Safari/Opera */
-    ::-webkit-scrollbar { display: none; }
-    
-    html.lenis { height: auto; }
-    .lenis.lenis-smooth { scroll-behavior: auto; }
-    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-    .lenis.lenis-stopped { overflow: hidden; }
-    
-    body { 
-      background-color: var(--c-cream);
-      color: var(--c-green-dark);
-      font-family: var(--font-sans);
-      overflow-x: hidden;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* --- VINTAGE NOISE TEXTURE --- */
-    .texture-overlay {
+    ::-webkit-scrollbar { display: none; }
+    html { scroll-behavior: smooth; }
+    
+    body { 
+      font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
+      color: var(--text-dark);
+      overflow-x: hidden;
+      background-color: var(--bg-light);
+      background-image:
+        radial-gradient(circle at 0 0, rgba(255,255,255,0.7), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(214,196,159,0.7), transparent 55%),
+        linear-gradient(180deg, rgba(0,0,0,0.05), transparent 40%),
+        linear-gradient(90deg, rgba(0,0,0,0.04), transparent 40%);
+      background-blend-mode: multiply;
+    }
+
+    /* subtle paper grain overlay */
+    body::before {
+      content: "";
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      inset: 0;
       pointer-events: none;
-      z-index: 9999;
-      opacity: 0.5;
-      filter: contrast(120%) brightness(100%);
+      z-index: 0;
+      opacity: 0.3;
+      mix-blend-mode: multiply;
+      background-image:
+        linear-gradient(0deg, rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 100% 3px, 3px 100%;
     }
 
     .container {
-      max-width: 1280px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 0 40px;
+      padding: 0 24px;
       position: relative;
-      z-index: 2;
+      z-index: 1;
     }
 
-    /* --- SIDE NAV (Replaces Scrollbar) --- */
-    .side-nav {
+    /* --- CUSTOM SCROLLBAR --- */
+    .custom-scrollbar {
       position: fixed;
       right: 30px;
       top: 50%;
@@ -79,54 +90,423 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 12px;
-      mix-blend-mode: multiply;
-    }
-    
-    .sb-label {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 4px;
-      color: var(--c-green-deep);
-      opacity: 0.5;
-      text-align: right;
     }
 
-    .sb-track {
-      width: 3px;
+    .sb-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+      opacity: 0.5;
+      transition: opacity 0.3s;
+      text-align: right;
+      mix-blend-mode: difference;
+    }
+
+    .sb-segment {
+      width: 4px;
       height: 40px;
-      background: rgba(37, 46, 28, 0.15);
+      background: rgba(44, 58, 31, 0.2);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      transition: width 0.3s;
+    }
+
+    .sb-fill {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--matcha-rich);
+      transform: scaleY(0);
+      transform-origin: top center;
+      transition: transform 0.1s linear;
+    }
+
+    .sb-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+      margin-top: 4px;
+    }
+
+    .sb-sub {
+      width: 4px;
+      height: 15px; 
+      background: rgba(44, 58, 31, 0.2);
       border-radius: 4px;
       position: relative;
       overflow: hidden;
     }
 
-    .sb-fill {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: var(--c-green-dark);
-      transform: scaleY(0);
-      transform-origin: top center;
+    .sb-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      cursor: pointer;
     }
-    
-    .sb-sub-group { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-    .sb-sub { width: 3px; height: 12px; background: rgba(37, 46, 28, 0.15); border-radius: 4px; position: relative; overflow: hidden; }
-    
-    .sb-wrap { cursor: pointer; display: flex; flex-direction: column; align-items: flex-end; }
-    .sb-wrap:hover .sb-label { opacity: 1; }
 
-    /* --- HERO SECTION --- */
-    .network-hero {
-      height: 100vh;
-      position: relative;
+    .sb-wrap:hover .sb-label { opacity: 1; }
+    .sb-wrap:hover .sb-segment,
+    .sb-wrap:hover .sb-sub { width: 6px; }
+
+    @media (max-width: 768px) {
+      .custom-scrollbar { display: none; }
+    }
+
+    /* --- FIXED PHONE (FIRST APPEARS IN HOW IT WORKS) --- */
+    .phone-wrapper-fixed {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100vh;
+      z-index: 50; 
+      pointer-events: none;
       display: flex;
       align-items: center;
       justify-content: center;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000px;
+    }
+
+    #phone-scaler {
+      transform-origin: center center;
+      will-change: transform;
+      opacity: 0; /* fades in at How it works */
+      transition: opacity 0.3s ease;
+    }
+
+    .phone-stage {
+      position: relative;
+      width: 400px;
+      height: 860px;
+      will-change: transform;
+      transform-style: preserve-3d;
+    }
+
+    .phone-glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 140%; height: 100%;
+      background: radial-gradient(circle, rgba(198,215,179,0.28) 0%, transparent 60%);
+      filter: blur(50px);
+      opacity: 0; 
+    }
+
+    .phone-device {
+      width: 100%; height: 100%;
+      background: #000;
+      border-radius: 54px; 
+      box-shadow:
+        0 0 0 1px #333,
+        0 0 0 3px #1a1a1a,
+        0 25px 70px -10px rgba(0,0,0,0.9);
+      position: relative;
       overflow: hidden;
-      /* Subtle vignette */
-      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.03) 100%);
+    }
+
+    .dynamic-island {
+      position: absolute;
+      top: 16px; left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 36px;
+      background: #000; border-radius: 20px;
+      z-index: 14;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 6px;
+      overflow: hidden;
+      border-radius: 48px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status bar */
+    .status-bar {
+      position: absolute;
+      top: 14px;
+      left: 0;
+      right: 0;
+      padding: 0 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'SF Pro Display', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #111;
+      opacity: 0.9;
+      z-index: 12;
+      pointer-events: none;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-signal {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 12px;
+    }
+    .status-signal span {
+      width: 3px;
+      border-radius: 1px;
+      background: #111;
+    }
+    .status-signal span:nth-child(1) { height: 4px; opacity: 0.5; }
+    .status-signal span:nth-child(2) { height: 6px; opacity: 0.7; }
+    .status-signal span:nth-child(3) { height: 9px; opacity: 0.85; }
+    .status-signal span:nth-child(4) { height: 12px; }
+
+    .status-wifi {
+      width: 18px;
+      height: 12px;
+      border-radius: 12px 12px 0 0;
+      border: 2px solid #111;
+      border-bottom: none;
+      position: relative;
+      box-sizing: border-box;
+      opacity: 0.9;
+    }
+    .status-wifi::after {
+      content: "";
+      position: absolute;
+      left: 3px;
+      right: 3px;
+      bottom: -2px;
+      height: 2px;
+      border-radius: 10px;
+      background: #111;
+      opacity: 0.65;
+    }
+
+    .status-battery {
+      width: 26px;
+      height: 13px;
+      border-radius: 4px;
+      border: 1.5px solid #111;
+      position: relative;
+      box-sizing: border-box;
+    }
+    .status-battery::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 4px;
+      bottom: 2px;
+      border-radius: 2px;
+      background: #111;
+    }
+    .status-battery::before {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 3px;
+      width: 2px;
+      height: 5px;
+      border-radius: 1px;
+      background: #111;
+    }
+    
+    .screen-header {
+      position: absolute;
+      top: 60px; 
+      left: 0;
+      right: 0;
+      height: 80px; 
+      display: flex;
+      flex-direction: column; 
+      align-items: center;
+      justify-content: center;
+      background: rgba(245, 245, 247, 0.96); 
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      z-index: 11;
+      transition: opacity 0.3s ease;
+    }
+
+    .header-profile-pic {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .header-name {
+      font-size: 13px;
+      color: #000;
+      font-family: 'SF Pro Display', sans-serif;
+      font-weight: 500;
+      margin-top: 6px;
+    }
+
+    #header-ai { opacity: 1; z-index: 12; }
+    #header-james { opacity: 0; z-index: 11; }
+
+    .screen-body-container {
+      position: relative;
+      flex-grow: 1;
+      background: #fff;
+      overflow: hidden;
+      margin-top: 140px;
+    }
+
+    .chat-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 20px 16px 40px;
+      gap: 10px; 
+      overflow-y: auto;
+      font-family: 'SF Pro Display', sans-serif;
+      opacity: 0;   /* will fade in via ScrollTrigger */
+    }
+
+    #chat-state-step1 { z-index: 5; }
+    #chat-state-step2 { z-index: 4; }
+    #chat-state-step3 { z-index: 4; }
+
+    .imessage-bubble {
+      max-width: 280px;
+      padding: 10px 16px; 
+      font-size: 17px;
+      line-height: 1.35;
+      position: relative;
+      word-wrap: break-word;
+    }
+
+    .imessage-received {
+      align-self: flex-start;
+      background-color: var(--imessage-gray);
+      color: #000;
+      border-radius: 20px 20px 20px 4px;
+    }
+
+    .imessage-sent {
+      align-self: flex-end;
+      background-color: var(--imessage-green);
+      color: white;
+      border-radius: 20px 20px 4px 20px;
+    }
+
+    /* --- FULLSCREEN NETWORK HERO --- */
+    .network-hero {
+      height: 100vh;
+      position: relative;
+      background-color: #e3edd8;
+      background-image:
+        radial-gradient(circle at 0 0, rgba(255,255,255,0.8), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(196,214,176,0.9), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,0.04), transparent 40%),
+        linear-gradient(90deg, rgba(0,0,0,0.04), transparent 40%);
+      color: #22241a;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      box-shadow: inset 0 -40px 80px rgba(0,0,0,0.12);
+    }
+
+    .network-hero::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        linear-gradient(0deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+      background-size: 100% 3px, 3px 100%;
+      opacity: 0.4;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+    }
+
+    .network-inner {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      max-width: 640px;
+      padding: 0 24px;
+    }
+
+    .network-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(15, 23, 15, 0.08);
+      border: 1px solid rgba(60,85,45,0.6);
+      color: #445132;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .network-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #7dd66f;
+      box-shadow: 0 0 12px rgba(125,214,111,0.9);
+    }
+
+    .network-headline {
+      font-family: 'DM Serif Display', 'Times New Roman', serif;
+      font-size: clamp(2.6rem, 5vw, 3.8rem);
+      line-height: 1.1;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
+      min-height: 3.1em; /* reserve space for typewriter */
+    }
+
+    .network-sub {
+      font-size: 1.05rem;
+      color: #4b5a36;
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.7;
+      min-height: 3.2em;
+    }
+
+    /* Typewriter cursor */
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: currentColor;
+      margin-left: 4px;
+      animation: cursorBlink 0.85s steps(2, start) infinite;
+      vertical-align: bottom;
+    }
+
+    .cursor-complete {
+      animation: none;
+      opacity: 1;
+    }
+
+    @keyframes cursorBlink {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
     }
 
     .network-graph-wrapper {
@@ -137,315 +517,291 @@
       justify-content: center;
       pointer-events: none;
       z-index: 1;
-      opacity: 0.6; /* Slight fade for background feel */
     }
 
     .network-graph {
-      width: 120%;
-      height: 120%;
+      width: 140%;
+      height: 140%;
+      max-width: none;
+      max-height: none;
+      transform-origin: 50% 50%;
     }
 
-    .net-node { fill: var(--c-green-mid); }
-    .net-node-main { fill: var(--c-cream); stroke: var(--c-green-deep); stroke-width: 2; }
-    .net-link { stroke: var(--c-green-mid); stroke-width: 1; opacity: 0.4; }
-
-    .network-inner {
-      position: relative;
-      z-index: 3;
-      text-align: center;
-      max-width: 700px;
-      padding: 0 24px;
+    .net-node {
+      fill: rgba(90,120,70, 0.9);
+      filter: drop-shadow(0 0 10px rgba(97,133,73,0.7));
     }
 
-    .pill-badge {
-      display: inline-flex;
+    .net-node-main {
+      fill: #ffffff;
+      stroke: rgba(90,120,70,0.9);
+      stroke-width: 2;
+      filter: drop-shadow(0 0 18px rgba(255,255,255,0.9));
+    }
+
+    .net-link {
+      stroke: rgba(122,148,96,0.9);
+      stroke-width: 1.2;
+      stroke-linecap: round;
+    }
+
+    .network-scroll-hint {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #4d5b3b;
+      display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 16px;
-      border: 1px solid rgba(37, 46, 28, 0.2);
-      border-radius: 100px;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 24px;
-      background: rgba(255,255,255,0.4);
-      backdrop-filter: blur(4px);
-    }
-    .pill-dot {
-      width: 6px; height: 6px;
-      background: #5E8C48;
-      border-radius: 50%;
-      box-shadow: 0 0 10px rgba(94, 140, 72, 0.6);
+      z-index: 3;
     }
 
-    .network-headline {
-      font-family: var(--font-serif);
-      font-size: clamp(3rem, 6vw, 4.5rem);
-      line-height: 1.1;
-      font-weight: 400;
-      color: var(--c-green-dark);
-      margin-bottom: 24px;
-      min-height: 2.2em;
-    }
-
-    .network-sub {
-      font-size: 1.1rem;
-      color: var(--c-green-deep);
-      line-height: 1.6;
-      max-width: 540px;
-      margin: 0 auto;
-      min-height: 3.2em;
-    }
-
-    .typing-cursor {
-      display: inline-block;
-      width: 2px; height: 1em;
-      background: var(--c-green-mid);
-      animation: blink 1s step-end infinite;
-      vertical-align: middle;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    /* --- CONTENT SECTION (Sticky Layout) --- */
-    .content-section {
+    .network-scroll-dot {
+      width: 6px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(68,81,50,0.7);
       position: relative;
-      padding: 10vh 0;
-      z-index: 10;
-    }
-
-    .split-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: start;
-    }
-
-    /* Left Col: Cards Overlay */
-    .content-left {
-      position: relative;
-      height: 100vh; /* height for pinning */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .card {
-      background: #FDFBF7;
-      padding: 40px;
-      border-radius: 4px;
-      border: 1px solid rgba(37, 46, 28, 0.1);
-      box-shadow: 
-        0 20px 40px -10px rgba(37, 46, 28, 0.05),
-        inset 0 0 0 1px rgba(255,255,255,0.5);
-      width: 100%;
-      max-width: 480px;
-      position: absolute; /* Overlap for crossfade */
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0; /* Default hidden */
-    }
-    
-    /* Paper texture on card */
-    .card::before {
-      content:''; position:absolute; inset:0; 
-      background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMCwwLDAsMC4wNCkiLz4KPC9zdmc+');
-      opacity: 0.5; pointer-events: none;
-    }
-
-    .step-num {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--c-green-mid);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 16px;
-      display: block;
-    }
-
-    .card h3 {
-      font-family: var(--font-serif);
-      font-size: 2rem;
-      margin-bottom: 16px;
-      color: var(--c-green-dark);
-      font-weight: 400;
-    }
-
-    .card p {
-      line-height: 1.6;
-      color: var(--c-green-deep);
-    }
-
-    /* Right Col: Sticky Phone */
-    .content-right {
-      height: 100vh;
-      position: sticky;
-      top: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      perspective: 1000px;
-    }
-
-    /* --- NEW PHONE DESIGN, OLD CONTENT --- */
-    .phone-chassis {
-      width: 380px;
-      height: 780px;
-      background: #1e201d;
-      border-radius: 56px;
-      padding: 12px;
-      box-shadow: 
-        0 0 0 2px #3e423a,
-        0 20px 50px -10px rgba(0,0,0,0.4),
-        0 50px 100px -20px rgba(37, 46, 28, 0.4);
-      position: relative;
-      transform: rotateY(-5deg) rotateX(2deg);
-    }
-    
-    /* Reflection */
-    .phone-chassis::after {
-      content: ""; position: absolute; inset: 12px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.05) 100%);
-      border-radius: 44px; pointer-events: none; z-index: 50;
-    }
-
-    .phone-screen {
-      width: 100%; height: 100%;
-      background: #fff;
-      border-radius: 44px;
       overflow: hidden;
-      position: relative;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    .dynamic-island {
-      position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
-      width: 120px; height: 35px; background: #000; border-radius: 20px; z-index: 20;
+    .network-scroll-dot::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 2px;
+      right: 2px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(68,81,50,0.95);
+      animation: scrollDot 1.4s ease-in-out infinite;
     }
 
-    /* Status Bar (Simplified) */
-    .status-bar {
-      position: absolute; top: 14px; left: 0; right: 0; padding: 0 32px;
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 14px; font-weight: 600; color: #000; z-index: 15;
-    }
-
-    /* Screen Headers (Swappable) */
-    .screen-header {
-      position: absolute; top: 0; left: 0; right: 0; height: 110px;
-      background: rgba(245, 245, 247, 0.85); backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-      z-index: 10;
-      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-      padding-bottom: 12px;
-      transition: opacity 0.3s ease;
-    }
-    .header-pic {
-      width: 36px; height: 36px; border-radius: 50%; 
-      display: grid; place-items: center; font-weight: 700; color: #fff;
-      margin-bottom: 4px;
-    }
-    .header-name { font-size: 12px; font-weight: 600; color: #000; }
-
-    #header-ai { opacity: 1; z-index: 12; }
-    #header-james { opacity: 0; z-index: 11; }
-
-    /* Screen Body */
-    .screen-body {
-      position: absolute; inset: 0; top: 110px;
-      background: #fff;
-      padding: 20px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-
-    /* Chat Layers (Overlapping for Crossfade) */
-    .chat-layer {
-      position: absolute; inset: 0;
-      padding: 20px;
-      display: flex; flex-direction: column; gap: 10px;
-      opacity: 0; /* Hidden by default */
-    }
-
-    .bubble {
-      max-width: 260px; padding: 10px 16px; font-size: 16px; line-height: 1.35;
-      position: relative; word-wrap: break-word;
-    }
-    .bubble-sent {
-      align-self: flex-end;
-      background: linear-gradient(180deg, var(--c-green-deep) 0%, var(--c-green-rich) 100%);
-      color: white; border-radius: 20px 20px 4px 20px;
-    }
-    .bubble-received {
-      align-self: flex-start;
-      background: var(--imessage-gray);
-      color: #000; border-radius: 20px 20px 20px 4px;
-    }
-
-    /* --- CTA SECTION --- */
-    .cta {
-      background: var(--c-green-dark);
-      color: var(--c-cream);
-      padding: 120px 0;
-      text-align: center;
-      position: relative;
-    }
-
-    .vintage-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding: 16px;
-      color: #fff;
-      font-family: var(--font-mono);
-      width: 100%; margin-bottom: 16px;
-      outline: none; transition: border-color 0.3s;
-    }
-    .vintage-input:focus { border-bottom-color: var(--c-green-light); }
-
-    .btn-submit {
-      background: var(--c-cream); color: var(--c-green-dark);
-      border: none; padding: 16px 32px;
-      font-family: var(--font-mono); font-weight: 600; text-transform: uppercase;
-      margin-top: 20px; cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .btn-submit:hover { transform: translateY(-2px); }
-
-    footer {
-      background: var(--c-green-dark);
-      color: rgba(255,255,255,0.4);
-      padding: 40px; text-align: center;
-      font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em;
-      border-top: 1px solid rgba(255,255,255,0.1);
+    @keyframes scrollDot {
+      0% { transform: translateY(0); opacity: 1; }
+      60% { transform: translateY(4px); opacity: 0.25; }
+      100% { transform: translateY(0); opacity: 1; }
     }
 
     @media (max-width: 900px) {
-      .split-layout { grid-template-columns: 1fr; gap: 40px; }
-      .content-right { display: none; }
-      .content-left { height: auto; display: block; }
-      .card { position: relative; transform: none; top: auto; opacity: 1 !important; margin-bottom: 20px; }
+      .network-graph {
+        width: 180%;
+        height: 180%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .network-headline {
+        font-size: 2.2rem;
+      }
+      .network-sub {
+        font-size: 0.98rem;
+      }
+    }
+
+    /* --- HOW IT WORKS SECTION --- */
+    .content-section {
+      position: relative;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      padding: 120px 0;
+      z-index: 40;
+      overflow: hidden;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 -25px 60px -40px rgba(0,0,0,0.4);
+    }
+
+    .reveal-header h2 {
+      font-family: 'DM Serif Display', 'Times New Roman', serif;
+      color: var(--matcha-rich);
+      letter-spacing: 0.04em;
+    }
+
+    .reveal-header p {
+      color: var(--matcha-deep);
+      font-size: 1.1rem;
+      line-height: 1.5;
+      margin-top: 12px;
+      margin-bottom: 20px;
+    }
+
+    .split-layout {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-top: 20px;
+      gap: 40px;
+    }
+
+    .content-left { 
+      width: 45%; 
+      height: 60vh;
+      display: grid; 
+      place-items: center;
+    }
+    
+    .content-right { width: 50%; position: relative; height: 100%; }
+
+    .card {
+      background: #fbf7ec;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid #e2ddcf;
+      box-shadow: 0 14px 40px -18px rgba(0,0,0,0.25);
+      opacity: 0;
+      transform: translateY(30px);
+      grid-area: 1 / 1;
+      width: 100%;
+    }
+    
+    .card h3 {
+      font-family: 'DM Serif Display', 'Times New Roman', serif;
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+      color: var(--matcha-rich);
+      font-weight: 400;
+      letter-spacing: 0.03em;
+    }
+    .card p {
+      color: var(--matcha-deep);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .step-num {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--matcha-medium);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+      letter-spacing: 0.16em;
+    }
+
+    /* CTA */
+    .cta {
+      background: #191f14;
+      color: var(--text-white);
+      text-align: center;
+      padding: 120px 0 160px;
+      z-index: 60;
+      position: relative;
+    }
+    
+    .cta h2 {
+      font-family: 'DM Serif Display', 'Times New Roman', serif;
+      letter-spacing: 0.08em;
+    }
+
+    .waitlist-group {
+      max-width: 400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .waitlist-input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.16);
+      padding: 16px 20px;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: 'IBM Plex Mono', ui-monospace;
+    }
+    .waitlist-input:focus {
+      border-color: var(--matcha-light);
+      background: rgba(0,0,0,0.3);
+    }
+    .waitlist-input::placeholder { color: rgba(255,255,255,0.5); }
+    
+    .btn-waitlist {
+      background: var(--matcha-light);
+      color: var(--matcha-rich);
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      margin-top: 8px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'IBM Plex Mono', ui-monospace;
+    }
+    .btn-waitlist:hover {
+      background: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px -16px rgba(0,0,0,0.9);
+    }
+    
+    #form-status {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      height: 20px;
+      font-weight: 500;
+    }
+    .status-success { color: var(--matcha-light); }
+    .status-error { color: #f87171; }
+
+    footer {
+      background: #0b0f0a;
+      color: var(--matcha-medium);
+      text-align: center;
+      padding: 32px;
+      font-size: 0.85rem;
+      position: relative;
+      z-index: 60;
+      font-family: 'IBM Plex Mono', ui-monospace;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px) {
+      .split-layout {
+        flex-direction: column;
+        gap: 32px;
+      }
+      .content-left {
+        width: 100%;
+        height: auto;
+        padding-bottom: 20px;
+      }
+      .content-right {
+        display: none;
+      }
+      .content-section {
+        padding-top: 80px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .cta { padding-top: 80px; }
     }
   </style>
 </head>
 <body>
 
-  <svg class="texture-overlay" xmlns="http://www.w3.org/2000/svg">
-    <filter id="noise">
-      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
-      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0"/>
-      <feBlend mode="overlay" in2="SourceGraphic" result="blend"/>
-    </filter>
-    <rect width="100%" height="100%" filter="url(#noise)" fill="none"/>
-  </svg>
-
-  <div class="side-nav">
-    <div class="sb-wrap" onclick="window.lenis.scrollTo(0)">
-      <div class="sb-label">Intro</div>
-      <div class="sb-track"><div class="sb-fill" id="fill-chaos"></div></div>
+  <!-- CUSTOM SCROLLBAR -->
+  <div class="custom-scrollbar">
+    <div class="sb-wrap" onclick="window.scrollTo(0,0)">
+      <div class="sb-label">Start</div>
+      <div class="sb-segment"><div class="sb-fill" id="fill-chaos"></div></div>
+    </div>
+    <div class="sb-wrap">
+      <div class="sb-label">Match</div>
+      <div class="sb-segment"><div class="sb-fill" id="fill-focus"></div></div>
     </div>
     <div class="sb-wrap" onclick="document.getElementById('section-content').scrollIntoView()">
       <div class="sb-label">How</div>
-      <div class="sb-sub-group">
+      <div class="sb-group">
         <div class="sb-sub"><div class="sb-fill" id="fill-step1"></div></div>
         <div class="sb-sub"><div class="sb-fill" id="fill-step2"></div></div>
         <div class="sb-sub"><div class="sb-fill" id="fill-step3"></div></div>
@@ -453,13 +809,72 @@
     </div>
     <div class="sb-wrap" onclick="document.getElementById('section-cta').scrollIntoView()">
       <div class="sb-label">Join</div>
-      <div class="sb-track"><div class="sb-fill" id="fill-join"></div></div>
+      <div class="sb-segment"><div class="sb-fill" id="fill-join"></div></div>
     </div>
   </div>
 
+  <!-- FIXED PHONE (appears from How it works down) -->
+  <div class="phone-wrapper-fixed">
+    <div id="phone-scaler">
+      <div class="phone-stage" id="global-phone">
+        <div class="phone-glow" id="phone-glow"></div>
+        <div class="phone-device">
+          <div class="screen">
+            <!-- Status bar -->
+            <div class="status-bar">
+              <div class="status-time">9:41</div>
+              <div class="status-icons">
+                <div class="status-signal">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+                <div class="status-wifi"></div>
+                <div class="status-battery"></div>
+              </div>
+            </div>
+
+            <div class="dynamic-island"></div>
+            
+            <!-- Chat headers -->
+            <div class="screen-header" id="header-ai">
+              <div class="header-profile-pic" style="background: var(--matcha-medium); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:20px;">🍵</div>
+              <span class="header-name">matchAI</span>
+            </div>
+
+            <div class="screen-header" id="header-james">
+              <div class="header-profile-pic" style="background:#98AA80; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold;">J</div>
+              <span class="header-name">James</span>
+            </div>
+
+            <div class="screen-body-container">
+              <!-- Step 1: first chat -->
+              <div class="chat-container" id="chat-state-step1">
+                <div class="imessage-bubble imessage-sent">Help me find an IB intern from BC.</div>
+              </div>
+
+              <!-- Step 2: AI searching + match -->
+              <div class="chat-container" id="chat-state-step2">
+                <div class="imessage-bubble imessage-sent" style="opacity:0.5;">Help me find an IB intern from BC.</div>
+                <div class="imessage-bubble imessage-received">Got it, searching...</div>
+                <div class="imessage-bubble imessage-received">Target acquired! James, a senior, interned at GS last summer. I'll connect you right away!</div>
+              </div>
+
+              <!-- Step 3: intro to James -->
+              <div class="chat-container" id="chat-state-step3">
+                <div class="imessage-bubble imessage-sent">Hey James, it's Bob from matcha match!</div>
+                <div class="imessage-bubble imessage-received">Howdy, happy to connect!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN NETWORK GRAPH OPENER -->
   <section class="network-hero" id="network-hero">
     <div class="network-graph-wrapper">
       <svg class="network-graph" id="network-graph" viewBox="0 0 800 480" preserveAspectRatio="xMidYMid meet">
+        <!-- links -->
         <g class="net-links">
           <line class="net-link" x1="400" y1="240" x2="220" y2="110" />
           <line class="net-link" x1="400" y1="240" x2="620" y2="130" />
@@ -467,6 +882,7 @@
           <line class="net-link" x1="400" y1="240" x2="610" y2="290" />
           <line class="net-link" x1="400" y1="240" x2="320" y2="390" />
           <line class="net-link" x1="400" y1="240" x2="510" y2="390" />
+          <!-- secondary links -->
           <line class="net-link" x1="220" y1="110" x2="110" y2="180" />
           <line class="net-link" x1="220" y1="110" x2="260" y2="40" />
           <line class="net-link" x1="620" y1="130" x2="710" y2="200" />
@@ -476,14 +892,19 @@
           <line class="net-link" x1="320" y1="390" x2="240" y2="430" />
           <line class="net-link" x1="510" y1="390" x2="590" y2="430" />
         </g>
+
+        <!-- nodes -->
         <g class="net-nodes">
+          <!-- central node -->
           <circle class="net-node net-node-main" cx="400" cy="240" r="16" />
+          <!-- primary layer -->
           <circle class="net-node" cx="220" cy="110" r="9" />
           <circle class="net-node" cx="620" cy="130" r="10" />
           <circle class="net-node" cx="190" cy="260" r="9" />
           <circle class="net-node" cx="610" cy="290" r="9" />
           <circle class="net-node" cx="320" cy="390" r="10" />
           <circle class="net-node" cx="510" cy="390" r="10" />
+          <!-- outer ring -->
           <circle class="net-node" cx="110" cy="180" r="7" />
           <circle class="net-node" cx="260" cy="40" r="7" />
           <circle class="net-node" cx="650" cy="60" r="7" />
@@ -496,163 +917,211 @@
       </svg>
     </div>
 
-    <div class="network-inner">
-      <div class="pill-badge">
-        <span class="pill-dot"></span>
-        matcha match · Boston College
+    <div class="network-inner" id="network-inner">
+      <div class="network-pill" id="network-pill">
+        <span class="network-pill-dot"></span>
+        Boston College · Internships
       </div>
       <h1 class="network-headline">
-        <span id="headline-typed"></span><span class="typing-cursor"></span>
+        <span id="headline-typed"></span><span class="typing-cursor" id="headline-cursor"></span>
       </h1>
       <p class="network-sub">
         <span id="sub-typed"></span>
       </p>
     </div>
+
+    <div class="network-scroll-hint">
+      <div class="network-scroll-dot"></div>
+      SCROLL TO CONTINUE
+    </div>
   </section>
 
+  <!-- HOW IT WORKS -->
   <section class="content-section" id="section-content">
     <div class="container">
+      <div class="reveal-header">
+        <h2 style="text-align:left; font-size:2.5rem; max-width:500px;">How it works</h2>
+        <p style="text-align:left; max-width:500px;">
+          Real human connection, powered by AI. We bridge the gap between ambition and experience.
+        </p>
+      </div>
+      
       <div class="split-layout">
-        
         <div class="content-left">
-          <div class="card" id="card-step1">
+          <div class="card step-card" id="card-step1">
             <span class="step-num">Step 01</span>
             <h3>Text Your Goal</h3>
             <p>Tell our AI what you're looking for. “Help me find a JPM IB intern from BC.” Simple as that.</p>
           </div>
-          <div class="card" id="card-step2">
+          <div class="card step-card" id="card-step2">
             <span class="step-num">Step 02</span>
             <h3>Get Matched</h3>
             <p>Our AI searches our vetted network of upperclassmen mentors to find your perfect match based on role, company, and school.</p>
           </div>
-          <div class="card" id="card-step3">
+          <div class="card step-card" id="card-step3">
             <span class="step-num">Step 03</span>
             <h3>Connect & Learn</h3>
             <p>Get introduced directly via text. Schedule mock interviews, resume reviews, and get the real inside scoop.</p>
           </div>
         </div>
-
-        <div class="content-right">
-          <div class="phone-chassis">
-            <div class="phone-screen">
-              <div class="dynamic-island"></div>
-              <div class="status-bar">
-                <span>9:41</span>
-                <span>5G</span>
-              </div>
-
-              <div class="screen-header" id="header-ai">
-                <div class="header-pic" style="background: var(--c-green-mid);">🍵</div>
-                <div class="header-name">matchAI</div>
-              </div>
-              <div class="screen-header" id="header-james">
-                <div class="header-pic" style="background: var(--c-green-deep);">J</div>
-                <div class="header-name">James</div>
-              </div>
-
-              <div class="screen-body">
-                
-                <div class="chat-layer" id="chat-state-step1">
-                  <div class="bubble bubble-sent">Help me find an IB intern from BC.</div>
-                </div>
-
-                <div class="chat-layer" id="chat-state-step2">
-                  <div class="bubble bubble-sent" style="opacity:0.5;">Help me find an IB intern from BC.</div>
-                  <div class="bubble bubble-received">Got it, searching...</div>
-                  <div class="bubble bubble-received">Target acquired! James, a senior, interned at GS last summer.</div>
-                </div>
-
-                <div class="chat-layer" id="chat-state-step3">
-                  <div class="bubble bubble-sent">Hey James, it's Bob from matcha match!</div>
-                  <div class="bubble bubble-received">Howdy, happy to connect!</div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <div class="content-right"></div>
       </div>
     </div>
   </section>
 
+  <!-- CTA -->
   <section class="cta" id="section-cta">
-    <div class="container">
-      <h2 style="font-family: var(--font-serif); font-size: 2.5rem; margin-bottom: 20px;">Your future is waiting.</h2>
-      <div style="max-width: 400px; margin: 0 auto;">
-        <form id="waitlist-form">
-          <input type="text" name="name" class="vintage-input" placeholder="FULL NAME" required>
-          <input type="email" name="email" class="vintage-input" placeholder="BC EMAIL ADDRESS" required>
-          <button type="submit" class="btn-submit">Join Waitlist</button>
-        </form>
-        <p id="form-status" style="margin-top:20px; font-family:var(--font-mono); font-size:0.8rem;"></p>
-      </div>
+    <div class="container reveal-cta">
+      <h2 style="font-size:2.4rem; margin-bottom:10px;">Your future is waiting.</h2>
+      <p style="color:var(--matcha-light); margin-bottom:40px; font-size:1.1rem;">
+        Join the exclusive network for Boston College students.
+      </p>
+      
+      <form id="waitlist-form" class="waitlist-group">
+        <input type="text" name="name" class="waitlist-input" placeholder="Your Full Name" required>
+        <input type="tel" name="phone" class="waitlist-input" placeholder="Mobile Phone Number" required pattern="[0-9]{10,}" title="Please enter a valid phone number">
+        <button type="submit" class="btn-waitlist">Join Now</button>
+      </form>
+      <p id="form-status"></p>
     </div>
   </section>
 
   <footer>
-    &copy; 2025 Matcha Match · Boston College
+    &copy; 2025 Matcha Match · Your career, brewed.
   </footer>
 
   <script>
-    // 1. Initialize Lenis (New Smooth Scroll)
-    const lenis = new Lenis({ duration: 1.2, smoothWheel: true });
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-    gsap.ticker.lagSmoothing(0);
-    window.lenis = lenis;
-
     gsap.registerPlugin(ScrollTrigger);
 
-    // 2. NETWORK GRAPH ANIMATION (Old Logic)
+    /* --- PHONE SCALE (LOCK PROPORTIONS) --- */
+    function resizePhone() {
+      const scaler = document.getElementById('phone-scaler');
+      const baseHeight = 860;
+      const baseWidth = 400;
+
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
+      
+      let targetScale = (vh * 0.70) / baseHeight;
+      if ((baseWidth * targetScale) > (vw * 0.9)) {
+        targetScale = (vw * 0.9) / baseWidth;
+      }
+
+      gsap.set(scaler, { scale: targetScale });
+    }
+
+    window.addEventListener('resize', resizePhone);
+
+    /* --- TYPEWRITER SETUP --- */
+    const headlineSpan = document.getElementById("headline-typed");
+    const subSpan = document.getElementById("sub-typed");
+    const cursor = document.getElementById("headline-cursor");
+
+    const fullHeadline = "Your school already has the network.";
+    const fullSub = "We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.";
+
+    function typeText(targetEl, text, speed, callback) {
+      let i = 0;
+      targetEl.textContent = "";
+      const interval = setInterval(() => {
+        targetEl.textContent = text.slice(0, i);
+        i++;
+        if (i > text.length) {
+          clearInterval(interval);
+          if (callback) callback();
+        }
+      }, speed);
+    }
+
+    /* --- INITIAL LOAD: NETWORK INTRO + TYPING --- */
     window.addEventListener('load', () => {
+      resizePhone();
+
       gsap.set("#network-graph", { scale: 0.85, opacity: 0, rotate: -4 });
       gsap.set(".net-node", { opacity: 0, scale: 0.6 });
       gsap.set(".net-link", { opacity: 0 });
 
       const introTl = gsap.timeline();
       introTl
-        .to("#network-graph", { scale: 1.05, opacity: 0.9, rotate: 0, duration: 1.2, ease: "power3.out" }, 0)
-        .to(".net-node", { opacity: 1, scale: 1, stagger: 0.05, duration: 0.8, ease: "back.out(1.7)" }, 0.4)
-        .to(".net-link", { opacity: 0.7, stagger: 0.03, duration: 0.6, ease: "power1.out" }, 0.5)
+        .to("#network-graph", {
+          scale: 1.05,
+          opacity: 0.9,
+          rotate: 0,
+          duration: 1.2,
+          ease: "power3.out"
+        }, 0)
+        .to(".net-node", {
+          opacity: 1,
+          scale: 1,
+          stagger: 0.05,
+          duration: 0.8,
+          ease: "back.out(1.7)"
+        }, 0.4)
+        .to(".net-link", {
+          opacity: 0.7,
+          stagger: 0.03,
+          duration: 0.6,
+          ease: "power1.out"
+        }, 0.5)
         .add(() => {
-          typeText(document.getElementById("headline-typed"), "Your school already has the network.", 40, () => {
-            typeText(document.getElementById("sub-typed"), "We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.", 20);
+          // type headline, then subtitle
+          typeText(headlineSpan, fullHeadline, 40, () => {
+            typeText(subSpan, fullSub, 20, () => {
+              if (cursor) cursor.classList.add("cursor-complete");
+            });
           });
-          // Breathing
-          gsap.to(".net-node", { opacity: (i) => (i % 2 === 0 ? 0.45 : 0.9), duration: 3, repeat: -1, yoyo: true, ease: "sine.inOut" });
+
+          // continuous breathing animation
+          gsap.to(".net-node", {
+            opacity: (i) => (i % 2 === 0 ? 0.45 : 0.9),
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+          gsap.to(".net-link", {
+            opacity: 0.3,
+            duration: 3.2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
         }, 1.3);
     });
 
-    // Typewriter Logic
-    function typeText(targetEl, text, speed, callback) {
-      let i = 0; targetEl.textContent = "";
-      const interval = setInterval(() => {
-        targetEl.textContent = text.slice(0, i); i++;
-        if (i > text.length) { clearInterval(interval); if (callback) callback(); }
-      }, speed);
-    }
-
-    // 3. SCROLLBAR SEGMENT LOGIC (Old Logic applied to New Side Nav)
+    /* --- SCROLLBAR SEGMENTS --- */
     const sbChaos = document.getElementById('fill-chaos');
+    const sbFocus = document.getElementById('fill-focus');
     const sbStep1 = document.getElementById('fill-step1');
     const sbStep2 = document.getElementById('fill-step2');
     const sbStep3 = document.getElementById('fill-step3');
     const sbJoin  = document.getElementById('fill-join');
 
+    // Start segment fills while hero scrolls
     ScrollTrigger.create({
-      trigger: "#network-hero", start: "top top", end: "bottom top",
-      onUpdate: (self) => { sbChaos.style.transform = `scaleY(${self.progress})`; }
+      trigger: "#network-hero",
+      start: "top top",
+      end: "bottom top",
+      onUpdate: (self) => {
+        const p = self.progress;
+        sbChaos.style.transform = `scaleY(${p})`;
+      }
     });
 
-    // 4. MAIN STEPS TIMELINE (EXACT OLD LOGIC RESTORED)
-    // PRE-SET STATES to prevent "Invisible" bug
-    gsap.set("#card-step1", { opacity: 1, y: 0 });
-    gsap.set("#chat-state-step1", { opacity: 1 });
-    gsap.set(["#card-step2", "#card-step3"], { opacity: 0, y: 30 });
-    gsap.set(["#chat-state-step2", "#chat-state-step3"], { opacity: 0 });
-    gsap.set("#header-james", { opacity: 0 });
+    /* --- PHONE FADE IN AT HOW IT WORKS --- */
+    ScrollTrigger.create({
+      trigger: "#section-content",
+      start: "top bottom",
+      end: "top top",
+      scrub: 1,
+      onUpdate: (self) => {
+        const p = self.progress;
+        gsap.set("#phone-scaler", { opacity: p });
+        gsap.set("#phone-glow", { opacity: p });
+      }
+    });
 
+    /* --- STEP-BY-STEP CONTENT TIMELINE --- */
     const stepsTl = gsap.timeline({
       scrollTrigger: {
         trigger: "#section-content",
@@ -660,54 +1129,134 @@
         end: "+=2600",
         pin: true,
         scrub: 1,
-        anticipatePin: 1
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          const p = self.progress;
+          sbFocus.style.transform = `scaleY(${p})`;
+        }
       }
     });
 
     stepsTl
-      // Step 1 In (Already visible, but sync scrollbar)
-      .to(sbStep1, { scaleY: 1, duration: 0.1 }, 0)
-      .to({}, { duration: 0.6 }) // Read time
+      // STEP 1: show first card + first chat
+      .to("#card-step1", { 
+        opacity: 1, 
+        y: 0, 
+        duration: 0.25,
+        ease: "power2.out"
+      }, 0.05)
+      .to("#chat-state-step1", {
+        opacity: 1,
+        duration: 0.25,
+        ease: "power2.out"
+      }, 0.05)
+      .to(sbStep1, { scaleY: 1, duration: 0.15, ease: "power1.out" }, 0.05)
+      .to({}, { duration: 0.6 })
 
-      // Swap 1 -> 2
-      .to("#card-step1", { opacity: 0, y: -30, duration: 0.2 })
-      .to("#card-step2", { opacity: 1, y: 0, duration: 0.25 })
-      .to("#chat-state-step1", { opacity: 0, duration: 0.2 }, "<")
-      .to("#chat-state-step2", { opacity: 1, duration: 0.25 }, ">")
-      .to(sbStep2, { scaleY: 1, duration: 0.1 }, "<")
-      .to({}, { duration: 0.6 }) // Read time
+      // STEP 2: second card + AI searching
+      .to("#card-step1", { 
+        opacity: 0, 
+        y: -30, 
+        duration: 0.2,
+        ease: "power2.in"
+      })
+      .to("#card-step2", { 
+        opacity: 1, 
+        y: 0, 
+        duration: 0.25,
+        ease: "power2.out"
+      })
+      .to("#chat-state-step1", {
+        opacity: 0,
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, "<")
+      .to("#chat-state-step2", {
+        opacity: 1,
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, ">")
+      .to(sbStep2, { scaleY: 1, duration: 0.15, ease: "power1.out" }, "<0.05")
+      .to({}, { duration: 0.6 })
 
-      // Swap 2 -> 3
-      .to("#card-step2", { opacity: 0, y: -30, duration: 0.2 })
-      .to("#card-step3", { opacity: 1, y: 0, duration: 0.25 })
-      .to("#chat-state-step2", { opacity: 0, duration: 0.2 }, "<")
-      
-      // Header Swap (AI -> James)
-      .to("#header-ai", { opacity: 0, duration: 0.25 }, ">-0.05")
-      .to("#header-james", { opacity: 1, duration: 0.25 }, ">")
-      
-      .to("#chat-state-step3", { opacity: 1, duration: 0.25 }, ">")
-      .to(sbStep3, { scaleY: 1, duration: 0.1 }, "<")
+      // STEP 3: third card + intro to James
+      .to("#card-step2", { 
+        opacity: 0, 
+        y: -30, 
+        duration: 0.2,
+        ease: "power2.in"
+      })
+      .to("#card-step3", { 
+        opacity: 1, 
+        y: 0, 
+        duration: 0.25,
+        ease: "power2.out"
+      })
+      .to("#chat-state-step2", {
+        opacity: 0,
+        duration: 0.2,
+        ease: "power2.inOut"
+      }, "<")
+      .to("#header-ai", { 
+        opacity: 0, 
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, ">-0.05")
+      .to("#header-james", { 
+        opacity: 1, 
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, ">")
+      .to("#chat-state-step3", {
+        opacity: 1,
+        duration: 0.25,
+        ease: "power2.inOut"
+      }, ">")
+      .to(sbStep3, { scaleY: 1, duration: 0.15, ease: "power1.out" }, "<0.05")
       .to({}, { duration: 0.7 });
 
-    // Join Trigger
+    /* --- CTA / JOIN SEGMENT + PHONE FADE OUT --- */
     gsap.to(sbJoin, {
-      scrollTrigger: { trigger: "#section-cta", start: "top 80%", scrub: true },
-      scaleY: 1
+      scrollTrigger: {
+        trigger: "#section-cta",
+        start: "top 80%",
+        toggleActions: "play reverse play reverse"
+      },
+      scaleY: 1,
+      duration: 0.3,
+      ease: "power2.out"
     });
 
-    // Form Mock
-    document.getElementById("waitlist-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const s = document.getElementById("form-status");
-      s.textContent = "Brewing your network...";
-      s.style.color = "var(--c-green-mid)";
+    gsap.to("#phone-scaler", {
+      scrollTrigger: {
+        trigger: "#section-cta",
+        start: "top bottom",
+        end: "top center",
+        scrub: 1
+      },
+      opacity: 0,
+      ease: "power2.inOut"
+    });
+
+    /* --- FORM SUBMISSION (mock) --- */
+    const form = document.getElementById("waitlist-form");
+    async function handleSubmit(event) {
+      event.preventDefault();
+      const status = document.getElementById("form-status");
+      const data = new FormData(event.target);
+      const name = data.get('name');
+      
+      status.innerHTML = "Sending...";
+      status.className = "";
+
       setTimeout(() => {
-        s.textContent = "You're on the list! Launching Feb 14, 2026.";
-        s.style.color = "var(--c-green-deep)";
+        status.innerHTML = `Hey ${name}, thanks for your interest in Matcha Match! Hang tight till our official launch on 2.14.26!`;
+        status.className = "status-success";
+        form.reset();
       }, 1500);
-    });
-
+    }
+    form.addEventListener("submit", handleSubmit);
   </script>
+
 </body>
 </html>
