@@ -60,7 +60,7 @@
       z-index: 1;
     }
 
-    /* --- CUSTOM SCROLLBAR (Vertical Stack) --- */
+    /* --- CUSTOM SCROLLBAR --- */
     .custom-scrollbar {
       position: fixed;
       right: 40px;
@@ -235,24 +235,49 @@
       overflow: hidden;
       display: flex; align-items: center; justify-content: center;
       z-index: 1;
-      background-image: url('network.png'); /* Use the provided image */
-      background-size: cover;
+    }
+
+    /* Background Wrapper for Animation */
+    .hero-bg-wrapper {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 1;
+      /* Initial state: circle mask at 0% (hidden at center) */
+      clip-path: circle(0% at 50% 50%);
+    }
+
+    .hero-bg-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      /* Using the specific image requested */
+      background-image: url('network.png'); 
       background-position: center;
+      background-size: cover;
       background-repeat: no-repeat;
     }
 
-    /* Add an overlay to tint the background image */
-    .network-hero::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: var(--matcha-cream);
-        opacity: 0.85; /* Adjust opacity to control the tint strength */
-        mix-blend-mode: multiply; /* Blend the cream color with the image */
-        z-index: 2;
+    /* Overlay for tinting after animation */
+    .hero-bg-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: var(--matcha-cream);
+      opacity: 0; /* Starts transparent */
+      z-index: 2;
+      mix-blend-mode: multiply; /* Blends cream over image */
+      pointer-events: none;
+    }
+
+    /* Bottom Fade (Blur/Merge) */
+    .hero-bottom-fade {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 200px; /* Height of the blur area */
+      /* Gradient from transparent to solid cream color */
+      background: linear-gradient(to bottom, rgba(243, 239, 229, 0) 0%, var(--matcha-cream) 100%);
+      z-index: 2;
+      pointer-events: none;
     }
 
     .network-inner {
@@ -261,13 +286,14 @@
       text-align: center;
       max-width: 800px;
       padding: 0 24px;
+      opacity: 0; /* Hidden initially, fades in after network expands */
     }
 
     .network-pill {
       display: inline-flex; align-items: center; gap: 10px;
       padding: 6px 14px;
       border-radius: 999px;
-      background: rgba(243, 239, 229, 0.6);
+      background: rgba(243, 239, 229, 0.8);
       border: 1px solid #dcd8cc;
       color: var(--text-dark);
       font-family: 'IBM Plex Mono', monospace;
@@ -276,6 +302,7 @@
       text-transform: uppercase;
       margin-bottom: 24px;
       font-weight: 500;
+      backdrop-filter: blur(4px);
     }
 
     .network-pill-dot {
@@ -315,7 +342,7 @@
       color: var(--text-muted);
       font-family: 'IBM Plex Mono', monospace;
       z-index: 3;
-      opacity: 0.7;
+      opacity: 0; /* Hidden initially */
     }
 
     /* --- HOW IT WORKS SECTION --- */
@@ -325,6 +352,8 @@
       padding: 140px 0;
       z-index: 40;
       overflow: hidden;
+      /* Ensure no harsh line at top by pulling up slightly or just relying on gradient above */
+      margin-top: -2px; 
     }
 
     .reveal-header h2 {
@@ -477,6 +506,13 @@
   </div>
 
   <section class="network-hero" id="network-hero">
+    <div class="hero-bg-wrapper" id="hero-bg-wrapper">
+      <div class="hero-bg-img"></div>
+      <div class="hero-bg-overlay" id="hero-bg-overlay"></div>
+    </div>
+
+    <div class="hero-bottom-fade"></div>
+
     <div class="network-inner" id="network-inner">
       <div class="network-pill" id="network-pill">
         <span class="network-pill-dot"></span>
@@ -487,7 +523,7 @@
       </h1>
     </div>
 
-    <div class="network-scroll-hint">SCROLL TO EXPLORE</div>
+    <div class="network-scroll-hint" id="scroll-hint">SCROLL TO EXPLORE</div>
   </section>
 
   <section class="content-section" id="section-content">
@@ -558,23 +594,39 @@
       }, speed);
     }
 
-    /* --- INITIAL LOAD & ANIMATION --- */
+    /* --- INITIAL LOAD ANIMATION SEQUENCE --- */
     window.addEventListener('load', () => {
       resizePhone();
       
-      typeText(headlineSpan, fullHeadline, 35);
+      const tl = gsap.timeline();
 
-      // --- BREATHING EFFECT (Subtle scaling for solid figures) ---
-      gsap.utils.toArray(".net-node, .net-node-main").forEach((node) => {
-        gsap.to(node, {
-          scale: "random(0.98, 1.05)", // Subtle scale range
-          duration: "random(2, 4)",
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: "random(0, 2)"
-        });
+      // Step 1: Reveal Network Image from Center (Branching Out)
+      // We animate the clip-path of the wrapper from a small circle to full coverage
+      tl.to("#hero-bg-wrapper", {
+        clipPath: "circle(150% at 50% 50%)", // Expand way past corners
+        duration: 3, 
+        ease: "power2.inOut"
+      })
+      // Step 2: Fade the image slightly (by fading in a cream overlay)
+      .to("#hero-bg-overlay", {
+        opacity: 0.85, // Adjust this value to make it more or less faded
+        duration: 1.5,
+        ease: "power1.out"
+      }, "-=1.0") // Overlap slightly with expansion
+      // Step 3: Reveal Text and Start Typing
+      .to("#network-inner", {
+        opacity: 1,
+        duration: 1,
+        onStart: () => {
+            typeText(headlineSpan, fullHeadline, 35);
+        }
+      }, "-=0.5")
+      .to("#scroll-hint", {
+        opacity: 0.7,
+        duration: 1,
+        delay: 0.5
       });
+
     });
 
     /* --- SCROLLBAR FILL --- */
