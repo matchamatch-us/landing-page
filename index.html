@@ -553,11 +553,41 @@
   <section class="cta" id="section-cta">
     <div class="container reveal-cta">
       <h2>Your dream internship is waiting.</h2>
-      <form id="waitlist-form" class="waitlist-group">
+
+      <!-- =========================================================
+           IMPORTANT:
+           1) Replace the action URL below with your Make.com signup webhook URL.
+           2) This form posts directly to Make. We use a hidden iframe to avoid CORS issues.
+         ========================================================= -->
+      <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+      <form
+        id="waitlist-form"
+        class="waitlist-group"
+        action="https://hook.us2.make.com/7un53b0jahy4pq2bohodobddkoi8ozpn"
+        method="POST"
+        target="hidden_iframe"
+      >
         <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
+
+        <!-- NEW: Phone input (user can type (617)... and we normalize to E.164 before submit) -->
+        <input
+          type="tel"
+          name="phone"
+          id="phone"
+          class="waitlist-input"
+          placeholder="(617) 555-1234"
+          required
+        >
+
         <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" required>
+
+        <!-- NEW: keep the original raw phone too -->
+        <input type="hidden" name="phone_raw" id="phone_raw">
+
         <button type="submit" class="btn-waitlist">REQUEST ACCESS</button>
       </form>
+
       <p id="form-status"></p>
     </div>
   </section>
@@ -692,17 +722,43 @@
       opacity: 0
     });
 
-    /* --- FORM SUBMISSION --- */
+    /* --- FORM SUBMISSION (posts to Make.com) --- */
     const form = document.getElementById("waitlist-form");
+    const status = document.getElementById("form-status");
+    const phoneEl = document.getElementById("phone");
+    const phoneRawEl = document.getElementById("phone_raw");
+
+    function normalizeUSPhoneToE164(raw) {
+      const digits = (raw || "").replace(/\D/g, "");
+      if (digits.length === 10) return "+1" + digits;                 // (617) 555-1234
+      if (digits.length === 11 && digits.startsWith("1")) return "+" + digits; // 1-617-...
+      if (raw && raw.trim().startsWith("+") && digits.length >= 10) return raw.trim(); // already e164-ish
+      return null;
+    }
+
     form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const status = document.getElementById("form-status");
       status.style.color = "var(--text-light)";
       status.innerHTML = "Requesting access...";
+
+      const raw = phoneEl.value;
+      const e164 = normalizeUSPhoneToE164(raw);
+
+      if (!e164) {
+        e.preventDefault();
+        status.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
+        return;
+      }
+
+      // Keep both versions:
+      phoneRawEl.value = raw;
+      phoneEl.value = e164; // what Make + Twilio + Supabase should store (E.164)
+
+      // Since we're submitting to a hidden iframe, we won't get a reliable success callback.
+      // This is a simple MVP UX.
       setTimeout(() => {
-        status.innerHTML = `Thanks! We've added you to the BC priority list.`;
+        status.innerHTML = "Thanks! Check your texts 🙂";
         form.reset();
-      }, 1500);
+      }, 1200);
     });
   </script>
 </body>
