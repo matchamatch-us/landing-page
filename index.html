@@ -8,27 +8,31 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
 
   <style>
-    /* --- VARIABLES & RESET --- */
+    /* --- THEME VARIABLES (Code B Look) --- */
     :root {
       --c-cream: #F3F0E7;
       --c-paper: #EAE6DB;
       --c-green-light: #D6E0CD;
       --c-green-mid: #94A684;
       --c-green-deep: #4E603B;
-      --c-green-dark: #252E1C; 
+      --c-green-rich: #3A4A2A;
+      --c-green-dark: #252E1C;
       --c-accent: #E07A5F;
 
       --font-serif: 'DM Serif Display', serif;
       --font-mono: 'IBM Plex Mono', monospace;
       --font-sans: 'Inter', sans-serif;
+      --font-ui: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
 
-      --easing: cubic-bezier(0.25, 1, 0.5, 1);
+      --imessage-gray: #F2F2F7;
+      --imessage-green: var(--c-green-rich);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,17 +50,18 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* --- TEXTURE OVERLAY --- */
+    /* --- NOISE TEXTURE --- */
     .texture-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
       z-index: 9999;
-      opacity: 0.6;
+      opacity: 0.5;
       filter: contrast(120%) brightness(100%);
+      mix-blend-mode: overlay;
     }
 
-    /* --- LAYOUT UTILS --- */
+    /* --- LAYOUT --- */
     .container {
       max-width: 1280px;
       margin: 0 auto;
@@ -65,361 +70,378 @@
       z-index: 2;
     }
 
-    /* --- HERO SECTION --- */
-    .hero {
-      height: 100vh;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .hero-viz {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      opacity: 0.6;
-    }
-    .hero-viz svg { width: 100%; height: 100%; }
-
-    .hero-content {
-      position: relative;
-      z-index: 5;
-      text-align: center;
-      max-width: 800px;
-      padding: 0 20px;
-    }
-
-    .pill-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border: 1px solid rgba(37, 46, 28, 0.2);
-      border-radius: 100px;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 32px;
-      background: rgba(255,255,255,0.4);
-      backdrop-filter: blur(4px);
-    }
-    .pill-pulse {
-      width: 6px; height: 6px;
-      background: #5E8C48;
-      border-radius: 50%;
-      box-shadow: 0 0 0 0 rgba(94, 140, 72, 0.7);
-      animation: pulseGreen 2s infinite;
-    }
-
-    @keyframes pulseGreen {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(94, 140, 72, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(94, 140, 72, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(94, 140, 72, 0); }
-    }
-
-    h1 {
-      font-family: var(--font-serif);
-      font-size: clamp(3rem, 6vw, 5rem);
-      line-height: 1;
-      font-weight: 400;
-      letter-spacing: -0.02em;
-      margin-bottom: 24px;
-      color: var(--c-green-dark);
-    }
-    
-    .cursor {
-      display: inline-block;
-      width: 0.4em;
-      height: 1em;
-      background: var(--c-green-mid);
-      vertical-align: text-bottom;
-      animation: blink 1s step-end infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    .hero-sub {
-      font-size: 1.125rem;
-      line-height: 1.6;
-      color: var(--c-green-deep);
-      max-width: 540px;
-      margin: 0 auto;
-      opacity: 0; /* JS Fade in */
-      transform: translateY(10px);
-    }
-
-    /* --- PROCESS SECTION --- */
-    .section-process {
-      position: relative;
-      padding: 10vh 0;
-      z-index: 10;
-    }
-
-    .process-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      min-height: 300vh; /* space to scroll */
-    }
-
-    .process-left {
-      position: relative;
-    }
-    
-    .content-sticky-wrapper {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding-left: 20px;
-      z-index: 20; /* Ensure content sits above any wrappers */
-    }
-
-    .step-card {
-      background: #FDFBF7;
-      border: 1px solid rgba(37, 46, 28, 0.08);
-      padding: 40px;
-      border-radius: 2px;
-      box-shadow: 
-        0 20px 40px -10px rgba(37, 46, 28, 0.05),
-        inset 0 0 0 1px rgba(255,255,255,0.8);
-      max-width: 480px;
-      position: absolute;
+    /* --- SIDE NAV (Scrollbar) --- */
+    .custom-scrollbar {
+      position: fixed;
+      right: 30px;
       top: 50%;
       transform: translateY(-50%);
-      width: 100%;
-      /* FIX: Removed visibility:hidden. Default is VISIBLE. */
-      opacity: 1; 
-      z-index: 10;
-    }
-    
-    /* Default Hide Steps 2 and 3 using CSS to prevent overlap before JS loads */
-    #card-2, #card-3 {
-      opacity: 0;
-      pointer-events: none;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
     }
 
-    .step-card::before {
-      content:''; position:absolute; inset:0; 
-      background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMCwwLDAsMC4wNCkiLz4KPC9zdmc+');
-      opacity: 0.5; pointer-events: none;
+    .sb-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      cursor: pointer;
+      group: focus;
     }
 
-    .step-meta {
+    .sb-label {
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--c-green-mid);
+      font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      margin-bottom: 16px;
-      display: block;
-    }
-    
-    .step-card h3 {
-      font-family: var(--font-serif);
-      font-size: 2rem;
-      margin-bottom: 16px;
-      color: var(--c-green-dark);
-    }
-    
-    .step-card p {
-      line-height: 1.6;
+      margin-bottom: 4px;
       color: var(--c-green-deep);
+      opacity: 0;
+      transform: translateX(10px);
+      transition: all 0.3s ease;
     }
+    .sb-wrap:hover .sb-label { opacity: 1; transform: translateX(0); }
 
-    /* --- PHONE --- */
-    .phone-column {
+    .sb-segment {
+      width: 3px; height: 32px;
+      background: rgba(37, 46, 28, 0.15);
+      border-radius: 4px;
       position: relative;
+      overflow: hidden;
+    }
+    .sb-fill {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--c-green-dark);
+      transform: scaleY(0); transform-origin: top;
+      transition: transform 0.1s linear;
     }
 
-    .phone-sticky-wrapper {
-      position: sticky;
-      top: 0;
-      height: 100vh;
+    .sb-group { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; margin-top: 4px; }
+    .sb-sub {
+      width: 3px; height: 12px; 
+      background: rgba(37, 46, 28, 0.15); border-radius: 4px;
+      position: relative; overflow: hidden;
+    }
+
+    @media (max-width: 768px) { .custom-scrollbar { display: none; } }
+
+    /* --- FIXED PHONE WRAPPER (Logic from Code A) --- */
+    .phone-wrapper-fixed {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100vh;
+      z-index: 50; 
+      pointer-events: none;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
+      padding-right: min(10vw, 80px);
       perspective: 1000px;
     }
 
-    .phone-chassis {
-      width: 380px;
-      height: 780px;
-      background: #1e201d;
-      border-radius: 56px;
-      padding: 12px;
-      box-shadow: 
-        0 0 0 2px #3e423a,
-        0 20px 50px -10px rgba(0,0,0,0.4),
-        0 50px 100px -20px rgba(37, 46, 28, 0.4);
-      position: relative;
-      transform: rotateY(-5deg) rotateX(2deg);
-      will-change: transform;
+    @media (max-width: 900px) {
+      .phone-wrapper-fixed { justify-content: center; padding-right: 0; }
     }
 
-    .phone-chassis::after {
+    #phone-scaler {
+      transform-origin: center center;
+      will-change: transform;
+      opacity: 0; /* Fades in via ScrollTrigger */
+    }
+
+    .phone-stage {
+      position: relative;
+      width: 380px; height: 800px;
+      transform-style: preserve-3d;
+    }
+
+    /* Modern Phone Styling (Code B Aesthetics) */
+    .phone-device {
+      width: 100%; height: 100%;
+      background: #1e201d;
+      border-radius: 56px; 
+      box-shadow:
+        0 0 0 2px #3e423a,
+        0 20px 60px -15px rgba(0,0,0,0.5),
+        0 40px 90px -20px rgba(37, 46, 28, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Screen Reflection */
+    .phone-device::after {
       content: ""; position: absolute; inset: 12px;
       background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.05) 100%);
       border-radius: 44px; pointer-events: none; z-index: 50;
     }
 
-    .phone-screen {
-      width: 100%; height: 100%;
+    .screen {
+      position: absolute; inset: 12px;
+      overflow: hidden; border-radius: 44px;
       background: #fff;
-      border-radius: 44px;
-      overflow: hidden;
-      position: relative;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex; flex-direction: column;
     }
 
-    .island {
+    /* Dynamic Island */
+    .dynamic-island {
       position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
       width: 120px; height: 35px; background: #000; border-radius: 20px; z-index: 20;
     }
 
-    .app-header {
-      position: absolute; top: 0; left: 0; right: 0; height: 100px;
-      background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
-      z-index: 10; border-bottom: 1px solid rgba(0,0,0,0.05);
-      display: flex; align-items: flex-end; justify-content: center; padding-bottom: 16px;
-    }
-    .header-content { text-align: center; }
-    .avatar-circle {
-      width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 4px;
-      background: var(--c-green-light); color: var(--c-green-dark);
-      display: grid; place-items: center; font-weight: 600; font-size: 18px;
-    }
-    .contact-name { font-size: 12px; font-weight: 600; color: #000; }
-
-    .chat-interface {
-      padding-top: 120px;
-      padding-left: 20px; padding-right: 20px;
-      display: flex; flex-direction: column; gap: 12px;
+    /* Screen Headers */
+    .screen-header {
+      position: absolute; top: 0; left: 0; right: 0; height: 110px;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+      padding-bottom: 16px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      z-index: 11; transition: opacity 0.3s ease;
     }
 
-    .bubble {
-      max-width: 260px;
-      padding: 12px 16px;
-      font-size: 16px;
-      line-height: 1.4;
-      position: relative;
-      /* FIX: Removed visibility:hidden. */
-      opacity: 1;
+    .header-profile-pic {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: grid; place-items: center; font-size: 18px;
+    }
+    .header-name {
+      font-size: 12px; color: #000; font-family: var(--font-ui);
+      font-weight: 600; margin-top: 6px;
+    }
+
+    #header-ai { opacity: 1; z-index: 12; }
+    #header-james { opacity: 0; z-index: 11; }
+
+    .screen-body-container {
+      position: relative; flex-grow: 1; background: #fff;
+      overflow: hidden; margin-top: 110px;
+    }
+
+    .chat-container {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      padding: 20px 16px 40px; gap: 10px;
+      font-family: var(--font-ui);
     }
     
-    /* Hide future chat bubbles by default */
-    .chat-2, .chat-3 {
-      opacity: 0;
+    #chat-state-step1, #chat-state-step2, #chat-state-step3 {
+        /* Set initial states in CSS to avoid flash, managed by GSAP later */
+        opacity: 0; 
     }
-    
-    .bubble-sent {
-      align-self: flex-end;
-      background: var(--c-green-deep);
-      background: linear-gradient(180deg, var(--c-green-deep) 0%, #3A4A2A 100%);
-      color: white;
-      border-radius: 20px 20px 4px 20px;
-      box-shadow: 0 2px 8px rgba(78, 96, 59, 0.2);
+    #chat-state-step1 { opacity: 1; z-index: 5; }
+
+    .imessage-bubble {
+      max-width: 260px; padding: 12px 16px;
+      font-size: 16px; line-height: 1.4;
+      position: relative; word-wrap: break-word;
     }
-    
-    .bubble-received {
+
+    .imessage-received {
       align-self: flex-start;
-      background: #F2F2F7;
+      background-color: var(--imessage-gray);
       color: #000;
       border-radius: 20px 20px 20px 4px;
     }
 
-    /* --- CTA SECTION --- */
-    .section-cta {
-      background: var(--c-green-dark);
-      color: var(--c-cream);
-      padding: 120px 0;
-      text-align: center;
-      position: relative;
+    .imessage-sent {
+      align-self: flex-end;
+      background: var(--imessage-green);
+      /* Subtle gradient for theme */
+      background: linear-gradient(180deg, var(--c-green-rich) 0%, #2C3A1F 100%);
+      color: white;
+      border-radius: 20px 20px 4px 20px;
+      box-shadow: 0 2px 8px rgba(58, 74, 42, 0.2);
+    }
+
+
+    /* --- NETWORK HERO (Theme Updated) --- */
+    .network-hero {
+      height: 100vh; position: relative;
+      background-color: var(--c-cream);
       overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1;
     }
 
-    .section-cta h2 {
-      color: var(--c-cream);
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      margin-bottom: 40px;
+    .network-hero::before {
+        /* Subtle radial gradient */
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(243,240,231,0) 60%);
+        z-index: 0;
     }
 
-    .form-wrapper {
-      max-width: 420px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
+    .network-inner {
+      position: relative; z-index: 3; text-align: center;
+      max-width: 700px; padding: 0 24px;
     }
 
-    .input-group {
-      position: relative;
-      margin-bottom: 16px;
-    }
-
-    .vintage-input {
-      width: 100%;
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding: 16px 0;
-      font-family: var(--font-mono);
-      color: #fff;
-      font-size: 1rem;
-      border-radius: 0;
-      transition: border-color 0.3s;
-    }
-    .vintage-input:focus {
-      outline: none;
-      border-bottom-color: var(--c-green-light);
-    }
-    .vintage-input::placeholder { color: rgba(255,255,255,0.3); }
-
-    .btn-submit {
-      margin-top: 24px;
-      background: var(--c-cream);
-      color: var(--c-green-dark);
-      border: none;
-      padding: 18px 40px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: transform 0.2s, box-shadow 0.2s;
-      width: 100%;
-    }
-    .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    }
-
-    footer {
-      background: var(--c-green-dark);
-      color: rgba(255,255,255,0.4);
-      text-align: center;
-      padding: 40px 0;
+    .network-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 999px;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(78, 96, 59, 0.2);
+      backdrop-filter: blur(4px);
+      color: var(--c-green-deep);
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .network-pill-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--c-accent);
+      box-shadow: 0 0 0 0 rgba(224, 122, 95, 0.7);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(224, 122, 95, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(224, 122, 95, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(224, 122, 95, 0); }
+    }
+
+    .network-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 6vw, 4.5rem);
+      line-height: 1.1; font-weight: 400;
+      color: var(--c-green-dark);
+      margin-bottom: 16px; min-height: 2.2em;
+    }
+
+    .network-sub {
+      font-size: 1.1rem; color: var(--c-green-mid);
+      max-width: 540px; margin: 0 auto; line-height: 1.6;
+      min-height: 3.2em;
+    }
+
+    .typing-cursor {
+      display: inline-block; width: 3px; height: 1em;
+      background: var(--c-green-mid);
+      animation: cursorBlink 1s step-end infinite;
+      vertical-align: text-bottom; margin-left: 4px;
+    }
+    @keyframes cursorBlink { 50% { opacity: 0; } }
+
+    .network-graph-wrapper {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; z-index: 1; opacity: 0.6;
+    }
+    .network-graph { width: 140%; height: 140%; }
+    .net-node { fill: var(--c-green-deep); }
+    .net-node-main { fill: var(--c-cream); stroke: var(--c-green-deep); stroke-width: 2; }
+    .net-link { stroke: var(--c-green-mid); stroke-width: 1.5; opacity: 0.4; }
+
+
+    /* --- CONTENT SECTION (Logic from Code A, Style from Code B) --- */
+    .content-section {
+      position: relative;
+      background: var(--c-cream);
+      padding: 120px 0;
+      z-index: 40;
+      /* Logic: Ensure enough scroll height */
+      min-height: 100vh;
+    }
+
+    .reveal-header h2 {
+      font-family: var(--font-serif);
+      color: var(--c-green-dark);
+      font-size: 2.5rem; margin-bottom: 16px;
+    }
+    .reveal-header p {
+      font-size: 1.1rem; color: var(--c-green-deep);
+      max-width: 500px; line-height: 1.5;
+    }
+
+    .split-layout {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-top: 40px; gap: 40px;
+    }
+
+    .content-left { width: 45%; height: 60vh; display: grid; place-items: center; }
+    .content-right { width: 50%; height: 100%; position: relative; }
+
+    /* CARD STYLE (Vintage Paper) */
+    .card {
+      background: #FDFBF7;
+      border: 1px solid rgba(37, 46, 28, 0.08);
+      padding: 40px;
+      border-radius: 4px;
+      box-shadow: 
+        0 20px 40px -10px rgba(37, 46, 28, 0.05),
+        inset 0 0 0 1px rgba(255,255,255,0.8);
+      opacity: 0; /* Logic handles fade in */
+      transform: translateY(30px);
+      grid-area: 1 / 1; width: 100%;
+      position: relative;
+    }
+    /* Paper Texture on Card */
+    .card::before {
+      content:''; position:absolute; inset:0; 
+      background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMCwwLDAsMC4wNCkiLz4KPC9zdmc+');
+      opacity: 0.5; pointer-events: none;
+    }
+
+    .step-num {
+      font-family: var(--font-mono); font-size: 0.75rem;
+      color: var(--c-green-mid); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 16px; display: block;
+    }
+    .card h3 {
+      font-family: var(--font-serif); font-size: 2rem;
+      margin-bottom: 16px; color: var(--c-green-dark); font-weight: 400;
+    }
+    .card p {
+      color: var(--c-green-deep); line-height: 1.6; font-size: 1rem;
+    }
+
+    /* --- CTA --- */
+    .cta {
+      background: var(--c-green-dark);
+      color: var(--c-cream);
+      padding: 120px 0 160px;
+      text-align: center; position: relative; z-index: 60;
+    }
+    .cta h2 { font-family: var(--font-serif); font-size: 3rem; margin-bottom: 16px; }
+    .cta p { color: var(--c-green-light); margin-bottom: 40px; }
+
+    .waitlist-group { max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+    
+    /* Vintage Input Style */
+    .vintage-input {
+      width: 100%; background: transparent; border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding: 16px 0;
+      font-family: var(--font-mono); color: #fff; font-size: 1rem;
+      border-radius: 0; outline: none; transition: border-color 0.3s;
+    }
+    .vintage-input:focus { border-bottom-color: var(--c-green-light); }
+    .vintage-input::placeholder { color: rgba(255,255,255,0.3); }
+
+    .btn-waitlist {
+      margin-top: 16px;
+      background: var(--c-cream); color: var(--c-green-dark);
+      border: none; padding: 16px;
+      font-family: var(--font-mono); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      cursor: pointer; transition: transform 0.2s;
+    }
+    .btn-waitlist:hover { transform: translateY(-2px); }
+
+    footer {
+      background: var(--c-green-dark); color: rgba(255,255,255,0.4);
+      text-align: center; padding: 40px; font-size: 0.75rem;
+      font-family: var(--font-mono); letter-spacing: 0.2em; text-transform: uppercase;
+      border-top: 1px solid rgba(255,255,255,0.1); z-index: 60; position: relative;
     }
 
     @media (max-width: 900px) {
-      .process-grid { grid-template-columns: 1fr; gap: 0; }
-      .phone-column { display: none; }
-      .content-sticky-wrapper { height: auto; display: block; padding: 60px 0; position: relative; }
-      .step-card { position: relative; transform: none; top: auto; opacity: 1 !important; margin-bottom: 40px; max-width: 100%; }
-      .process-grid { min-height: auto; }
-      .bubble { opacity: 1 !important; }
+      .split-layout { flex-direction: column; gap: 32px; }
+      .content-left { width: 100%; height: auto; padding-bottom: 40px; }
+      .content-right { display: none; }
+      .card { transform: translateY(0); opacity: 1 !important; margin-bottom: 20px; }
+      .phone-wrapper-fixed { display: none; } /* Hide phone scroll effect on mobile */
     }
   </style>
 </head>
@@ -434,247 +456,302 @@
     <rect width="100%" height="100%" filter="url(#noise)" fill="none"/>
   </svg>
 
-  <main>
-    <section class="hero" id="hero">
-      <div class="hero-viz">
-        <svg viewBox="0 0 1000 600" id="network-svg" preserveAspectRatio="xMidYMid slice">
-          <g id="links-layer" stroke="var(--c-green-mid)" stroke-width="1.5" stroke-opacity="0.3"></g>
-          <g id="nodes-layer"></g>
-        </svg>
+  <div class="custom-scrollbar">
+    <div class="sb-wrap" onclick="window.lenis.scrollTo(0)">
+      <div class="sb-label">Start</div>
+      <div class="sb-segment"><div class="sb-fill" id="fill-chaos"></div></div>
+    </div>
+    <div class="sb-wrap" onclick="window.lenis.scrollTo('#section-content')">
+      <div class="sb-label">How</div>
+      <div class="sb-group">
+        <div class="sb-sub"><div class="sb-fill" id="fill-step1"></div></div>
+        <div class="sb-sub"><div class="sb-fill" id="fill-step2"></div></div>
+        <div class="sb-sub"><div class="sb-fill" id="fill-step3"></div></div>
       </div>
+    </div>
+    <div class="sb-wrap" onclick="window.lenis.scrollTo('#section-cta')">
+      <div class="sb-label">Join</div>
+      <div class="sb-segment"><div class="sb-fill" id="fill-join"></div></div>
+    </div>
+  </div>
 
-      <div class="hero-content">
-        <div class="pill-badge">
-          <div class="pill-pulse"></div>
-          matcha match · Boston College
-        </div>
-        <h1>
-          <span id="type-target"></span><span class="cursor"></span>
-        </h1>
-        <p class="hero-sub" id="hero-sub">
-          We map the alumni who’ve landed your dream roles—and connect you with a single text.
-        </p>
-      </div>
-    </section>
-
-    <section class="section-process" id="process">
-      <div class="container">
-        <div class="process-grid">
-          
-          <div class="process-left">
-            <div class="content-sticky-wrapper">
-              
-              <div class="step-card" id="card-1">
-                <span class="step-meta">Step 01</span>
-                <h3>Set Your Target</h3>
-                <p>Tell our AI what you're looking for. “Help me find a JPM IB intern from BC.” No portals, no forms. Just text.</p>
-              </div>
-
-              <div class="step-card" id="card-2">
-                <span class="step-meta">Step 02</span>
-                <h3>The Search</h3>
-                <p>We scan our vetted network of upperclassmen and alumni. We don't just match keywords; we match experience and vibe.</p>
-              </div>
-
-              <div class="step-card" id="card-3">
-                <span class="step-meta">Step 03</span>
-                <h3>Direct Intro</h3>
-                <p>Get introduced immediately via iMessage. Schedule mock interviews, resume reviews, or just grab a coffee.</p>
-              </div>
+  <div class="phone-wrapper-fixed">
+    <div id="phone-scaler">
+      <div class="phone-stage">
+        <div class="phone-device">
+          <div class="screen">
+            <div class="dynamic-island"></div>
+            
+            <div class="screen-header" id="header-ai">
+              <div class="header-profile-pic" style="background: var(--c-green-mid); color:white;">🍵</div>
+              <span class="header-name">matchAI</span>
             </div>
-          </div>
 
-          <div class="phone-column">
-            <div class="phone-sticky-wrapper">
-              <div class="phone-chassis">
-                <div class="phone-screen">
-                  <div class="island"></div>
-                  
-                  <div class="app-header">
-                    <div class="header-content">
-                      <div class="avatar-circle">🍵</div>
-                      <div class="contact-name">Matcha AI</div>
-                    </div>
-                  </div>
+            <div class="screen-header" id="header-james">
+              <div class="header-profile-pic" style="background:#333; color:white;">J</div>
+              <span class="header-name">James</span>
+            </div>
 
-                  <div class="chat-interface">
-                    <div class="bubble bubble-sent chat-1">Find me an IB intern from BC.</div>
-                    
-                    <div class="bubble bubble-received chat-2">Searching the network...</div>
-                    <div class="bubble bubble-received chat-2">Found match: James (BC '25), Summer Analyst at Goldman Sachs.</div>
-                    
-                    <div class="bubble bubble-sent chat-3">Perfect. Connect us.</div>
-                    <div class="bubble bubble-received chat-3">Connecting you with James...</div>
-                    <div class="bubble bubble-received chat-3" style="background:#fff; border:1px solid #eee;">Hey! James here. Happy to help w/ prep.</div>
-                  </div>
+            <div class="screen-body-container">
+              <div class="chat-container" id="chat-state-step1">
+                <div class="imessage-bubble imessage-sent">Find me an IB intern from BC.</div>
+              </div>
 
-                </div>
+              <div class="chat-container" id="chat-state-step2">
+                <div class="imessage-bubble imessage-sent" style="opacity:0.5;">Find me an IB intern from BC.</div>
+                <div class="imessage-bubble imessage-received">Searching network...</div>
+                <div class="imessage-bubble imessage-received">Match found: James (BC '25), Goldman Sachs Summer Analyst.</div>
+              </div>
+
+              <div class="chat-container" id="chat-state-step3">
+                <div class="imessage-bubble imessage-sent">Perfect. Connect us.</div>
+                <div class="imessage-bubble imessage-received">Connecting you with James...</div>
+                <div class="imessage-bubble imessage-received" style="background:#fff; border:1px solid #eee;">Hey! James here. Happy to help w/ prep.</div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section class="section-cta" id="join">
-      <div class="container">
-        <h2>Your future is waiting.</h2>
-        <div class="form-wrapper">
-          <form id="waitlist-form">
-            <div class="input-group">
-              <input type="text" class="vintage-input" placeholder="FULL NAME" required>
-            </div>
-            <div class="input-group">
-              <input type="email" class="vintage-input" placeholder="BC EMAIL ADDRESS" required>
-            </div>
-            <button type="submit" class="btn-submit">Request Access</button>
-          </form>
-          <div id="success-msg" style="margin-top:20px; color:#D6E0CD; display:none; font-family:var(--font-mono);">
-            You're on the list. We'll text you soon.
+  <section class="network-hero" id="network-hero">
+    <div class="network-graph-wrapper">
+      <svg class="network-graph" id="network-graph" viewBox="0 0 800 480" preserveAspectRatio="xMidYMid meet">
+        <g class="net-links">
+          <line class="net-link" x1="400" y1="240" x2="220" y2="110" />
+          <line class="net-link" x1="400" y1="240" x2="620" y2="130" />
+          <line class="net-link" x1="400" y1="240" x2="190" y2="260" />
+          <line class="net-link" x1="400" y1="240" x2="610" y2="290" />
+          <line class="net-link" x1="400" y1="240" x2="320" y2="390" />
+          <line class="net-link" x1="400" y1="240" x2="510" y2="390" />
+        </g>
+        <g class="net-nodes">
+          <circle class="net-node net-node-main" cx="400" cy="240" r="16" />
+          <circle class="net-node" cx="220" cy="110" r="9" />
+          <circle class="net-node" cx="620" cy="130" r="10" />
+          <circle class="net-node" cx="190" cy="260" r="9" />
+          <circle class="net-node" cx="610" cy="290" r="9" />
+          <circle class="net-node" cx="320" cy="390" r="10" />
+          <circle class="net-node" cx="510" cy="390" r="10" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="network-inner">
+      <div class="network-pill">
+        <span class="network-pill-dot"></span>
+        matcha match · Boston College
+      </div>
+      <h1 class="network-headline">
+        <span id="headline-typed"></span><span class="typing-cursor"></span>
+      </h1>
+      <p class="network-sub">
+        <span id="sub-typed"></span>
+      </p>
+    </div>
+  </section>
+
+  <section class="content-section" id="section-content">
+    <div class="container">
+      <div class="reveal-header">
+        <h2>How it works</h2>
+        <p>Real human connection, powered by AI. We bridge the gap between ambition and experience.</p>
+      </div>
+      
+      <div class="split-layout">
+        <div class="content-left">
+          <div class="card step-card" id="card-step1">
+            <span class="step-num">Step 01</span>
+            <h3>Text Your Goal</h3>
+            <p>Tell our AI what you're looking for. “Help me find a JPM IB intern from BC.” Simple as that.</p>
+          </div>
+          <div class="card step-card" id="card-step2">
+            <span class="step-num">Step 02</span>
+            <h3>Get Matched</h3>
+            <p>Our AI searches our vetted network of upperclassmen mentors to find your perfect match based on role, company, and school.</p>
+          </div>
+          <div class="card step-card" id="card-step3">
+            <span class="step-num">Step 03</span>
+            <h3>Connect & Learn</h3>
+            <p>Get introduced directly via text. Schedule mock interviews, resume reviews, and get the real inside scoop.</p>
           </div>
         </div>
+        <div class="content-right"></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <footer>
-      &copy; 2025 MATCHA MATCH · CAREERS BREWED IN BOSTON
-    </footer>
-  </main>
+  <section class="cta" id="section-cta">
+    <div class="container">
+      <h2>Your future is waiting.</h2>
+      <p>Join the exclusive network for Boston College students.</p>
+      <form id="waitlist-form" class="waitlist-group">
+        <input type="text" name="name" class="vintage-input" placeholder="YOUR FULL NAME" required>
+        <input type="email" name="email" class="vintage-input" placeholder="BC EMAIL ADDRESS" required>
+        <button type="submit" class="btn-waitlist">Request Access</button>
+      </form>
+      <p id="form-status" style="margin-top:20px; font-family:var(--font-mono); font-size:0.8rem;"></p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Matcha Match · Careers Brewed in Boston
+  </footer>
 
   <script>
-    // 1. Initialize Lenis (Smooth Scroll)
+    // 1. INIT LENIS (Smooth Scroll)
     const lenis = new Lenis({
       duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
-      smoothWheel: true,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true
     });
+    window.lenis = lenis;
 
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
+    // Connect Lenis to GSAP Ticker
     gsap.registerPlugin(ScrollTrigger);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
 
-    // 2. HERO ANIMATION
-    const svgNS = "http://www.w3.org/2000/svg";
-    const linksLayer = document.getElementById("links-layer");
-    const nodesLayer = document.getElementById("nodes-layer");
-    const nodeCount = 12;
-    const nodes = [];
-    const width = 1000;
-    const height = 600;
-
-    for(let i=0; i<nodeCount; i++) {
-      let circle = document.createElementNS(svgNS, "circle");
-      let x = Math.random() * width;
-      let y = Math.random() * height;
-      let r = 4 + Math.random() * 6;
-      circle.setAttribute("cx", x);
-      circle.setAttribute("cy", y);
-      circle.setAttribute("r", r);
-      circle.setAttribute("fill", i===0 ? "#E07A5F" : "#4E603B");
-      circle.setAttribute("opacity", 0.8);
-      nodesLayer.appendChild(circle);
-      nodes.push({ el: circle, x, y, r, off: Math.random()*100 });
-    }
-
-    nodes.forEach((n1, i) => {
-      nodes.forEach((n2, j) => {
-        if (i < j && Math.random() > 0.7) {
-          let line = document.createElementNS(svgNS, "line");
-          line.setAttribute("x1", n1.x);
-          line.setAttribute("y1", n1.y);
-          line.setAttribute("x2", n2.x);
-          line.setAttribute("y2", n2.y);
-          let len = Math.hypot(n2.x - n1.x, n2.y - n1.y);
-          line.style.strokeDasharray = len;
-          line.style.strokeDashoffset = len;
-          linksLayer.appendChild(line);
-          gsap.to(line, {
-            strokeDashoffset: 0,
-            duration: 1.5,
-            delay: Math.random(),
-            ease: "power2.out"
-          });
-        }
-      });
-    });
-
-    gsap.to(nodes, {
-      y: "+=20",
-      x: "+=10",
-      duration: 3,
-      stagger: {
-        each: 0.2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      }
-    });
-
-    const words = "Your school already has the network.";
-    let charIndex = 0;
-    const typeTarget = document.getElementById("type-target");
-    function type() {
-      if (charIndex < words.length) {
-        typeTarget.textContent += words.charAt(charIndex);
-        charIndex++;
-        setTimeout(type, 50);
-      } else {
-        gsap.to("#hero-sub", { opacity: 1, y: 0, duration: 1, delay: 0.2 });
-      }
-    }
-    setTimeout(type, 500);
-
-    // 3. SCROLL PROCESS LOGIC (Desktop)
-    if (window.innerWidth > 900) {
+    /* --- PHONE SCALER --- */
+    function resizePhone() {
+      const scaler = document.getElementById('phone-scaler');
+      const baseHeight = 800;
+      const baseWidth = 380;
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
       
-      const processTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: "#process",
-          start: "top top",
-          end: "+=3000",
-          scrub: 0.5,
-          pin: true,
-          anticipatePin: 1
-        }
-      });
+      let targetScale = (vh * 0.85) / baseHeight;
+      if ((baseWidth * targetScale) > (vw * 0.9)) {
+        targetScale = (vw * 0.9) / baseWidth;
+      }
+      gsap.set(scaler, { scale: targetScale });
+    }
+    window.addEventListener('resize', resizePhone);
 
-      /* Logic: Step 1 is ALREADY VISIBLE via CSS.
-         We only need to animate it OUT, and animate the others IN.
-      */
+    /* --- TYPEWRITER --- */
+    const headlineSpan = document.getElementById("headline-typed");
+    const subSpan = document.getElementById("sub-typed");
+    const fullHeadline = "Your school already has the network.";
+    const fullSub = "We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.";
 
-      processTl
-        .to({}, { duration: 0.5 }) // Wait
-
-        // Step 1 Out -> Step 2 In
-        .to("#card-1", { opacity: 0, y: -20, duration: 1 })
-        .to(".chat-1", { opacity: 0.4, scale: 0.95, transformOrigin:"right bottom", duration: 1 }, "<")
-        
-        .to("#card-2", { opacity: 1, y: 0, duration: 1 })
-        .to(".chat-2", { opacity: 1, y: 0, scale: 1, stagger: 0.2, duration: 1 }, "<")
-        
-        .to({}, { duration: 1.5 }) // Wait
-
-        // Step 2 Out -> Step 3 In
-        .to("#card-2", { opacity: 0, y: -20, duration: 1 })
-        .to(".chat-2", { opacity: 0.4, scale: 0.95, transformOrigin:"left bottom", duration: 1 }, "<")
-        
-        .to("#card-3", { opacity: 1, y: 0, duration: 1 })
-        .to(".chat-3", { opacity: 1, y: 0, scale: 1, stagger: 0.2, duration: 1 }, "<");
+    function typeText(targetEl, text, speed, callback) {
+      let i = 0;
+      const interval = setInterval(() => {
+        targetEl.textContent = text.slice(0, i);
+        i++;
+        if (i > text.length) { clearInterval(interval); if (callback) callback(); }
+      }, speed);
     }
 
-    // 4. Form Logic
-    document.getElementById("waitlist-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const btn = e.target.querySelector("button");
-      btn.textContent = "Brewing...";
-      btn.disabled = true;
+    /* --- ON LOAD ANIMATIONS --- */
+    window.addEventListener('load', () => {
+      resizePhone();
+      
+      // Hero Animation
+      gsap.from(".net-node", { opacity: 0, scale: 0, duration: 1, stagger: 0.05, ease: "back.out" });
+      gsap.from(".net-link", { opacity: 0, duration: 1.5, delay: 0.5 });
+      
       setTimeout(() => {
-        e.target.style.display = "none";
-        document.getElementById("success-msg").style.display = "block";
+        typeText(headlineSpan, fullHeadline, 40, () => {
+          typeText(subSpan, fullSub, 20);
+        });
+      }, 1000);
+
+      // Float Animation for Graph
+      gsap.to("#network-graph", { y: -20, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut" });
+    });
+
+    /* --- SCROLL LOGIC (from Code A) --- */
+    const sbChaos = document.getElementById('fill-chaos');
+    const sbFocus = document.getElementById('fill-focus');
+    const sbStep1 = document.getElementById('fill-step1');
+    const sbStep2 = document.getElementById('fill-step2');
+    const sbStep3 = document.getElementById('fill-step3');
+    const sbJoin  = document.getElementById('fill-join');
+
+    // Hero Scrollbar
+    ScrollTrigger.create({
+      trigger: "#network-hero", start: "top top", end: "bottom top",
+      onUpdate: (self) => { sbChaos.style.transform = `scaleY(${self.progress})`; }
+    });
+
+    // Fade Phone In
+    ScrollTrigger.create({
+      trigger: "#section-content", start: "top bottom", end: "top top", scrub: 1,
+      onUpdate: (self) => { gsap.set("#phone-scaler", { opacity: self.progress }); }
+    });
+
+    // Header Reveal
+    gsap.from(".reveal-header", {
+      scrollTrigger: { trigger: "#section-content", start: "top 80%" },
+      y: 30, opacity: 0, duration: 0.8
+    });
+
+    // MAIN TIMELINE
+    const stepsTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#section-content",
+        start: "top top", 
+        end: "+=2600",
+        pin: true,
+        scrub: 1,
+        anticipatePin: 1,
+        onUpdate: (self) => { sbFocus.style.transform = `scaleY(${self.progress})`; }
+      }
+    });
+
+    stepsTl
+      // STEP 1
+      .to("#card-step1", { opacity: 1, y: 0, duration: 0.25 })
+      // (Step 1 chat is already opacity:1 in CSS, so we just hold)
+      .to(sbStep1, { scaleY: 1, duration: 0.1 }, 0)
+      .to({}, { duration: 0.6 }) // Read time
+
+      // STEP 2
+      .to("#card-step1", { opacity: 0, y: -30, duration: 0.2 })
+      .to("#chat-state-step1", { opacity: 0, duration: 0.2 }, "<")
+      
+      .to("#card-step2", { opacity: 1, y: 0, duration: 0.25 })
+      .to("#chat-state-step2", { opacity: 1, duration: 0.25 }, ">")
+      .to(sbStep2, { scaleY: 1, duration: 0.1 }, "<")
+      .to({}, { duration: 0.6 }) // Read time
+
+      // STEP 3
+      .to("#card-step2", { opacity: 0, y: -30, duration: 0.2 })
+      .to("#chat-state-step2", { opacity: 0, duration: 0.2 }, "<")
+
+      .to("#header-ai", { opacity: 0, duration: 0.2 }, "<")
+      .to("#header-james", { opacity: 1, duration: 0.2 }, ">")
+
+      .to("#card-step3", { opacity: 1, y: 0, duration: 0.25 })
+      .to("#chat-state-step3", { opacity: 1, duration: 0.25 }, ">")
+      .to(sbStep3, { scaleY: 1, duration: 0.1 }, "<")
+      .to({}, { duration: 0.7 });
+
+    // CTA Reveal
+    gsap.to(sbJoin, {
+      scrollTrigger: { trigger: "#section-cta", start: "top 80%" },
+      scaleY: 1, duration: 0.5
+    });
+    
+    gsap.to("#phone-scaler", {
+      scrollTrigger: { trigger: "#section-cta", start: "top bottom", end: "top center", scrub: 1 },
+      opacity: 0
+    });
+
+    // Form
+    const form = document.getElementById("waitlist-form");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const btn = form.querySelector("button");
+      btn.textContent = "BREWING...";
+      setTimeout(() => {
+        form.style.display = "none";
+        const status = document.getElementById("form-status");
+        status.textContent = "You're on the list. We'll text you soon.";
+        status.style.color = "var(--c-green-mid)";
       }, 1500);
     });
   </script>
