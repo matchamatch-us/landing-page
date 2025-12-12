@@ -166,11 +166,19 @@
       pointer-events: none;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
+      padding-right: min(12vw, 96px);
       transform: translateZ(0);
       -webkit-transform: translateZ(0);
       backface-visibility: hidden;
       perspective: 1000px;
+    }
+
+    @media (max-width: 900px) {
+      .phone-wrapper-fixed {
+        justify-content: center;
+        padding-right: 0;
+      }
     }
 
     #phone-scaler {
@@ -496,11 +504,6 @@
       margin-left: 4px;
       animation: cursorBlink 0.85s steps(2, start) infinite;
       vertical-align: bottom;
-    }
-
-    .cursor-complete {
-      animation: none;
-      opacity: 1;
     }
 
     @keyframes cursorBlink {
@@ -920,7 +923,7 @@
     <div class="network-inner" id="network-inner">
       <div class="network-pill" id="network-pill">
         <span class="network-pill-dot"></span>
-        Boston College · Internships
+        matcha match · Boston College
       </div>
       <h1 class="network-headline">
         <span id="headline-typed"></span><span class="typing-cursor" id="headline-cursor"></span>
@@ -932,7 +935,7 @@
 
     <div class="network-scroll-hint">
       <div class="network-scroll-dot"></div>
-      SCROLL TO CONTINUE
+      SCROLL TO LEARN MORE
     </div>
   </section>
 
@@ -1002,7 +1005,8 @@
       const vh = window.innerHeight;
       const vw = window.innerWidth;
       
-      let targetScale = (vh * 0.70) / baseHeight;
+      // slightly larger overall
+      let targetScale = (vh * 0.82) / baseHeight;
       if ((baseWidth * targetScale) > (vw * 0.9)) {
         targetScale = (vw * 0.9) / baseWidth;
       }
@@ -1015,7 +1019,6 @@
     /* --- TYPEWRITER SETUP --- */
     const headlineSpan = document.getElementById("headline-typed");
     const subSpan = document.getElementById("sub-typed");
-    const cursor = document.getElementById("headline-cursor");
 
     const fullHeadline = "Your school already has the network.";
     const fullSub = "We map the upperclassmen and alumni who’ve already landed your dream roles—and connect you with a single text.";
@@ -1033,7 +1036,7 @@
       }, speed);
     }
 
-    /* --- INITIAL LOAD: NETWORK INTRO + TYPING --- */
+    /* --- INITIAL LOAD: NETWORK INTRO + TYPING + BREATHING --- */
     window.addEventListener('load', () => {
       resizePhone();
 
@@ -1066,12 +1069,10 @@
         .add(() => {
           // type headline, then subtitle
           typeText(headlineSpan, fullHeadline, 40, () => {
-            typeText(subSpan, fullSub, 20, () => {
-              if (cursor) cursor.classList.add("cursor-complete");
-            });
+            typeText(subSpan, fullSub, 20);
           });
 
-          // continuous breathing animation
+          // continuous breathing animation for nodes & links
           gsap.to(".net-node", {
             opacity: (i) => (i % 2 === 0 ? 0.45 : 0.9),
             duration: 3,
@@ -1082,6 +1083,13 @@
           gsap.to(".net-link", {
             opacity: 0.3,
             duration: 3.2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+          gsap.to("#network-graph", {
+            scale: 1.08,
+            duration: 6,
             repeat: -1,
             yoyo: true,
             ease: "sine.inOut"
@@ -1106,6 +1114,19 @@
         const p = self.progress;
         sbChaos.style.transform = `scaleY(${p})`;
       }
+    });
+
+    /* Smooth fade of How-it-works header */
+    gsap.from(".reveal-header", {
+      scrollTrigger: {
+        trigger: "#section-content",
+        start: "top 80%",
+        toggleActions: "play none none reverse"
+      },
+      y: 30,
+      opacity: 0,
+      duration: 0.7,
+      ease: "power2.out"
     });
 
     /* --- PHONE FADE IN AT HOW IT WORKS --- */
