@@ -237,23 +237,16 @@
       z-index: 1;
     }
 
-    /* Background Wrapper for Animation */
-    /* Using CSS Variables for the mask to allow GSAP interpolation */
     .hero-bg-wrapper {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       z-index: 1;
-      
       --mask-radius: 0%; 
-      
-      /* Radial gradient with a soft transparent edge for the "misty" feel */
       -webkit-mask-image: radial-gradient(circle at center, black var(--mask-radius), transparent calc(var(--mask-radius) + 50%));
       mask-image: radial-gradient(circle at center, black var(--mask-radius), transparent calc(var(--mask-radius) + 50%));
-      
-      /* Initial States for animation */
       opacity: 0;
-      transform: scale(1.15); /* Start zoomed in */
-      filter: blur(15px); /* Start blurry */
+      transform: scale(1.15);
+      filter: blur(15px);
     }
 
     .hero-bg-img {
@@ -265,14 +258,12 @@
       background-repeat: no-repeat;
     }
 
-    /* Bottom Fade (Blur/Merge) */
     .hero-bottom-fade {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
       height: 180px; 
-      /* Soft gradient from transparent to the background color */
       background: linear-gradient(to bottom, rgba(243, 239, 229, 0) 0%, var(--matcha-cream) 90%);
       z-index: 2;
       pointer-events: none;
@@ -284,7 +275,7 @@
       text-align: center;
       max-width: 800px;
       padding: 0 24px;
-      opacity: 0; /* Hidden initially */
+      opacity: 0;
     }
 
     .network-pill {
@@ -340,7 +331,7 @@
       color: var(--text-muted);
       font-family: 'IBM Plex Mono', monospace;
       z-index: 3;
-      opacity: 0; /* Hidden initially */
+      opacity: 0;
     }
 
     /* --- HOW IT WORKS SECTION --- */
@@ -350,7 +341,7 @@
       padding: 140px 0;
       z-index: 40;
       overflow: hidden;
-      margin-top: -1px; /* Remove any sub-pixel gap */
+      margin-top: -1px;
     }
 
     .reveal-header h2 {
@@ -394,7 +385,42 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
     }
     
-    .cta h2 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 60px; }
+    .cta h2 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 30px; }
+
+    .cta-toggle {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 239, 229, 0.25);
+      overflow: hidden;
+      margin-bottom: 50px;
+      font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+    }
+
+    .cta-toggle-btn {
+      padding: 10px 20px;
+      border: none;
+      background: transparent;
+      color: rgba(243, 239, 229, 0.7);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .cta-toggle-btn.active {
+      background: var(--matcha-green-muted);
+      color: var(--text-light);
+    }
+
+    .cta-panel {
+      display: none;
+    }
+
+    .cta-panel.active {
+      display: block;
+    }
+
     .waitlist-group { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
     .waitlist-input {
       background: transparent; border: none; border-bottom: 1px solid rgba(243, 239, 229, 0.3);
@@ -412,7 +438,14 @@
       text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; border-radius: 0;
     }
     .btn-waitlist:hover { background: #a3b58f; }
-    #form-status { margin-top: 24px; font-size: 0.9rem; height: 20px; font-family: 'IBM Plex Mono', monospace; opacity: 0.8; }
+
+    .cta-status {
+      margin-top: 24px;
+      font-size: 0.9rem;
+      height: 20px;
+      font-family: 'IBM Plex Mono', monospace;
+      opacity: 0.8;
+    }
 
     footer {
       background: var(--matcha-green-dark); color: rgba(243, 239, 229, 0.6);
@@ -552,43 +585,75 @@
 
   <section class="cta" id="section-cta">
     <div class="container reveal-cta">
-      <h2>Your next coffee chat awaits.</h2>
+      <h2 id="cta-heading">Looking for help? (for underclassmen)</h2>
 
-      <!-- =========================================================
-           IMPORTANT:
-           1) Replace the action URL below with your Make.com signup webhook URL.
-           2) This form posts directly to Make. We use a hidden iframe to avoid CORS issues.
-         ========================================================= -->
+      <div class="cta-toggle">
+        <button class="cta-toggle-btn active" data-role="mentee">Underclassmen</button>
+        <button class="cta-toggle-btn" data-role="mentor">Upperclassmen</button>
+      </div>
+
+      <!-- Hidden iframe for posting to webhooks without redirect -->
       <iframe name="hidden_iframe" style="display:none;"></iframe>
 
-      <form
-        id="waitlist-form"
-        class="waitlist-group"
-        action="https://hook.us2.make.com/7un53b0jahy4pq2bohodobddkoi8ozpn"
-        method="POST"
-        target="hidden_iframe"
-      >
-        <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
-
-        <!-- NEW: Phone input (user can type (617)... and we normalize to E.164 before submit) -->
-        <input
-          type="tel"
-          name="phone"
-          id="phone"
-          class="waitlist-input"
-          placeholder="(617) 555-1234"
-          required
+      <!-- MENTEE / UNDERCLASSMEN PANEL -->
+      <div id="cta-mentee" class="cta-panel active">
+        <form
+          id="mentee-form"
+          class="waitlist-group"
+          action="https://hook.us2.make.com/7un53b0jahy4pq2bohodobddkoi8ozpn"
+          method="POST"
+          target="hidden_iframe"
         >
+          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
 
-        <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" required>
+          <input
+            type="tel"
+            name="phone"
+            id="mentee-phone"
+            class="waitlist-input"
+            placeholder="(617) 555-1234"
+            required
+          >
 
-        <!-- NEW: keep the original raw phone too -->
-        <input type="hidden" name="phone_raw" id="phone_raw">
+          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" required>
 
-        <button type="submit" class="btn-waitlist">JOIN NOW</button>
-      </form>
+          <input type="hidden" name="phone_raw" id="mentee_phone_raw">
 
-      <p id="form-status"></p>
+          <button type="submit" class="btn-waitlist">JOIN NOW</button>
+        </form>
+
+        <p id="form-status-mentee" class="cta-status"></p>
+      </div>
+
+      <!-- MENTOR / UPPERCLASSMEN PANEL -->
+      <div id="cta-mentor" class="cta-panel">
+        <form
+          id="mentor-form"
+          class="waitlist-group"
+          action="https://hook.us2.make.com/YOUR_MENTOR_WEBHOOK_URL_HERE"
+          method="POST"
+          target="hidden_iframe"
+        >
+          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
+
+          <input
+            type="tel"
+            name="phone"
+            id="mentor-phone"
+            class="waitlist-input"
+            placeholder="(617) 555-1234"
+            required
+          >
+
+          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" required>
+
+          <input type="hidden" name="phone_raw" id="mentor_phone_raw">
+
+          <button type="submit" class="btn-waitlist">JOIN NOW</button>
+        </form>
+
+        <p id="form-status-mentor" class="cta-status"></p>
+      </div>
     </div>
   </section>
 
@@ -627,31 +692,24 @@
       const tl = gsap.timeline();
       const heroBg = document.getElementById("hero-bg-wrapper");
 
-      // Animate the custom CSS property for the mask radius
       tl.to(heroBg, {
-        "--mask-radius": "140%", // Expands the misty mask outwards
-        duration: 4.5,           // Slower, dreamy duration
+        "--mask-radius": "140%",
+        duration: 4.5,
         ease: "power2.out"
       })
-      // Simultaneously un-blur and scale down for the dreamy effect
       .to(heroBg, {
         filter: "blur(0px)",
         transform: "scale(1)",
         opacity: 1,
         duration: 3.5,
         ease: "power2.out"
-      }, "<") 
-      
-      // FADE OUT SLIGHTLY FOR TEXT
-      // Just as the previous animation settles, we fade it back for the text
+      }, "<")
       .to(heroBg, {
-        opacity: 0.2, // Reduced opacity so text pops
-        filter: "blur(3px)", // Slight re-blur for depth
+        opacity: 0.2,
+        filter: "blur(3px)",
         duration: 1.5,
         ease: "power2.inOut"
-      }, "-=1.0") // Overlap the end of the reveal
-
-      // TEXT REVEAL
+      }, "-=1.0")
       .to("#network-inner", {
         opacity: 1,
         duration: 1,
@@ -722,11 +780,44 @@
       opacity: 0
     });
 
-    /* --- FORM SUBMISSION (posts to Make.com) --- */
-    const form = document.getElementById("waitlist-form");
-    const status = document.getElementById("form-status");
-    const phoneEl = document.getElementById("phone");
-    const phoneRawEl = document.getElementById("phone_raw");
+    /* --- CTA TOGGLE (mentee vs mentor) --- */
+    const ctaHeading = document.getElementById('cta-heading');
+    const toggleButtons = document.querySelectorAll('.cta-toggle-btn');
+    const menteePanel = document.getElementById('cta-mentee');
+    const mentorPanel = document.getElementById('cta-mentor');
+
+    toggleButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const role = btn.dataset.role;
+
+        toggleButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (role === 'mentee') {
+          ctaHeading.textContent = 'Looking for help? (for underclassmen)';
+          menteePanel.classList.add('active');
+          mentorPanel.classList.remove('active');
+        } else {
+          ctaHeading.textContent = 'Got wisdom to share? (for upperclassmen)';
+          mentorPanel.classList.add('active');
+          menteePanel.classList.remove('active');
+        }
+      });
+    });
+
+    /* --- FORM SUBMISSION (two separate forms -> two separate tables/webhooks) --- */
+
+    const menteeForm = document.getElementById("mentee-form");
+    const mentorForm = document.getElementById("mentor-form");
+
+    const menteePhoneEl = document.getElementById("mentee-phone");
+    const mentorPhoneEl = document.getElementById("mentor-phone");
+
+    const menteePhoneRawEl = document.getElementById("mentee_phone_raw");
+    const mentorPhoneRawEl = document.getElementById("mentor_phone_raw");
+
+    const menteeStatus = document.getElementById("form-status-mentee");
+    const mentorStatus = document.getElementById("form-status-mentor");
 
     function normalizeUSPhoneToE164(raw) {
       const digits = (raw || "").replace(/\D/g, "");
@@ -736,30 +827,53 @@
       return null;
     }
 
-    form.addEventListener("submit", (e) => {
-      status.style.color = "var(--text-light)";
-      status.innerHTML = "Requesting access...";
+    if (menteeForm) {
+      menteeForm.addEventListener("submit", (e) => {
+        menteeStatus.style.color = "var(--text-light)";
+        menteeStatus.innerHTML = "Requesting access...";
 
-      const raw = phoneEl.value;
-      const e164 = normalizeUSPhoneToE164(raw);
+        const raw = menteePhoneEl.value;
+        const e164 = normalizeUSPhoneToE164(raw);
 
-      if (!e164) {
-        e.preventDefault();
-        status.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
-        return;
-      }
+        if (!e164) {
+          e.preventDefault();
+          menteeStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
+          return;
+        }
 
-      // Keep both versions:
-      phoneRawEl.value = raw;
-      phoneEl.value = e164; // what Make + Twilio + Supabase should store (E.164)
+        menteePhoneRawEl.value = raw;
+        menteePhoneEl.value = e164;
 
-      // Since we're submitting to a hidden iframe, we won't get a reliable success callback.
-      // This is a simple MVP UX.
-      setTimeout(() => {
-        status.innerHTML = "Thanks! Check your texts 🙂";
-        form.reset();
-      }, 1200);
-    });
+        setTimeout(() => {
+          menteeStatus.innerHTML = "Thanks! Check your texts 🙂";
+          menteeForm.reset();
+        }, 1200);
+      });
+    }
+
+    if (mentorForm) {
+      mentorForm.addEventListener("submit", (e) => {
+        mentorStatus.style.color = "var(--text-light)";
+        mentorStatus.innerHTML = "Requesting access...";
+
+        const raw = mentorPhoneEl.value;
+        const e164 = normalizeUSPhoneToE164(raw);
+
+        if (!e164) {
+          e.preventDefault();
+          mentorStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
+          return;
+        }
+
+        mentorPhoneRawEl.value = raw;
+        mentorPhoneEl.value = e164;
+
+        setTimeout(() => {
+          mentorStatus.innerHTML = "Thanks! We'll be in touch 🙂";
+          mentorForm.reset();
+        }, 1200);
+      });
+    }
   </script>
 </body>
 </html>
