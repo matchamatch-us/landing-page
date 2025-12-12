@@ -16,14 +16,13 @@
   <style>
     /* --- VARIABLES & RESET --- */
     :root {
-      /* Palette: Organic, Deep, Vintage */
       --c-cream: #F3F0E7;
       --c-paper: #EAE6DB;
       --c-green-light: #D6E0CD;
       --c-green-mid: #94A684;
       --c-green-deep: #4E603B;
-      --c-green-dark: #252E1C; /* Almost black */
-      --c-accent: #E07A5F; /* Subtle burnt orange for tiny accents */
+      --c-green-dark: #252E1C; 
+      --c-accent: #E07A5F;
 
       --font-serif: 'DM Serif Display', serif;
       --font-mono: 'IBM Plex Mono', monospace;
@@ -47,7 +46,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* --- VINTAGE NOISE TEXTURE --- */
+    /* --- TEXTURE OVERLAY --- */
     .texture-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -66,65 +65,6 @@
       z-index: 2;
     }
 
-    /* --- CUSTOM SIDEBAR NAV --- */
-    .side-nav {
-      position: fixed;
-      right: 40px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 16px;
-      mix-blend-mode: multiply;
-    }
-
-    .nav-dot-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      group: focus;
-      opacity: 0.4;
-      transition: opacity 0.3s ease;
-    }
-    .nav-dot-wrap:hover, .nav-dot-wrap.active { opacity: 1; }
-
-    .nav-label {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      transform: translateX(10px);
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-    .nav-dot-wrap:hover .nav-label { transform: translateX(0); opacity: 1; }
-
-    .nav-track {
-      width: 2px;
-      height: 24px;
-      background: rgba(37, 46, 28, 0.15);
-      position: relative;
-      border-radius: 2px;
-      overflow: hidden;
-      transition: height 0.3s ease;
-    }
-    .nav-dot-wrap.active .nav-track { height: 32px; width: 3px; }
-
-    .nav-fill {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: var(--c-green-deep);
-      transform: scaleY(0);
-      transform-origin: top;
-      transition: transform 0.1s linear;
-    }
-
-    @media (max-width: 768px) { .side-nav { display: none; } }
-
-
     /* --- HERO SECTION --- */
     .hero {
       height: 100vh;
@@ -136,7 +76,6 @@
       overflow: hidden;
     }
 
-    /* SVG Graph Background */
     .hero-viz {
       position: absolute;
       inset: 0;
@@ -214,8 +153,7 @@
       transform: translateY(10px);
     }
 
-
-    /* --- HOW IT WORKS (Scroll Area) --- */
+    /* --- PROCESS SECTION --- */
     .section-process {
       position: relative;
       padding: 10vh 0;
@@ -233,7 +171,6 @@
       position: relative;
     }
     
-    /* Sticky Wrapper for Content */
     .content-sticky-wrapper {
       position: sticky;
       top: 0;
@@ -248,7 +185,7 @@
       background: #FDFBF7;
       border: 1px solid rgba(37, 46, 28, 0.08);
       padding: 40px;
-      border-radius: 2px; /* Slight rounded */
+      border-radius: 2px;
       box-shadow: 
         0 20px 40px -10px rgba(37, 46, 28, 0.05),
         inset 0 0 0 1px rgba(255,255,255,0.8);
@@ -256,10 +193,10 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      opacity: 0;
-      transition: opacity 0.5s ease;
+      /* REMOVED opacity: 0 from CSS to prevent permanent invisibility */
+      visibility: hidden; /* Controlled by GSAP */
     }
-    /* Add a vintage paper texture to card */
+    
     .step-card::before {
       content:''; position:absolute; inset:0; 
       background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMCwwLDAsMC4wNCkiLz4KPC9zdmc+');
@@ -288,8 +225,7 @@
       color: var(--c-green-deep);
     }
 
-
-    /* --- PHONE MOCKUP (Sticky Right) --- */
+    /* --- PHONE --- */
     .phone-column {
       position: relative;
     }
@@ -311,15 +247,14 @@
       border-radius: 56px;
       padding: 12px;
       box-shadow: 
-        0 0 0 2px #3e423a, /* Outer rim */
+        0 0 0 2px #3e423a,
         0 20px 50px -10px rgba(0,0,0,0.4),
-        0 50px 100px -20px rgba(37, 46, 28, 0.4); /* Colored shadow */
+        0 50px 100px -20px rgba(37, 46, 28, 0.4);
       position: relative;
       transform: rotateY(-5deg) rotateX(2deg);
-      transition: transform 0.6s var(--easing);
+      will-change: transform;
     }
 
-    /* Screen Reflection */
     .phone-chassis::after {
       content: ""; position: absolute; inset: 12px;
       background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.05) 100%);
@@ -335,20 +270,11 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Dynamic Island */
     .island {
       position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
       width: 120px; height: 35px; background: #000; border-radius: 20px; z-index: 20;
     }
 
-    /* Chat UI */
-    .chat-interface {
-      padding-top: 120px;
-      padding-left: 20px; padding-right: 20px;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-
-    /* Header inside phone */
     .app-header {
       position: absolute; top: 0; left: 0; right: 0; height: 100px;
       background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
@@ -363,14 +289,20 @@
     }
     .contact-name { font-size: 12px; font-weight: 600; color: #000; }
 
+    .chat-interface {
+      padding-top: 120px;
+      padding-left: 20px; padding-right: 20px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
     .bubble {
       max-width: 260px;
       padding: 12px 16px;
       font-size: 16px;
       line-height: 1.4;
       position: relative;
-      opacity: 0; /* Controlled by GSAP */
-      transform: translateY(20px);
+      /* REMOVED opacity: 0 to fix invisible content bug */
+      visibility: hidden;
     }
     
     .bubble-sent {
@@ -388,7 +320,6 @@
       color: #000;
       border-radius: 20px 20px 20px 4px;
     }
-
 
     /* --- CTA SECTION --- */
     .section-cta {
@@ -468,13 +399,13 @@
       border-top: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* RESPONSIVE */
     @media (max-width: 900px) {
       .process-grid { grid-template-columns: 1fr; gap: 0; }
-      .phone-column { display: none; } /* Hide phone on mobile for cleaner layout */
+      .phone-column { display: none; }
       .content-sticky-wrapper { height: auto; display: block; padding: 60px 0; position: relative; }
-      .step-card { position: relative; transform: none; top: auto; opacity: 1; margin-bottom: 40px; max-width: 100%; }
+      .step-card { position: relative; transform: none; top: auto; visibility: visible; opacity: 1; margin-bottom: 40px; max-width: 100%; }
       .process-grid { min-height: auto; }
+      .bubble { visibility: visible; }
     }
   </style>
 </head>
@@ -488,21 +419,6 @@
     </filter>
     <rect width="100%" height="100%" filter="url(#noise)" fill="none"/>
   </svg>
-
-  <div class="side-nav">
-    <div class="nav-dot-wrap" onclick="window.lenis.scrollTo('#hero')">
-      <span class="nav-label">Start</span>
-      <div class="nav-track"><div class="nav-fill" id="nav-hero-fill"></div></div>
-    </div>
-    <div class="nav-dot-wrap" onclick="window.lenis.scrollTo('#process')">
-      <span class="nav-label">How</span>
-      <div class="nav-track"><div class="nav-fill" id="nav-how-fill"></div></div>
-    </div>
-    <div class="nav-dot-wrap" onclick="window.lenis.scrollTo('#join')">
-      <span class="nav-label">Join</span>
-      <div class="nav-track"><div class="nav-fill" id="nav-join-fill"></div></div>
-    </div>
-  </div>
 
   <main>
     <section class="hero" id="hero">
@@ -572,7 +488,6 @@
                     
                     <div class="bubble bubble-sent chat-3">Perfect. Connect us.</div>
                     <div class="bubble bubble-received chat-3">Connecting you with James...</div>
-                    <div style="text-align:center; font-size:10px; color:#999; margin-top:10px; opacity:0;" class="chat-3">TODAY 9:42 AM</div>
                     <div class="bubble bubble-received chat-3" style="background:#fff; border:1px solid #eee;">Hey! James here. Happy to help w/ prep.</div>
                   </div>
 
@@ -611,25 +526,26 @@
   </main>
 
   <script>
-    // 1. Initialize Lenis Smooth Scroll
+    // 1. Initialize Lenis (Smooth Scroll)
     const lenis = new Lenis({
       duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential easing
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
       smoothWheel: true,
-      wheelMultiplier: 1,
     });
-    window.lenis = lenis; // Expose to window
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+    // IMPORTANT: Link Lenis to GSAP's Ticker for perfect sync
+    // This fixes the issue where scroll triggers don't fire during the smooth scroll
+    lenis.on('scroll', ScrollTrigger.update);
 
-    // Sync ScrollTrigger with Lenis
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+
+    gsap.ticker.lagSmoothing(0);
+
     gsap.registerPlugin(ScrollTrigger);
-    
-    // 2. Network Animation (Hero)
+
+    // 2. HERO ANIMATION (Network Graph)
     const svgNS = "http://www.w3.org/2000/svg";
     const linksLayer = document.getElementById("links-layer");
     const nodesLayer = document.getElementById("nodes-layer");
@@ -649,7 +565,7 @@
       circle.setAttribute("cx", x);
       circle.setAttribute("cy", y);
       circle.setAttribute("r", r);
-      circle.setAttribute("fill", i===0 ? "#E07A5F" : "#4E603B"); // First node is accent
+      circle.setAttribute("fill", i===0 ? "#E07A5F" : "#4E603B");
       circle.setAttribute("opacity", 0.8);
       
       nodesLayer.appendChild(circle);
@@ -666,7 +582,6 @@
           line.setAttribute("x2", n2.x);
           line.setAttribute("y2", n2.y);
           
-          // Animate line drawing
           let len = Math.hypot(n2.x - n1.x, n2.y - n1.y);
           line.style.strokeDasharray = len;
           line.style.strokeDashoffset = len;
@@ -711,65 +626,65 @@
     }
     setTimeout(type, 500);
 
-    // 4. Scroll Process Animation (Desktop)
+    // 4. SCROLL PROCESS LOGIC
     if (window.innerWidth > 900) {
+      // PRE-SET INITIAL STATES via GSAP (Prevent FOUC or Invisible Content)
+      // Hide Steps 2 & 3, show Step 1 immediately
+      gsap.set("#card-1", { autoAlpha: 1, y: 0 }); 
+      gsap.set([".chat-1"], { autoAlpha: 1, y: 0 });
+
+      gsap.set(["#card-2", "#card-3"], { autoAlpha: 0, y: 20 });
+      gsap.set([".chat-2", ".chat-3"], { autoAlpha: 0, y: 20, scale: 0.95 });
+
       const processTl = gsap.timeline({
         scrollTrigger: {
           trigger: "#process",
           start: "top top",
           end: "+=3000",
-          scrub: 1,
+          scrub: 0.5, // Added smoothing to scrub
           pin: true,
+          anticipatePin: 1
         }
-      });
-
-      // NAV SYNC
-      gsap.to("#nav-hero-fill", {
-        scrollTrigger: { trigger: "#hero", start: "top center", end: "bottom center", scrub: true },
-        scaleY: 1
-      });
-      gsap.to("#nav-how-fill", {
-        scrollTrigger: { trigger: "#process", start: "top center", end: "bottom center", scrub: true },
-        scaleY: 1
       });
 
       /* SEQUENCE */
       
-      // Step 1: Text In, Chat In
+      // We start with Step 1 Visible. 
+      // User scrolls -> Step 1 fades out, Step 2 fades in.
+      
       processTl
-        .to("#card-1", { opacity: 1, duration: 1 })
-        .to(".chat-1", { opacity: 1, y: 0, duration: 1 }, "<")
-        .to({}, { duration: 2 }) // hold
+        .to({}, { duration: 0.5 }) // Pause at start to read Step 1
 
-        // Step 1 Out, Step 2 In
-        .to("#card-1", { opacity: 0, y: -20, duration: 1 })
-        .to("#card-2", { opacity: 1, duration: 1 }, "<")
+        // Step 1 Out -> Step 2 In
+        .to("#card-1", { autoAlpha: 0, y: -20, duration: 1 })
+        .to(".chat-1", { autoAlpha: 0.4, scale: 0.95, transformOrigin:"right bottom", duration: 1 }, "<")
         
-        // Chat update
-        .to(".chat-1", { opacity: 0.4, scale: 0.95, transformOrigin:"right bottom", duration: 1 }, "<")
-        .to(".chat-2", { opacity: 1, y: 0, stagger: 0.5, duration: 1 })
-        .to({}, { duration: 2 }) // hold
+        .to("#card-2", { autoAlpha: 1, y: 0, duration: 1 })
+        .to(".chat-2", { autoAlpha: 1, y: 0, scale: 1, stagger: 0.2, duration: 1 }, "<")
+        
+        .to({}, { duration: 1.5 }) // Hold Step 2
 
-        // Step 2 Out, Step 3 In
-        .to("#card-2", { opacity: 0, y: -20, duration: 1 })
-        .to("#card-3", { opacity: 1, duration: 1 }, "<")
+        // Step 2 Out -> Step 3 In
+        .to("#card-2", { autoAlpha: 0, y: -20, duration: 1 })
+        .to(".chat-2", { autoAlpha: 0.4, scale: 0.95, transformOrigin:"left bottom", duration: 1 }, "<")
         
-        // Chat update
-        .to(".chat-2", { opacity: 0.4, scale: 0.95, transformOrigin:"left bottom", duration: 1 }, "<")
-        .to(".chat-3", { opacity: 1, y: 0, stagger: 0.5, duration: 1 });
+        .to("#card-3", { autoAlpha: 1, y: 0, duration: 1 })
+        .to(".chat-3", { autoAlpha: 1, y: 0, scale: 1, stagger: 0.2, duration: 1 }, "<");
     }
 
     // 5. Form Logic
     document.getElementById("waitlist-form").addEventListener("submit", (e) => {
       e.preventDefault();
       const btn = e.target.querySelector("button");
+      const originalText = btn.textContent;
       btn.textContent = "Brewing...";
+      btn.disabled = true;
+      
       setTimeout(() => {
         e.target.style.display = "none";
         document.getElementById("success-msg").style.display = "block";
       }, 1500);
     });
-
   </script>
 </body>
 </html>
