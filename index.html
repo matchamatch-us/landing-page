@@ -43,6 +43,7 @@
       color: var(--text-dark);
       overflow-x: hidden;
       background-color: var(--matcha-cream);
+      /* Subtle noise texture */
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
     }
 
@@ -59,7 +60,7 @@
       z-index: 1;
     }
 
-    /* --- CUSTOM SCROLLBAR (Updated to vertical stack) --- */
+    /* --- CUSTOM SCROLLBAR (Vertical Stack) --- */
     .custom-scrollbar {
       position: fixed;
       right: 40px;
@@ -68,7 +69,7 @@
       z-index: 1000;
       display: flex;
       flex-direction: column;
-      align-items: center; /* Center align labels with lines */
+      align-items: center;
       gap: 8px;
       mix-blend-mode: multiply;
     }
@@ -236,7 +237,6 @@
       z-index: 1;
     }
 
-    /* Updated Graph Wrapper to be truly fullscreen/widespread */
     .network-graph-wrapper {
       position: absolute; 
       inset: 0;
@@ -250,25 +250,26 @@
     .network-graph {
       width: 100%; 
       height: 100%;
-      /* Allows SVG to stretch to corners */
       min-width: 100vw;
       min-height: 100vh; 
     }
 
-    /* Nodes & Links Styles */
+    /* --- UPDATED NETWORK STYLES (Matching Reference Image Look) --- */
     .net-node { 
-      fill: #d6dccb; /* Very light greenish/grey for subtle background nodes */
-      opacity: 0.6; 
+      fill: #cfd8dc; /* Gray platform color */
+      /* Filter applied in SVG for shadow */
     }
+    /* The center node anchor */
     .net-node-main { 
-      fill: transparent; 
-      stroke: var(--matcha-green-muted); 
+      fill: transparent;
+      stroke: #cfd8dc;
       stroke-width: 2; 
+      opacity: 0.5;
     }
     .net-link { 
-      stroke: var(--matcha-green-muted); 
-      stroke-width: 1; 
-      opacity: 0.25; 
+      stroke: #607d8b; /* Darker blue-gray connector color */
+      stroke-width: 1.5; 
+      opacity: 0.7; /* More solid lines */
       stroke-linecap: round; 
     }
 
@@ -310,10 +311,9 @@
       letter-spacing: -0.02em;
     }
 
-    /* Skinny Block Cursor */
     .typing-cursor {
       display: inline-block;
-      width: 2px; /* Skinnier */
+      width: 2px; 
       height: 0.9em;
       background: var(--matcha-green-muted);
       margin-left: 2px;
@@ -497,6 +497,19 @@
   <section class="network-hero" id="network-hero">
     <div class="network-graph-wrapper">
       <svg class="network-graph" id="network-graph" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <filter id="platform-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+            <feOffset in="blur" dx="0" dy="5" result="offsetBlur"/>
+            <feFlood flood-color="#000000" flood-opacity="0.2" result="offsetColor"/>
+            <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetShadow"/>
+            <feMerge>
+              <feMergeNode in="offsetShadow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
         <g class="net-links">
           <line class="net-link" x1="800" y1="450" x2="200" y2="150" />
           <line class="net-link" x1="800" y1="450" x2="1400" y2="200" />
@@ -510,19 +523,19 @@
           <line class="net-link" x1="1400" y1="200" x2="1200" y2="100" />
         </g>
         <g class="net-nodes">
-            <circle class="net-node-main" cx="800" cy="450" r="20" opacity="0.1" />
+            <circle class="net-node-main" cx="800" cy="450" r="20" />
 
-            <circle class="net-node" cx="200" cy="150" r="14" />
-            <circle class="net-node" cx="1400" cy="200" r="16" />
-            <circle class="net-node" cx="150" cy="750" r="15" />
-            <circle class="net-node" cx="1450" cy="800" r="14" />
+            <circle class="net-node" cx="200" cy="150" r="16" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="1400" cy="200" r="18" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="150" cy="750" r="17" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="1450" cy="800" r="16" filter="url(#platform-shadow)" />
             
-            <circle class="net-node" cx="50" cy="300" r="10" />
-            <circle class="net-node" cx="1550" cy="100" r="12" />
-            <circle class="net-node" cx="400" cy="850" r="11" />
-            <circle class="net-node" cx="1200" cy="880" r="13" />
-            <circle class="net-node" cx="450" cy="50" r="9" />
-            <circle class="net-node" cx="1200" cy="100" r="10" />
+            <circle class="net-node" cx="50" cy="300" r="12" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="1550" cy="100" r="14" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="400" cy="850" r="13" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="1200" cy="880" r="15" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="450" cy="50" r="11" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="1200" cy="100" r="12" filter="url(#platform-shadow)" />
         </g>
       </svg>
     </div>
@@ -598,7 +611,7 @@
 
     /* --- TYPEWRITER --- */
     const headlineSpan = document.getElementById("headline-typed");
-    const fullHeadline = "Secure an internship with our AI-powered SMS networking system.";
+    const fullHeadline = "AI-powered networking system that helps you land your first internship.";
 
     function typeText(targetEl, text, speed) {
       let i = 0; targetEl.textContent = "";
@@ -608,23 +621,22 @@
       }, speed);
     }
 
-    /* --- INITIAL LOAD & BREATHING ANIMATION --- */
+    /* --- INITIAL LOAD & ANIMATION --- */
     window.addEventListener('load', () => {
       resizePhone();
       
       // Initial fade in
       gsap.to(".network-graph", { opacity: 1, duration: 2 });
-      gsap.from(".net-node", { scale: 0, opacity: 0, duration: 1, stagger: 0.1, ease: "back.out" });
-      gsap.from(".net-link", { opacity: 0, duration: 1.5, delay: 0.5 });
+      // Animate nodes scaling up from 0
+      gsap.from(".net-node", { scale: 0, duration: 1.2, stagger: 0.05, ease: "back.out(1.5)" });
+      gsap.from(".net-link", { opacity: 0, duration: 1.5, delay: 0.8 });
 
       typeText(headlineSpan, fullHeadline, 35);
 
-      // --- BREATHING EFFECT ---
-      // Randomly pulse nodes up and down forever
+      // --- BREATHING EFFECT (Subtle scaling for solid platforms) ---
       gsap.utils.toArray(".net-node").forEach((node) => {
         gsap.to(node, {
-          scale: "random(0.8, 1.3)", // Glow up/down size
-          opacity: "random(0.4, 0.9)", // Glow up/down brightness
+          scale: "random(0.95, 1.08)", // Subtle scale range
           duration: "random(2, 4)",
           repeat: -1,
           yoyo: true,
