@@ -254,22 +254,17 @@
       min-height: 100vh; 
     }
 
-    /* --- UPDATED NETWORK STYLES (Matching Reference Image Look) --- */
-    .net-node { 
-      fill: #cfd8dc; /* Gray platform color */
-      /* Filter applied in SVG for shadow */
+    /* --- UPDATED NETWORK STYLES (Matching 3D Miniature Look) --- */
+    .net-node, .net-node-main {
+      /* Figures are solid, light brown/grey to simulate miniature people */
+      fill: #a08d81; 
     }
-    /* The center node anchor */
-    .net-node-main { 
-      fill: transparent;
-      stroke: #cfd8dc;
-      stroke-width: 2; 
-      opacity: 0.5;
-    }
+    
     .net-link { 
-      stroke: #607d8b; /* Darker blue-gray connector color */
-      stroke-width: 1.5; 
-      opacity: 0.7; /* More solid lines */
+      /* Thin, blue lines */
+      stroke: #0056b3; 
+      stroke-width: 1.2; 
+      opacity: 0.9;
       stroke-linecap: round; 
     }
 
@@ -498,10 +493,20 @@
     <div class="network-graph-wrapper">
       <svg class="network-graph" id="network-graph" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
         <defs>
-          <filter id="platform-shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
-            <feOffset in="blur" dx="0" dy="5" result="offsetBlur"/>
-            <feFlood flood-color="#000000" flood-opacity="0.2" result="offsetColor"/>
+          <filter id="figure-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+            <feOffset in="blur" dx="0" dy="4" result="offsetBlur"/>
+            <feFlood flood-color="#000000" flood-opacity="0.3" result="offsetColor"/>
+            <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetShadow"/>
+            <feMerge>
+              <feMergeNode in="offsetShadow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+           <filter id="link-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="blur"/>
+            <feOffset in="blur" dx="0" dy="2" result="offsetBlur"/>
+            <feFlood flood-color="#0056b3" flood-opacity="0.2" result="offsetColor"/>
             <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetShadow"/>
             <feMerge>
               <feMergeNode in="offsetShadow"/>
@@ -510,32 +515,51 @@
           </filter>
         </defs>
 
-        <g class="net-links">
-          <line class="net-link" x1="800" y1="450" x2="200" y2="150" />
-          <line class="net-link" x1="800" y1="450" x2="1400" y2="200" />
-          <line class="net-link" x1="800" y1="450" x2="150" y2="750" />
-          <line class="net-link" x1="800" y1="450" x2="1450" y2="800" />
-          <line class="net-link" x1="200" y1="150" x2="50" y2="300" />
-          <line class="net-link" x1="1400" y1="200" x2="1550" y2="100" />
-          <line class="net-link" x1="150" y1="750" x2="400" y2="850" />
-          <line class="net-link" x1="1450" y1="800" x2="1200" y2="880" />
-          <line class="net-link" x1="200" y1="150" x2="450" y2="50" />
-          <line class="net-link" x1="1400" y1="200" x2="1200" y2="100" />
+        <g class="net-links" filter="url(#link-shadow)">
+          <line class="net-link" x1="800" y1="450" x2="350" y2="250" />
+          <line class="net-link" x1="800" y1="450" x2="1250" y2="300" />
+          <line class="net-link" x1="800" y1="450" x2="450" y2="700" />
+          <line class="net-link" x1="800" y1="450" x2="1350" y2="650" />
+
+          <line class="net-link" x1="350" y1="250" x2="150" y2="100" />
+          <line class="net-link" x1="350" y1="250" x2="600" y2="100" />
+          <line class="net-link" x1="350" y1="250" x2="100" y2="450" />
+
+          <line class="net-link" x1="1250" y1="300" x2="1500" y2="150" />
+          <line class="net-link" x1="1250" y1="300" x2="1100" y2="100" />
+          <line class="net-link" x1="1250" y1="300" x2="1550" y2="400" />
+
+          <line class="net-link" x1="450" y1="700" x2="200" y2="850" />
+          <line class="net-link" x1="450" y1="700" x2="650" y2="850" />
+
+          <line class="net-link" x1="1350" y1="650" x2="1150" y2="850" />
+          <line class="net-link" x1="1350" y1="650" x2="1500" y2="800" />
+
+          <line class="net-link" x1="600" y1="100" x2="1100" y2="100" />
+          <line class="net-link" x1="100" y1="450" x2="450" y2="700" />
+          <line class="net-link" x1="1550" y1="400" x2="1350" y2="650" />
         </g>
         <g class="net-nodes">
-            <circle class="net-node-main" cx="800" cy="450" r="20" />
+            <circle class="net-node-main" cx="800" cy="450" r="12" filter="url(#figure-shadow)" />
 
-            <circle class="net-node" cx="200" cy="150" r="16" filter="url(#platform-shadow)" />
-            <circle class="net-node" cx="1400" cy="200" r="18" filter="url(#platform-shadow)" />
-            <circle class="net-node" cx="150" cy="750" r="17" filter="url(#platform-shadow)" />
-            <circle class="net-node" cx="1450" cy="800" r="16" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="350" cy="250" r="11" filter="url(#figure-shadow)" />
+            <circle class="net-node" cx="1250" cy="300" r="11" filter="url(#figure-shadow)" />
+            <circle class="net-node" cx="450" cy="700" r="11" filter="url(#figure-shadow)" />
+            <circle class="net-node" cx="1350" cy="650" r="11" filter="url(#figure-shadow)" />
             
-            <circle class="net-node" cx="50" cy="300" r="12" filter="url(#platform-shadow)" />
-            <circle class="net-node" cx="1550" cy="100" r="14" filter="url(#platform-shadow)" />
-            <circle class="net-node" cx="400" cy="850" r="13" filter="url(#platform-shadow)" />
-            <circle class="net-node" cx="1200" cy="880" r="15" filter="url(#platform-shadow)" />
-            <circle class="net-node" cx="450" cy="50" r="11" filter="url(#platform-shadow)" />
-            <circle class="net-node" cx="1200" cy="100" r="12" filter="url(#platform-shadow)" />
+            <circle class="net-node" cx="150" cy="100" r="10" filter="url(#figure-shadow)" />
+            <circle class="net-node" cx="600" cy="100" r="10" filter="url(#figure-shadow)" />
+            <circle class="net-node" cx="100" cy="450" r="10" filter="url(#figure-shadow)" />
+
+            <circle class="net-node" cx="1500" cy="150" r="10" filter="url(#figure-shadow)" />
+            <circle class="net-node" cx="1100" cy="100" r="10" filter="url(#figure-shadow)" />
+            <circle class="net-node" cx="1550" cy="400" r="10" filter="url(#figure-shadow)" />
+
+            <circle class="net-node" cx="200" cy="850" r="10" filter="url(#figure-shadow)" />
+            <circle class="net-node" cx="650" cy="850" r="10" filter="url(#figure-shadow)" />
+
+            <circle class="net-node" cx="1150" cy="850" r="10" filter="url(#figure-shadow)" />
+            <circle class="net-node" cx="1500" cy="800" r="10" filter="url(#figure-shadow)" />
         </g>
       </svg>
     </div>
@@ -583,7 +607,7 @@
 
   <section class="cta" id="section-cta">
     <div class="container reveal-cta">
-      <h2>Your future is waiting.</h2>
+      <h2>Your dream internship is waiting.</h2>
       <form id="waitlist-form" class="waitlist-group">
         <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
         <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" required>
@@ -611,7 +635,7 @@
 
     /* --- TYPEWRITER --- */
     const headlineSpan = document.getElementById("headline-typed");
-    const fullHeadline = "AI-powered networking system that helps you land your first internship.";
+    const fullHeadline = "Your professional network, brewed perfectly.";
 
     function typeText(targetEl, text, speed) {
       let i = 0; targetEl.textContent = "";
@@ -628,15 +652,15 @@
       // Initial fade in
       gsap.to(".network-graph", { opacity: 1, duration: 2 });
       // Animate nodes scaling up from 0
-      gsap.from(".net-node", { scale: 0, duration: 1.2, stagger: 0.05, ease: "back.out(1.5)" });
+      gsap.from(".net-node, .net-node-main", { scale: 0, duration: 1.2, stagger: 0.05, ease: "back.out(1.5)" });
       gsap.from(".net-link", { opacity: 0, duration: 1.5, delay: 0.8 });
 
       typeText(headlineSpan, fullHeadline, 35);
 
-      // --- BREATHING EFFECT (Subtle scaling for solid platforms) ---
-      gsap.utils.toArray(".net-node").forEach((node) => {
+      // --- BREATHING EFFECT (Subtle scaling for solid figures) ---
+      gsap.utils.toArray(".net-node, .net-node-main").forEach((node) => {
         gsap.to(node, {
-          scale: "random(0.95, 1.08)", // Subtle scale range
+          scale: "random(0.98, 1.05)", // Subtle scale range
           duration: "random(2, 4)",
           repeat: -1,
           yoyo: true,
