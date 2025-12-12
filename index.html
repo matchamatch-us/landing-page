@@ -16,7 +16,7 @@
   <style>
     /* --- RESET & VARIABLES --- */
     :root {
-      --matcha-cream: #f3efe5;       
+      --matcha-cream: #f3efe5;      
       --matcha-green-muted: #98AA80; 
       --matcha-green-dark: #2F3B28;  
       
@@ -235,37 +235,24 @@
       overflow: hidden;
       display: flex; align-items: center; justify-content: center;
       z-index: 1;
+      background-image: url('network.png'); /* Use the provided image */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
-    .network-graph-wrapper {
-      position: absolute; 
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      pointer-events: none; 
-      z-index: 1;
-    }
-
-    .network-graph {
-      width: 100%; 
-      height: 100%;
-      min-width: 100vw;
-      min-height: 100vh; 
-    }
-
-    /* --- UPDATED NETWORK STYLES (Matching 3D Miniature Look) --- */
-    .net-node, .net-node-main {
-      /* Figures are solid, light brown/grey to simulate miniature people */
-      fill: #a08d81; 
-    }
-    
-    .net-link { 
-      /* Thin, blue lines */
-      stroke: #0056b3; 
-      stroke-width: 1.2; 
-      opacity: 0.9;
-      stroke-linecap: round; 
+    /* Add an overlay to tint the background image */
+    .network-hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--matcha-cream);
+        opacity: 0.85; /* Adjust opacity to control the tint strength */
+        mix-blend-mode: multiply; /* Blend the cream color with the image */
+        z-index: 2;
     }
 
     .network-inner {
@@ -490,80 +477,6 @@
   </div>
 
   <section class="network-hero" id="network-hero">
-    <div class="network-graph-wrapper">
-      <svg class="network-graph" id="network-graph" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <filter id="figure-shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
-            <feOffset in="blur" dx="0" dy="4" result="offsetBlur"/>
-            <feFlood flood-color="#000000" flood-opacity="0.3" result="offsetColor"/>
-            <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetShadow"/>
-            <feMerge>
-              <feMergeNode in="offsetShadow"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-           <filter id="link-shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="blur"/>
-            <feOffset in="blur" dx="0" dy="2" result="offsetBlur"/>
-            <feFlood flood-color="#0056b3" flood-opacity="0.2" result="offsetColor"/>
-            <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetShadow"/>
-            <feMerge>
-              <feMergeNode in="offsetShadow"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-
-        <g class="net-links" filter="url(#link-shadow)">
-          <line class="net-link" x1="800" y1="450" x2="350" y2="250" />
-          <line class="net-link" x1="800" y1="450" x2="1250" y2="300" />
-          <line class="net-link" x1="800" y1="450" x2="450" y2="700" />
-          <line class="net-link" x1="800" y1="450" x2="1350" y2="650" />
-
-          <line class="net-link" x1="350" y1="250" x2="150" y2="100" />
-          <line class="net-link" x1="350" y1="250" x2="600" y2="100" />
-          <line class="net-link" x1="350" y1="250" x2="100" y2="450" />
-
-          <line class="net-link" x1="1250" y1="300" x2="1500" y2="150" />
-          <line class="net-link" x1="1250" y1="300" x2="1100" y2="100" />
-          <line class="net-link" x1="1250" y1="300" x2="1550" y2="400" />
-
-          <line class="net-link" x1="450" y1="700" x2="200" y2="850" />
-          <line class="net-link" x1="450" y1="700" x2="650" y2="850" />
-
-          <line class="net-link" x1="1350" y1="650" x2="1150" y2="850" />
-          <line class="net-link" x1="1350" y1="650" x2="1500" y2="800" />
-
-          <line class="net-link" x1="600" y1="100" x2="1100" y2="100" />
-          <line class="net-link" x1="100" y1="450" x2="450" y2="700" />
-          <line class="net-link" x1="1550" y1="400" x2="1350" y2="650" />
-        </g>
-        <g class="net-nodes">
-            <circle class="net-node-main" cx="800" cy="450" r="12" filter="url(#figure-shadow)" />
-
-            <circle class="net-node" cx="350" cy="250" r="11" filter="url(#figure-shadow)" />
-            <circle class="net-node" cx="1250" cy="300" r="11" filter="url(#figure-shadow)" />
-            <circle class="net-node" cx="450" cy="700" r="11" filter="url(#figure-shadow)" />
-            <circle class="net-node" cx="1350" cy="650" r="11" filter="url(#figure-shadow)" />
-            
-            <circle class="net-node" cx="150" cy="100" r="10" filter="url(#figure-shadow)" />
-            <circle class="net-node" cx="600" cy="100" r="10" filter="url(#figure-shadow)" />
-            <circle class="net-node" cx="100" cy="450" r="10" filter="url(#figure-shadow)" />
-
-            <circle class="net-node" cx="1500" cy="150" r="10" filter="url(#figure-shadow)" />
-            <circle class="net-node" cx="1100" cy="100" r="10" filter="url(#figure-shadow)" />
-            <circle class="net-node" cx="1550" cy="400" r="10" filter="url(#figure-shadow)" />
-
-            <circle class="net-node" cx="200" cy="850" r="10" filter="url(#figure-shadow)" />
-            <circle class="net-node" cx="650" cy="850" r="10" filter="url(#figure-shadow)" />
-
-            <circle class="net-node" cx="1150" cy="850" r="10" filter="url(#figure-shadow)" />
-            <circle class="net-node" cx="1500" cy="800" r="10" filter="url(#figure-shadow)" />
-        </g>
-      </svg>
-    </div>
-
     <div class="network-inner" id="network-inner">
       <div class="network-pill" id="network-pill">
         <span class="network-pill-dot"></span>
@@ -649,12 +562,6 @@
     window.addEventListener('load', () => {
       resizePhone();
       
-      // Initial fade in
-      gsap.to(".network-graph", { opacity: 1, duration: 2 });
-      // Animate nodes scaling up from 0
-      gsap.from(".net-node, .net-node-main", { scale: 0, duration: 1.2, stagger: 0.05, ease: "back.out(1.5)" });
-      gsap.from(".net-link", { opacity: 0, duration: 1.5, delay: 0.8 });
-
       typeText(headlineSpan, fullHeadline, 35);
 
       // --- BREATHING EFFECT (Subtle scaling for solid figures) ---
