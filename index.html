@@ -16,17 +16,16 @@
   <style>
     /* --- RESET & VARIABLES --- */
     :root {
-      /* New Color Palette based on Screenshots */
-      --matcha-cream: #f3efe5;       /* Main light background */
-      --matcha-green-muted: #98AA80; /* Accents, buttons, pill dot */
-      --matcha-green-dark: #2F3B28;  /* Deep green for CTA background */
+      --matcha-cream: #f3efe5;       
+      --matcha-green-muted: #98AA80; 
+      --matcha-green-dark: #2F3B28;  
       
-      --text-dark: #222018;          /* Main dark text */
-      --text-light: #f3efe5;         /* Light text for dark backgrounds */
+      --text-dark: #1a1a1a;          
+      --text-light: #f3efe5;         
       --text-muted: #9a9da0;
 
       --imessage-gray: #e9e9eb;
-      --imessage-green: var(--matcha-green-dark); /* Sent bubbles are now dark green */
+      --imessage-green: #2F3B28; 
     }
 
     * {
@@ -44,17 +43,12 @@
       color: var(--text-dark);
       overflow-x: hidden;
       background-color: var(--matcha-cream);
-      /* Subtle noise texture for the light background */
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
     }
 
     h1, h2, h3 {
         font-family: 'DM Serif Display', serif;
         font-weight: 400;
-    }
-
-    .mono {
-        font-family: 'IBM Plex Mono', monospace;
     }
 
     .container {
@@ -65,42 +59,41 @@
       z-index: 1;
     }
 
-    /* --- CUSTOM SCROLLBAR --- */
+    /* --- CUSTOM SCROLLBAR (Updated to vertical stack) --- */
     .custom-scrollbar {
       position: fixed;
-      right: 30px;
+      right: 40px;
       top: 50%;
       transform: translateY(-50%);
       z-index: 1000;
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
-      gap: 12px;
-      mix-blend-mode: difference; /* Ensures visibility on dark sections */
+      align-items: center; /* Center align labels with lines */
+      gap: 8px;
+      mix-blend-mode: multiply;
     }
 
     .sb-label {
-      font-size: 0.75rem;
+      font-size: 0.65rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 4px;
+      letter-spacing: 0.15em;
       color: var(--text-muted);
-      opacity: 0.5;
-      transition: opacity 0.3s;
-      text-align: right;
+      transition: color 0.3s;
       font-family: 'IBM Plex Mono', monospace;
+      margin: 6px 0;
     }
 
-    .sb-segment {
-      width: 4px;
-      height: 40px;
-      background: rgba(0,0,0, 0.1);
-      border-radius: 4px;
+    .sb-line-container {
+      width: 2px;
+      background: rgba(0,0,0, 0.08);
       position: relative;
       overflow: hidden;
-      transition: width 0.3s;
+      border-radius: 2px;
     }
+
+    .sb-line-long { height: 60px; }
+    .sb-line-short { height: 12px; margin: 2px 0; }
 
     .sb-fill {
       position: absolute;
@@ -112,28 +105,16 @@
       transition: transform 0.1s linear;
     }
 
-    .sb-group {
+    .sb-wrap {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      align-items: flex-end;
-      margin-top: 4px;
+      align-items: center;
+      cursor: pointer;
     }
+    
+    .sb-wrap:hover .sb-label { color: var(--text-dark); }
 
-    .sb-sub {
-      width: 4px;
-      height: 15px; 
-      background: rgba(0,0,0, 0.1);
-      border-radius: 4px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .sb-wrap:hover .sb-label { opacity: 1; }
-    .sb-wrap:hover .sb-segment,
-    .sb-wrap:hover .sb-sub { width: 6px; }
-
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
       .custom-scrollbar { display: none; }
     }
 
@@ -147,7 +128,7 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding-right: min(12vw, 96px);
+      padding-right: min(10vw, 80px);
       transform: translateZ(0);
       backface-visibility: hidden;
     }
@@ -166,32 +147,22 @@
       transition: opacity 0.3s ease;
     }
 
-    .phone-stage {
-      position: relative;
-      width: 400px;
-      height: 860px;
-      will-change: transform;
-      transform-style: preserve-3d;
-    }
-
     .phone-device {
-      width: 100%; height: 100%;
-      background: #1c1c1e; /* Darker bezel */
+      width: 400px; height: 850px;
+      background: #1c1c1e;
       border-radius: 54px; 
-      /* Flatter, darker shadow */
       box-shadow:
-        0 0 0 2px #2a2a2a,
-        0 20px 40px -10px rgba(0,0,0,0.3);
+        0 0 0 4px #2a2a2a,
+        0 30px 60px -15px rgba(0,0,0,0.3);
       position: relative;
       overflow: hidden;
     }
 
     .dynamic-island {
       position: absolute;
-      top: 16px; left: 50%;
+      top: 18px; left: 50%;
       transform: translateX(-50%);
-      width: 126px;
-      height: 36px;
+      width: 120px; height: 35px;
       background: #000; border-radius: 20px;
       z-index: 14;
     }
@@ -208,110 +179,56 @@
 
     /* Status bar */
     .status-bar {
-      position: absolute;
-      top: 14px;
-      left: 0;
-      right: 0;
-      padding: 0 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: 'SF Pro Display', sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      color: #111;
-      z-index: 12;
+      position: absolute; top: 16px; left: 0; right: 0; padding: 0 32px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'SF Pro Display', sans-serif; font-size: 16px; font-weight: 600; color: #000; z-index: 12;
     }
-
-    .status-icons { display: flex; align-items: center; gap: 8px; }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
     .status-signal { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
-    .status-signal span { width: 3px; border-radius: 1px; background: #111; }
+    .status-signal span { width: 3px; background: #000; border-radius: 1px; }
     .status-signal span:nth-child(1) { height: 4px; } .status-signal span:nth-child(2) { height: 6px; }
     .status-signal span:nth-child(3) { height: 9px; } .status-signal span:nth-child(4) { height: 12px; }
+    .status-wifi { width: 18px; height: 12px; border-radius: 50% 50% 0 0; border: 2px solid #000; border-bottom: none; position: relative; }
+    .status-wifi::after { content:""; position: absolute; bottom:-2px; left:2px; right:2px; height:2px; background:#000; }
+    .status-battery { width: 24px; height: 12px; border: 1.5px solid #000; border-radius: 3px; position:relative; }
+    .status-battery::after { content:""; position:absolute; inset: 1px; background:#000; border-radius: 1px; }
 
-    .status-wifi {
-      width: 18px; height: 12px;
-      border-radius: 12px 12px 0 0; border: 2px solid #111; border-bottom: none; position: relative;
-    }
-    .status-wifi::after {
-      content: ""; position: absolute; left: 3px; right: 3px; bottom: -2px; height: 2px; border-radius: 10px; background: #111;
-    }
-
-    .status-battery {
-      width: 26px; height: 13px;
-      border-radius: 4px; border: 1.5px solid #111; position: relative;
-    }
-    .status-battery::after { content: ""; position: absolute; top: 2px; left: 2px; right: 4px; bottom: 2px; border-radius: 2px; background: #111; }
-    .status-battery::before { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 5px; border-radius: 1px; background: #111; }
-    
     .screen-header {
-      position: absolute;
-      top: 60px; 
-      left: 0; right: 0; height: 80px; 
+      position: absolute; top: 60px; left: 0; right: 0; height: 80px; 
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: rgba(245, 245, 247, 0.8); 
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      background: rgba(255,255,255, 0.95); 
       border-bottom: 1px solid rgba(0,0,0,0.05);
-      z-index: 11;
-      transition: opacity 0.3s ease;
+      z-index: 11; transition: opacity 0.3s ease;
     }
-
     .header-profile-pic {
-      width: 42px; height: 42px;
-      border-radius: 50%;
+      width: 38px; height: 38px; border-radius: 50%;
       display:flex; align-items:center; justify-content:center;
-      font-weight:bold; font-size:18px;
+      font-weight:bold; font-size:16px;
     }
-    .header-name {
-      font-size: 12px; color: #000;
-      font-family: 'SF Pro Display', sans-serif;
-      font-weight: 500; margin-top: 6px;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
+    .header-name { font-size: 11px; color: #000; font-weight: 600; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
 
     #header-ai { opacity: 1; z-index: 12; }
     #header-james { opacity: 0; z-index: 11; }
 
-    .screen-body-container {
-      position: relative; flex-grow: 1; background: #fff; overflow: hidden; margin-top: 140px;
-    }
-
+    .screen-body-container { position: relative; flex-grow: 1; background: #fff; overflow: hidden; margin-top: 140px; }
     .chat-container {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column; justify-content: flex-start;
-      padding: 20px 16px 40px; gap: 8px; 
-      overflow-y: auto;
-      font-family: 'SF Pro Display', sans-serif;
-      opacity: 0; 
+      position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-start;
+      padding: 20px 16px 40px; gap: 8px; overflow-y: auto; font-family: 'SF Pro Display', sans-serif; opacity: 0; 
     }
-
     #chat-state-step1 { z-index: 5; }
     #chat-state-step2 { z-index: 4; }
     #chat-state-step3 { z-index: 4; }
 
     .imessage-bubble {
-      max-width: 260px;
-      padding: 10px 16px; 
-      font-size: 17px; line-height: 1.3;
-      position: relative; word-wrap: break-word;
+      max-width: 260px; padding: 10px 16px; font-size: 16px; line-height: 1.35; position: relative; word-wrap: break-word;
     }
-
-    .imessage-received {
-      align-self: flex-start;
-      background-color: var(--imessage-gray); color: #000;
-      border-radius: 18px 18px 18px 4px;
-    }
-
-    .imessage-sent {
-      align-self: flex-end;
-      /* Dark Green theme color for sent bubbles */
-      background-color: var(--imessage-green); color: white;
-      border-radius: 18px 18px 4px 18px;
-    }
+    .imessage-received { align-self: flex-start; background-color: #f2f2f7; color: #000; border-radius: 18px 18px 18px 4px; }
+    .imessage-sent { align-self: flex-end; background-color: var(--matcha-green-dark); color: white; border-radius: 18px 18px 4px 18px; }
 
     /* --- FULLSCREEN NETWORK HERO --- */
     .network-hero {
       height: 100vh;
+      width: 100vw;
       position: relative;
       background-color: var(--matcha-cream);
       overflow: hidden;
@@ -319,51 +236,87 @@
       z-index: 1;
     }
 
+    /* Updated Graph Wrapper to be truly fullscreen/widespread */
+    .network-graph-wrapper {
+      position: absolute; 
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; 
+      z-index: 1;
+    }
+
+    .network-graph {
+      width: 100%; 
+      height: 100%;
+      /* Allows SVG to stretch to corners */
+      min-width: 100vw;
+      min-height: 100vh; 
+    }
+
+    /* Nodes & Links Styles */
+    .net-node { 
+      fill: #d6dccb; /* Very light greenish/grey for subtle background nodes */
+      opacity: 0.6; 
+    }
+    .net-node-main { 
+      fill: transparent; 
+      stroke: var(--matcha-green-muted); 
+      stroke-width: 2; 
+    }
+    .net-link { 
+      stroke: var(--matcha-green-muted); 
+      stroke-width: 1; 
+      opacity: 0.25; 
+      stroke-linecap: round; 
+    }
+
     .network-inner {
       position: relative;
       z-index: 3;
       text-align: center;
-      max-width: 700px;
+      max-width: 800px;
       padding: 0 24px;
     }
 
-    /* Updated Pill Style matching image_1.png */
     .network-pill {
       display: inline-flex; align-items: center; gap: 10px;
-      padding: 8px 16px;
+      padding: 6px 14px;
       border-radius: 999px;
-      background: var(--matcha-cream);
+      background: rgba(243, 239, 229, 0.6);
       border: 1px solid #dcd8cc;
       color: var(--text-dark);
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       margin-bottom: 24px;
       font-weight: 500;
     }
 
     .network-pill-dot {
-      width: 8px; height: 8px;
+      width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--matcha-green-muted);
     }
 
     .network-headline {
-      font-size: clamp(3rem, 6vw, 4.5rem);
-      line-height: 1.1;
+      font-size: clamp(3rem, 5.5vw, 5rem);
+      line-height: 1.05;
       margin-bottom: 14px;
       min-height: 2.2em;
       color: var(--text-dark);
+      letter-spacing: -0.02em;
     }
 
-    /* Block Cursor matching image_1.png */
+    /* Skinny Block Cursor */
     .typing-cursor {
       display: inline-block;
-      width: 0.6em;
-      height: 1em;
+      width: 2px; /* Skinnier */
+      height: 0.9em;
       background: var(--matcha-green-muted);
-      margin-left: 6px;
+      margin-left: 2px;
       animation: cursorBlink 1s steps(2, start) infinite;
       vertical-align: baseline;
       transform: translateY(0.1em);
@@ -373,29 +326,14 @@
       0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; }
     }
 
-    .network-graph-wrapper {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      pointer-events: none; z-index: 1;
-    }
-
-    .network-graph {
-      width: 120%; height: 120%;
-      opacity: 0.6;
-    }
-
-    /* Updated Graph Colors for subtle green theme */
-    .net-node { fill: var(--matcha-green-muted); opacity: 0.5; }
-    .net-node-main { fill: var(--matcha-cream); stroke: var(--matcha-green-muted); stroke-width: 3; }
-    .net-link { stroke: var(--matcha-green-muted); stroke-width: 1.5; opacity: 0.3; stroke-linecap: round; }
-
     .network-scroll-hint {
-      position: absolute; bottom: 30px; left: 50%;
+      position: absolute; bottom: 40px; left: 50%;
       transform: translateX(-50%);
-      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--text-muted);
       font-family: 'IBM Plex Mono', monospace;
       z-index: 3;
+      opacity: 0.7;
     }
 
     /* --- HOW IT WORKS SECTION --- */
@@ -408,178 +346,81 @@
     }
 
     .reveal-header h2 {
-      font-size: 3rem;
+      font-size: 3.5rem;
       color: var(--text-dark);
       margin-bottom: 16px;
     }
 
     .split-layout {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-top: 60px;
-      gap: 40px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-top: 60px; gap: 40px;
     }
 
     .content-left { 
-      width: 40%; 
-      height: 60vh;
-      display: flex;
-      align-items: center;
+      width: 45%; height: 60vh; display: flex; align-items: center;
     }
-    
     .content-right { width: 50%; position: relative; height: 100%; }
 
-    /* Updated Card Style matching image_0.png */
     .card {
-      background: var(--matcha-cream); /* Blends with background */
-      padding: 0; /* Removed padding to match clean look */
-      opacity: 0;
-      transform: translateY(30px);
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 100%;
-      text-align: left;
+      background: transparent; padding: 0; opacity: 0;
+      transform: translateY(30px); position: absolute; top: 50%;
+      transform: translateY(-50%); width: 100%; text-align: left;
     }
     
     .card h3 {
-      font-size: 2.8rem;
-      margin-bottom: 16px;
-      color: var(--text-dark);
-      line-height: 1.1;
+      font-size: 3rem; margin-bottom: 16px; color: var(--text-dark); line-height: 1.1;
     }
     .card p {
-      color: var(--text-dark);
-      font-size: 1.1rem;
-      line-height: 1.6;
-      opacity: 0.8;
-      max-width: 400px;
+      color: var(--text-dark); font-size: 1.15rem; line-height: 1.6; opacity: 0.8; max-width: 440px;
     }
     .step-num {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #c0c0c0; /* Lighter gray step number */
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      display: block;
-      letter-spacing: 0.1em;
-      font-family: 'SF Pro Display', sans-serif;
+      font-size: 0.8rem; font-weight: 600; color: #b0b0b0; 
+      text-transform: uppercase; margin-bottom: 16px; display: block;
+      letter-spacing: 0.15em; font-family: 'IBM Plex Mono', monospace;
     }
 
-    /* --- CTA SECTION (Dark Green Theme matching image_2.png) --- */
+    /* --- CTA SECTION --- */
     .cta {
-      background: var(--matcha-green-dark);
-      color: var(--text-light);
-      text-align: center;
-      padding: 140px 0 160px;
-      z-index: 60;
-      position: relative;
-      /* Noise texture for the dark background */
+      background: var(--matcha-green-dark); color: var(--text-light);
+      text-align: center; padding: 140px 0 160px; z-index: 60; position: relative;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
     }
     
-    .cta h2 {
-      font-size: clamp(2.5rem, 5vw, 3.5rem);
-      margin-bottom: 60px;
-    }
-
-    .waitlist-group {
-      max-width: 420px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    /* Updated Form Input Style (Underline only) */
+    .cta h2 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 60px; }
+    .waitlist-group { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
     .waitlist-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(243, 239, 229, 0.3);
-      padding: 12px 0;
-      color: var(--text-light);
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.3s;
-      font-family: 'IBM Plex Mono', monospace;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      background: transparent; border: none; border-bottom: 1px solid rgba(243, 239, 229, 0.3);
+      padding: 12px 0; color: var(--text-light); font-size: 0.9rem; outline: none;
+      transition: border-color 0.3s; font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase; letter-spacing: 0.1em;
     }
-    .waitlist-input:focus {
-      border-bottom-color: var(--text-light);
-    }
-    .waitlist-input::placeholder { 
-        color: rgba(243, 239, 229, 0.5); 
-        text-transform: uppercase;
-    }
+    .waitlist-input:focus { border-bottom-color: var(--text-light); }
+    .waitlist-input::placeholder { color: rgba(243, 239, 229, 0.5); text-transform: uppercase; }
     
-    /* Updated Button Style (Muted Green Rectangle) */
     .btn-waitlist {
-      background: var(--matcha-green-muted);
-      color: var(--text-light);
-      border: none;
-      padding: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: background 0.2s;
-      margin-top: 24px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-family: 'IBM Plex Mono', monospace;
-      border-radius: 0; /* Sharp corners */
+      background: var(--matcha-green-muted); color: var(--text-light); border: none;
+      padding: 18px; font-weight: 600; cursor: pointer; font-size: 0.9rem;
+      transition: background 0.2s; margin-top: 24px; letter-spacing: 0.12em;
+      text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; border-radius: 0;
     }
-    .btn-waitlist:hover {
-      background: #a3b58f;
-    }
-    
-    #form-status {
-      margin-top: 24px;
-      font-size: 0.9rem;
-      height: 20px;
-      font-family: 'IBM Plex Mono', monospace;
-      opacity: 0.8;
-    }
+    .btn-waitlist:hover { background: #a3b58f; }
+    #form-status { margin-top: 24px; font-size: 0.9rem; height: 20px; font-family: 'IBM Plex Mono', monospace; opacity: 0.8; }
 
     footer {
-      background: var(--matcha-green-dark);
-      color: rgba(243, 239, 229, 0.6);
-      text-align: center;
-      padding: 40px 32px;
-      font-size: 0.75rem;
-      position: relative;
-      z-index: 60;
-      font-family: 'IBM Plex Mono', monospace;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      background: var(--matcha-green-dark); color: rgba(243, 239, 229, 0.6);
+      text-align: center; padding: 40px 32px; font-size: 0.75rem;
+      position: relative; z-index: 60; font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.1em; text-transform: uppercase;
       border-top: 1px solid rgba(243, 239, 229, 0.1);
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
     }
 
-    /* Responsive tweaks */
     @media (max-width: 900px) {
-      .split-layout {
-        flex-direction: column;
-        gap: 32px;
-      }
-      .content-left {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
-      .card {
-        position: relative;
-        transform: none;
-        top: auto;
-        opacity: 1 !important; /* Force show on mobile for simpler layout */
-        margin-bottom: 40px;
-      }
-      .content-right {
-        display: none; /* Hide phone placeholder on mobile */
-      }
+      .split-layout { flex-direction: column; gap: 32px; }
+      .content-left { width: 100%; height: auto; display: block; }
+      .card { position: relative; transform: none; top: auto; opacity: 1 !important; margin-bottom: 60px; }
+      .content-right { display: none; }
       .content-section { padding-top: 80px; }
-      .network-headline { font-size: 2.8rem; }
+      .network-headline { font-size: 3rem; }
     }
   </style>
 </head>
@@ -588,65 +429,64 @@
   <div class="custom-scrollbar">
     <div class="sb-wrap" onclick="window.scrollTo(0,0)">
       <div class="sb-label">Start</div>
-      <div class="sb-segment"><div class="sb-fill" id="fill-chaos"></div></div>
-    </div>
-    <div class="sb-wrap" onclick="document.getElementById('section-content').scrollIntoView()">
-      <div class="sb-label">How</div>
-      <div class="sb-group">
-        <div class="sb-sub"><div class="sb-fill" id="fill-step1"></div></div>
-        <div class="sb-sub"><div class="sb-fill" id="fill-step2"></div></div>
-        <div class="sb-sub"><div class="sb-fill" id="fill-step3"></div></div>
+      <div class="sb-line-container sb-line-long">
+        <div class="sb-fill" id="fill-chaos"></div>
       </div>
     </div>
+    
+    <div class="sb-wrap" onclick="document.getElementById('section-content').scrollIntoView()">
+      <div class="sb-label">How</div>
+      <div class="sb-line-container sb-line-short"><div class="sb-fill" id="fill-step1"></div></div>
+      <div class="sb-line-container sb-line-short"><div class="sb-fill" id="fill-step2"></div></div>
+      <div class="sb-line-container sb-line-short"><div class="sb-fill" id="fill-step3"></div></div>
+    </div>
+    
     <div class="sb-wrap" onclick="document.getElementById('section-cta').scrollIntoView()">
+      <div class="sb-line-container sb-line-long" style="height:40px; margin-bottom:6px;">
+        <div class="sb-fill" id="fill-join"></div>
+      </div>
       <div class="sb-label">Join</div>
-      <div class="sb-segment"><div class="sb-fill" id="fill-join"></div></div>
     </div>
   </div>
 
   <div class="phone-wrapper-fixed">
     <div id="phone-scaler">
-      <div class="phone-stage" id="global-phone">
-        <div class="phone-device">
-          <div class="screen">
-            <div class="status-bar">
-              <div class="status-time">9:41</div>
-              <div class="status-icons">
-                <div class="status-signal"><span></span><span></span><span></span><span></span></div>
-                <div class="status-wifi"></div>
-                <div class="status-battery"></div>
-              </div>
+      <div class="phone-device">
+        <div class="screen">
+          <div class="status-bar">
+            <div class="status-time">9:41</div>
+            <div class="status-icons">
+              <div class="status-signal"><span></span><span></span><span></span><span></span></div>
+              <div class="status-wifi"></div>
+              <div class="status-battery"></div>
             </div>
-
-            <div class="dynamic-island"></div>
-            
-            <div class="screen-header" id="header-ai">
-              <div class="header-profile-pic" style="background: #f4f4f4; border: 1px solid #d0d0d0; color:#222;">
-                  <span style="font-size: 14px;">🍵</span>
-              </div>
-              <span class="header-name">Matcha AI</span>
+          </div>
+          <div class="dynamic-island"></div>
+          
+          <div class="screen-header" id="header-ai">
+            <div class="header-profile-pic" style="background: #f4f4f4; border: 1px solid #d0d0d0; color:#222;">
+                <span style="font-size: 14px;">🍵</span>
             </div>
+            <span class="header-name">Matcha AI</span>
+          </div>
 
-            <div class="screen-header" id="header-james">
-              <div class="header-profile-pic" style="background: var(--matcha-green-muted); color:white;">J</div>
-              <span class="header-name">James</span>
+          <div class="screen-header" id="header-james">
+            <div class="header-profile-pic" style="background: var(--matcha-green-muted); color:white;">J</div>
+            <span class="header-name">James</span>
+          </div>
+
+          <div class="screen-body-container">
+            <div class="chat-container" id="chat-state-step1">
+              <div class="imessage-bubble imessage-sent">Help me find an IB intern from BC.</div>
             </div>
-
-            <div class="screen-body-container">
-              <div class="chat-container" id="chat-state-step1">
-                <div class="imessage-bubble imessage-sent">Help me find an IB intern from BC.</div>
-              </div>
-
-              <div class="chat-container" id="chat-state-step2">
-                <div class="imessage-bubble imessage-sent" style="opacity:0.5;">Help me find an IB intern from BC.</div>
-                <div class="imessage-bubble imessage-received">Got it, searching the network...</div>
-                <div class="imessage-bubble imessage-received" style="margin-top:10px;">Found a match. James, Class of '24. Interned at JPM last summer.</div>
-              </div>
-
-              <div class="chat-container" id="chat-state-step3">
-                <div class="imessage-bubble imessage-sent">Hey James, connecting via Matcha!</div>
-                <div class="imessage-bubble imessage-received">Hey! Happy to chat about JPM. What's your schedule like?</div>
-              </div>
+            <div class="chat-container" id="chat-state-step2">
+              <div class="imessage-bubble imessage-sent" style="opacity:0.5;">Help me find an IB intern from BC.</div>
+              <div class="imessage-bubble imessage-received">Got it, searching the network...</div>
+              <div class="imessage-bubble imessage-received" style="margin-top:10px;">Found a match. James, Class of '24. Interned at JPM last summer.</div>
+            </div>
+            <div class="chat-container" id="chat-state-step3">
+              <div class="imessage-bubble imessage-sent">Hey James, connecting via Matcha!</div>
+              <div class="imessage-bubble imessage-received">Hey! Happy to chat about JPM. What's your schedule like?</div>
             </div>
           </div>
         </div>
@@ -656,27 +496,33 @@
 
   <section class="network-hero" id="network-hero">
     <div class="network-graph-wrapper">
-      <svg class="network-graph" id="network-graph" viewBox="0 0 800 480" preserveAspectRatio="xMidYMid meet">
+      <svg class="network-graph" id="network-graph" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
         <g class="net-links">
-          <line class="net-link" x1="400" y1="240" x2="220" y2="110" />
-          <line class="net-link" x1="400" y1="240" x2="620" y2="130" />
-          <line class="net-link" x1="400" y1="240" x2="190" y2="260" />
-          <line class="net-link" x1="400" y1="240" x2="610" y2="290" />
-          <line class="net-link" x1="400" y1="240" x2="320" y2="390" />
-          <line class="net-link" x1="400" y1="240" x2="510" y2="390" />
-          <line class="net-link" x1="220" y1="110" x2="260" y2="40" />
-          <line class="net-link" x1="620" y1="130" x2="710" y2="200" />
+          <line class="net-link" x1="800" y1="450" x2="200" y2="150" />
+          <line class="net-link" x1="800" y1="450" x2="1400" y2="200" />
+          <line class="net-link" x1="800" y1="450" x2="150" y2="750" />
+          <line class="net-link" x1="800" y1="450" x2="1450" y2="800" />
+          <line class="net-link" x1="200" y1="150" x2="50" y2="300" />
+          <line class="net-link" x1="1400" y1="200" x2="1550" y2="100" />
+          <line class="net-link" x1="150" y1="750" x2="400" y2="850" />
+          <line class="net-link" x1="1450" y1="800" x2="1200" y2="880" />
+          <line class="net-link" x1="200" y1="150" x2="450" y2="50" />
+          <line class="net-link" x1="1400" y1="200" x2="1200" y2="100" />
         </g>
         <g class="net-nodes">
-          <circle class="net-node net-node-main" cx="400" cy="240" r="14" />
-          <circle class="net-node" cx="220" cy="110" r="8" />
-          <circle class="net-node" cx="620" cy="130" r="9" />
-          <circle class="net-node" cx="190" cy="260" r="8" />
-          <circle class="net-node" cx="610" cy="290" r="8" />
-          <circle class="net-node" cx="320" cy="390" r="9" />
-          <circle class="net-node" cx="510" cy="390" r="9" />
-          <circle class="net-node" cx="260" cy="40" r="6" />
-          <circle class="net-node" cx="710" cy="200" r="6" />
+            <circle class="net-node-main" cx="800" cy="450" r="20" opacity="0.1" />
+
+            <circle class="net-node" cx="200" cy="150" r="14" />
+            <circle class="net-node" cx="1400" cy="200" r="16" />
+            <circle class="net-node" cx="150" cy="750" r="15" />
+            <circle class="net-node" cx="1450" cy="800" r="14" />
+            
+            <circle class="net-node" cx="50" cy="300" r="10" />
+            <circle class="net-node" cx="1550" cy="100" r="12" />
+            <circle class="net-node" cx="400" cy="850" r="11" />
+            <circle class="net-node" cx="1200" cy="880" r="13" />
+            <circle class="net-node" cx="450" cy="50" r="9" />
+            <circle class="net-node" cx="1200" cy="100" r="10" />
         </g>
       </svg>
     </div>
@@ -691,9 +537,7 @@
       </h1>
     </div>
 
-    <div class="network-scroll-hint">
-      SCROLL TO EXPLORE
-    </div>
+    <div class="network-scroll-hint">SCROLL TO EXPLORE</div>
   </section>
 
   <section class="content-section" id="section-content">
@@ -701,7 +545,6 @@
       <div class="reveal-header" style="margin-bottom: 80px;">
         <h2>How it works</h2>
       </div>
-      
       <div class="split-layout">
         <div class="content-left">
           <div class="card step-card" id="card-step1">
@@ -720,8 +563,7 @@
             <p>Get introduced via text. Skip the cold emails and schedule a chat with someone who's been in your shoes.</p>
           </div>
         </div>
-        <div class="content-right">
-            </div>
+        <div class="content-right"></div>
       </div>
     </div>
   </section>
@@ -729,7 +571,6 @@
   <section class="cta" id="section-cta">
     <div class="container reveal-cta">
       <h2>Your future is waiting.</h2>
-      
       <form id="waitlist-form" class="waitlist-group">
         <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
         <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" required>
@@ -739,9 +580,7 @@
     </div>
   </section>
 
-  <footer>
-    &copy; 2025 MATCHA MATCH · CAREERS BREWED IN BOSTON
-  </footer>
+  <footer>&copy; 2025 MATCHA MATCH · CAREERS BREWED IN BOSTON</footer>
 
   <script>
     gsap.registerPlugin(ScrollTrigger);
@@ -749,7 +588,7 @@
     /* --- PHONE SCALE --- */
     function resizePhone() {
       const scaler = document.getElementById('phone-scaler');
-      const baseHeight = 860; const baseWidth = 400;
+      const baseHeight = 850; const baseWidth = 400;
       const vh = window.innerHeight; const vw = window.innerWidth;
       let targetScale = (vh * 0.85) / baseHeight;
       if ((baseWidth * targetScale) > (vw * 0.9)) { targetScale = (vw * 0.9) / baseWidth; }
@@ -762,35 +601,40 @@
     const fullHeadline = "Secure an internship with our AI-powered SMS networking system.";
 
     function typeText(targetEl, text, speed) {
-      let i = 0;
-      targetEl.textContent = "";
+      let i = 0; targetEl.textContent = "";
       const interval = setInterval(() => {
-        targetEl.textContent = text.slice(0, i);
-        i++;
-        if (i > text.length) { clearInterval(interval); }
+        targetEl.textContent = text.slice(0, i); i++;
+        if (i > text.length) clearInterval(interval);
       }, speed);
     }
 
-    /* --- INITIAL LOAD --- */
+    /* --- INITIAL LOAD & BREATHING ANIMATION --- */
     window.addEventListener('load', () => {
       resizePhone();
-      gsap.set("#network-graph", { scale: 0.9, opacity: 0 });
-      gsap.set(".net-node", { opacity: 0, scale: 0.8 });
-      gsap.set(".net-link", { opacity: 0 });
+      
+      // Initial fade in
+      gsap.to(".network-graph", { opacity: 1, duration: 2 });
+      gsap.from(".net-node", { scale: 0, opacity: 0, duration: 1, stagger: 0.1, ease: "back.out" });
+      gsap.from(".net-link", { opacity: 0, duration: 1.5, delay: 0.5 });
 
-      const introTl = gsap.timeline();
-      introTl
-        .to("#network-graph", { scale: 1, opacity: 0.6, duration: 1.5, ease: "power3.out" }, 0)
-        .to(".net-node", { opacity: 0.5, scale: 1, stagger: 0.05, duration: 0.8, ease: "back.out(1.5)" }, 0.3)
-        .to(".net-link", { opacity: 0.3, stagger: 0.03, duration: 0.6 }, 0.5)
-        .add(() => {
-          typeText(headlineSpan, fullHeadline, 45);
-          // Subtle breathing
-          gsap.to(".net-node", { opacity: 0.3, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut", stagger:0.1 });
-        }, 1.2);
+      typeText(headlineSpan, fullHeadline, 35);
+
+      // --- BREATHING EFFECT ---
+      // Randomly pulse nodes up and down forever
+      gsap.utils.toArray(".net-node").forEach((node) => {
+        gsap.to(node, {
+          scale: "random(0.8, 1.3)", // Glow up/down size
+          opacity: "random(0.4, 0.9)", // Glow up/down brightness
+          duration: "random(2, 4)",
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: "random(0, 2)"
+        });
+      });
     });
 
-    /* --- SCROLLBAR & PHONE FADE IN --- */
+    /* --- SCROLLBAR FILL --- */
     const sbChaos = document.getElementById('fill-chaos');
     const sbStep1 = document.getElementById('fill-step1');
     const sbStep2 = document.getElementById('fill-step2');
@@ -802,36 +646,30 @@
       onUpdate: (self) => { sbChaos.style.transform = `scaleY(${self.progress})`; }
     });
 
+    /* --- PHONE & CONTENT TIMELINE --- */
     ScrollTrigger.create({
       trigger: "#section-content", start: "top bottom", end: "top 20%", scrub: 1,
       onUpdate: (self) => { gsap.set("#phone-scaler", { opacity: self.progress }); }
     });
 
-    /* --- STEP-BY-STEP TIMELINE --- */
-    // Only run the pinning timeline on desktop/tablet
     if (window.innerWidth > 900) {
         const stepsTl = gsap.timeline({
-        scrollTrigger: {
-            trigger: "#section-content", start: "top top", end: "+=2400", pin: true, scrub: 1, anticipatePin: 1
-        }
+            scrollTrigger: { trigger: "#section-content", start: "top top", end: "+=2400", pin: true, scrub: 1 }
         });
 
         stepsTl
-        // Step 1
         .to("#card-step1", { opacity: 1, duration: 0.3 })
         .to("#chat-state-step1", { opacity: 1, duration: 0.3 }, "<")
         .to(sbStep1, { scaleY: 1, duration: 0.1 }, "<")
-        .to({}, { duration: 0.8 }) // pause
+        .to({}, { duration: 0.8 }) 
 
-        // Step 2
         .to("#card-step1", { opacity: 0, duration: 0.3 })
         .to("#card-step2", { opacity: 1, duration: 0.3 })
         .to("#chat-state-step1", { opacity: 0, duration: 0.3 }, "<")
         .to("#chat-state-step2", { opacity: 1, duration: 0.3 }, ">")
         .to(sbStep2, { scaleY: 1, duration: 0.1 }, "<")
-        .to({}, { duration: 0.8 }) // pause
+        .to({}, { duration: 0.8 })
 
-        // Step 3
         .to("#card-step2", { opacity: 0, duration: 0.3 })
         .to("#card-step3", { opacity: 1, duration: 0.3 })
         .to("#chat-state-step2", { opacity: 0, duration: 0.3 }, "<")
@@ -842,18 +680,17 @@
         .to({}, { duration: 0.8 });
     }
 
-
-    /* --- CTA FADES --- */
     gsap.to(sbJoin, {
       scrollTrigger: { trigger: "#section-cta", start: "top 80%", toggleActions: "play reverse play reverse" },
       scaleY: 1, duration: 0.3
     });
+    
     gsap.to("#phone-scaler", {
       scrollTrigger: { trigger: "#section-cta", start: "top bottom", end: "top center", scrub: 1 },
       opacity: 0
     });
 
-    /* --- FORM MOCK --- */
+    /* --- FORM SUBMISSION --- */
     const form = document.getElementById("waitlist-form");
     form.addEventListener("submit", (e) => {
       e.preventDefault();
