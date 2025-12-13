@@ -1,10 +1,6 @@
 BEGIN:VCARD
 VERSION:3.0
-N:AI;Matcha;;;
-FN:Matcha AI
-ORG:Matcha AI
-TEL;TYPE=CELL:+18449231608
-URL:https://matchamatch.us/
-PHOTO;ENCODING=b;TYPE=JPEG:
- <PHOTO.JPEG>
+FN:Matcha Match
+TEL;TYPE=CELL:+16176168444
+PHOTO;VALUE=URL;TYPE=JPEG:https://matchamatch.us/contact-logo.jpg
 END:VCARD
