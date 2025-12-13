@@ -2,5 +2,5 @@ BEGIN:VCARD
 VERSION:3.0
 FN:Matcha Match
 TEL;TYPE=CELL:+16176168444
-PHOTO;VALUE=URL;TYPE=JPEG:https://matchamatch.us/contact-logo.jpg
+PHOTO;TYPE=JPEG:https://matchamatch.us/contact-logo.jpg
 END:VCARD
