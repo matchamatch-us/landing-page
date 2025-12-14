@@ -604,6 +604,9 @@
           method="POST"
           target="hidden_iframe"
         >
+          <!-- NEW: role explicitly sent to Make -->
+          <input type="hidden" name="role" value="mentee">
+
           <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
 
           <input
@@ -634,6 +637,9 @@
           method="POST"
           target="hidden_iframe"
         >
+          <!-- NEW: role explicitly sent to Make -->
+          <input type="hidden" name="role" value="mentor">
+
           <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
 
           <input
@@ -821,9 +827,9 @@
 
     function normalizeUSPhoneToE164(raw) {
       const digits = (raw || "").replace(/\D/g, "");
-      if (digits.length === 10) return "+1" + digits;                 // (617) 555-1234
-      if (digits.length === 11 && digits.startsWith("1")) return "+" + digits; // 1-617-...
-      if (raw && raw.trim().startsWith("+") && digits.length >= 10) return raw.trim(); // already e164-ish
+      if (digits.length === 10) return "+1" + digits;
+      if (digits.length === 11 && digits.startsWith("1")) return "+" + digits;
+      if (raw && raw.trim().startsWith("+") && digits.length >= 10) return raw.trim();
       return null;
     }
 
