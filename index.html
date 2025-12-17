@@ -59,7 +59,7 @@
     /* Make scrollIntoView land below fixed mobile header */
     #section-content, #section-cta { scroll-margin-top: calc(var(--nav-h) + var(--safe-top) + 12px); }
 
-    /* --- MOBILE FIXED HEADER + BOTTOM CTA --- */
+    /* --- MOBILE FIXED HEADER --- */
     .mobile-nav {
       display: none;
       position: fixed;
@@ -88,53 +88,6 @@
       font-size: 0.72rem;
       color: rgba(0,0,0,0.75);
       user-select: none;
-    }
-    .mobile-nav-btn {
-      min-height: 44px;
-      padding: 0 14px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,0.12);
-      background: rgba(255,255,255,0.75);
-      font-family: 'IBM Plex Mono', monospace;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-size: 0.68rem;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-
-    .mobile-cta-bar {
-      display: none;
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      z-index: 1400;
-      background: rgba(243, 239, 229, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(0,0,0,0.06);
-      padding: 12px var(--container-pad) calc(12px + var(--safe-bottom));
-    }
-    .mobile-cta-row { display: flex; gap: 10px; }
-    .mobile-cta-btn {
-      flex: 1;
-      min-height: 48px;
-      border-radius: 16px;
-      border: 1px solid rgba(0,0,0,0.10);
-      font-family: 'IBM Plex Mono', monospace;
-      letter-spacing: 0.10em;
-      text-transform: uppercase;
-      font-size: 0.68rem;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-    .mobile-cta-btn.primary {
-      background: var(--matcha-green-dark);
-      color: var(--text-light);
-      border-color: transparent;
-    }
-    .mobile-cta-btn.secondary {
-      background: rgba(255,255,255,0.75);
-      color: rgba(0,0,0,0.82);
     }
 
     /* --- CUSTOM SCROLLBAR (desktop only) --- */
@@ -189,9 +142,6 @@
     @media (max-width: 900px) {
       .custom-scrollbar { display: none; }
       .mobile-nav { display: block; }
-      /* We keep the bottom CTA bar commented out/hidden if not needed, 
-         but for now leaving structure if you want to repurpose it. */
-      .mobile-cta-bar { display: none; } /* Hidden as per request to remove signup context */
       body { padding-bottom: 0; }
     }
 
@@ -352,11 +302,12 @@
     }
     .network-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--matcha-green-muted); }
 
+    /* REDUCED FONT SIZE HERE */
     .network-headline {
-      font-size: clamp(2.2rem, 7vw, 5rem);
+      font-size: clamp(2.0rem, 5vw, 3.8rem);
       line-height: 1.05;
       margin-bottom: 12px;
-      min-height: 2.2em;
+      min-height: 2.2em; /* Height to accommodate 2 lines */
       color: var(--text-dark);
       letter-spacing: -0.02em;
     }
@@ -386,7 +337,6 @@
     .content-section {
       position: relative;
       background: var(--matcha-cream);
-      /* DESKTOP ADJUSTMENT: Raised position significantly */
       padding: 60px 0 140px; 
       z-index: 40;
       overflow: hidden;
@@ -442,8 +392,6 @@
       background: rgba(255,255,255,0.05);
     }
 
-    /* Commenting out original CTA styles to keep code clean, 
-       but leaving structure in case of revert */
     .cta-toggle, .cta-panel, .waitlist-group { display: none !important; }
 
     footer {
@@ -458,21 +406,17 @@
       .split-layout { flex-direction: column; gap: 0; }
       .content-left { width: 100%; height: auto; display: block; }
       
-      /* IPHONE VIEW (MOBILE) UPDATES: 
-         - Added "Resistance": min-height is tall so user must scroll.
-         - Sticky positioning acts as "pinholders".
-      */
       .card { 
         position: sticky; 
         top: 100px; 
         transform: none !important; 
         opacity: 1 !important; 
         margin-bottom: 0;
-        min-height: 85vh; /* This provides the 'resistance' / placeholder height */
+        min-height: 85vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        background: var(--matcha-cream); /* Opaque background to cover previous cards */
+        background: var(--matcha-cream);
         border-bottom: 1px solid rgba(0,0,0,0.05);
         padding-bottom: 40px;
       }
@@ -493,7 +437,7 @@
         <span aria-hidden="true">🍵</span>
         <span>Matcha Match</span>
       </div>
-      </div>
+    </div>
   </header>
 
   <div class="custom-scrollbar">
@@ -580,15 +524,15 @@
       <h1 class="network-headline">
         <span id="headline-typed"></span><span class="typing-cursor" id="headline-cursor"></span>
       </h1>
-
-      </div>
+    </div>
 
     <div class="network-scroll-hint" id="scroll-hint">SCROLL TO EXPLORE</div>
   </section>
 
   <section class="content-section" id="section-content">
     <div class="container">
-      <div class="reveal-header" style="margin-bottom: 40px;"> <h2>How it works</h2>
+      <div class="reveal-header" style="margin-bottom: 40px;"> 
+        <h2>How it works</h2>
       </div>
 
       <div class="split-layout">
@@ -620,7 +564,6 @@
   <section class="cta" id="section-cta">
     <div class="container reveal-cta">
       <h2 id="cta-heading">Ready to match?</h2>
-
       <div class="registration-soon">
         Registration opening soon!
       </div>
@@ -648,18 +591,48 @@
       gsap.set(scaler, { scale: targetScale });
     }
 
-    /* --- TYPEWRITER --- */
+    /* --- ROTATING TYPEWRITER EFFECT --- */
     const headlineSpan = document.getElementById("headline-typed");
-    const fullHeadline = "Your professional network, brewed perfectly.";
+    const phrases = [
+      "Skip the cold coffee chat. Meet the person one step ahead of you.",
+      "Coffee chats are random. Matcha Match is targeted.",
+      "Find your 'been there, done that' person."
+    ];
+    
+    let currentPhraseIndex = 0;
+    let currentCharIndex = 0;
+    let isDeleting = false;
+    let typeSpeed = 40; // typing speed
+    let deleteSpeed = 20; // backspace speed
+    let pauseDelay = 2500; // time to read the text
 
-    function typeText(targetEl, text, speed) {
-      let i = 0;
-      targetEl.textContent = "";
-      const interval = setInterval(() => {
-        targetEl.textContent = text.slice(0, i);
-        i++;
-        if (i > text.length) clearInterval(interval);
-      }, speed);
+    function startTypewriterCycle() {
+      const currentPhrase = phrases[currentPhraseIndex];
+
+      if (isDeleting) {
+        // Deleting
+        headlineSpan.textContent = currentPhrase.substring(0, currentCharIndex - 1);
+        currentCharIndex--;
+        
+        if (currentCharIndex === 0) {
+          isDeleting = false;
+          currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+          setTimeout(startTypewriterCycle, 500); // short pause before typing next
+        } else {
+          setTimeout(startTypewriterCycle, deleteSpeed);
+        }
+      } else {
+        // Typing
+        headlineSpan.textContent = currentPhrase.substring(0, currentCharIndex + 1);
+        currentCharIndex++;
+
+        if (currentCharIndex === currentPhrase.length) {
+          isDeleting = true;
+          setTimeout(startTypewriterCycle, pauseDelay); // long pause to read
+        } else {
+          setTimeout(startTypewriterCycle, typeSpeed);
+        }
+      }
     }
 
     /* --- INITIAL LOAD ANIMATION SEQUENCE --- */
@@ -669,14 +642,15 @@
       const tl = gsap.timeline();
       const heroBg = document.getElementById("hero-bg-wrapper");
 
-      tl.to(heroBg, { "--mask-radius": "140%", duration: 4.5, ease: "power2.out" })
-        .to(heroBg, { filter: "blur(0px)", transform: "scale(1)", opacity: 1, duration: 3.5, ease: "power2.out" }, "<")
-        .to(heroBg, { opacity: 0.2, filter: "blur(3px)", duration: 1.5, ease: "power2.inOut" }, "-=1.0")
+      // SPEED UPDATE: Total opening is now much faster (approx 2.5s total fade in)
+      tl.to(heroBg, { "--mask-radius": "140%", duration: 3.0, ease: "power2.out" }) 
+        .to(heroBg, { filter: "blur(0px)", transform: "scale(1)", opacity: 1, duration: 2.0, ease: "power2.out" }, "<") 
+        .to(heroBg, { opacity: 0.2, filter: "blur(3px)", duration: 1.0, ease: "power2.inOut" }, "-=0.5")
         .to("#network-inner", {
           opacity: 1,
-          duration: 1,
-          onStart: () => typeText(headlineSpan, fullHeadline, 35)
-        }, "-=0.5")
+          duration: 0.8,
+          onStart: () => startTypewriterCycle() // Begin the infinite rotation
+        }, "-=0.2")
         .to("#scroll-hint", { opacity: 0.7, duration: 1, delay: 0.5 });
 
       ScrollTrigger.refresh();
