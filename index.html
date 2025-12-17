@@ -306,7 +306,7 @@
       font-size: clamp(2.0rem, 5vw, 3.8rem);
       line-height: 1.05;
       margin-bottom: 12px;
-      min-height: 2.2em; /* Height to accommodate 2 lines */
+      min-height: 2.2em;
       color: var(--text-dark);
       letter-spacing: -0.02em;
     }
@@ -451,20 +451,62 @@
     }
     .cta h2 { font-size: clamp(2.0rem, 6vw, 4rem); margin-bottom: 30px; }
 
-    .registration-soon {
+    .cta-toggle {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid rgba(243, 239, 229, 0.25);
+      overflow: hidden;
+      margin-bottom: 50px;
       font-family: 'IBM Plex Mono', monospace;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      font-size: 1.1rem;
-      opacity: 0.8;
-      border: 1px solid rgba(243, 239, 229, 0.25);
-      display: inline-block;
-      padding: 16px 24px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.05);
+      font-size: 0.7rem;
+    }
+    .cta-toggle-btn {
+      min-height: 44px;
+      padding: 10px 20px;
+      border: none;
+      background: transparent;
+      color: rgba(243, 239, 229, 0.7);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      touch-action: manipulation;
+    }
+    .cta-toggle-btn.active {
+      background: var(--matcha-green-muted);
+      color: var(--text-light);
     }
 
-    .cta-toggle, .cta-panel, .waitlist-group { display: none !important; }
+    .cta-panel { display: none; }
+    .cta-panel.active { display: block; }
+
+    .waitlist-group { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+    .waitlist-input {
+      background: transparent; border: none; border-bottom: 1px solid rgba(243, 239, 229, 0.3);
+      padding: 14px 0; color: var(--text-light); font-size: 0.9rem; outline: none;
+      transition: border-color 0.3s; font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase; letter-spacing: 0.1em; min-height: 44px;
+    }
+    .waitlist-input:focus { border-bottom-color: var(--text-light); }
+    .waitlist-input::placeholder { color: rgba(243, 239, 229, 0.5); text-transform: uppercase; }
+
+    .btn-waitlist {
+      min-height: 48px;
+      background: var(--matcha-green-muted); color: var(--text-light); border: none;
+      padding: 16px 18px; font-weight: 600; cursor: pointer; font-size: 0.9rem;
+      transition: background 0.2s; margin-top: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; font-family: 'IBM Plex Mono', monospace;
+      border-radius: 16px; touch-action: manipulation;
+    }
+    .btn-waitlist:hover { background: #a3b58f; }
+
+    .cta-status {
+      margin-top: 22px;
+      font-size: 0.9rem;
+      min-height: 22px;
+      font-family: 'IBM Plex Mono', monospace;
+      opacity: 0.85;
+    }
 
     footer {
       background: var(--matcha-green-dark); color: rgba(243, 239, 229, 0.6);
@@ -708,9 +750,71 @@
 
   <section class="cta" id="section-cta">
     <div class="container reveal-cta">
-      <h2 id="cta-heading">Ready to match?</h2>
-      <div class="registration-soon">
-        Registration opening soon!
+      <h2 id="cta-heading">Looking for help?</h2>
+
+      <div class="cta-toggle" role="tablist" aria-label="Join as mentee or mentor">
+        <button class="cta-toggle-btn active" data-role="mentee" type="button">mentee</button>
+        <button class="cta-toggle-btn" data-role="mentor" type="button">mentor</button>
+      </div>
+
+      <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+      <div id="cta-mentee" class="cta-panel active">
+        <form
+          id="mentee-form"
+          class="waitlist-group"
+          action="https://hook.us2.make.com/hpankjggy3pt463fydxkam3b1w4glrlp"
+          method="POST"
+          target="hidden_iframe"
+        >
+          <input type="hidden" name="role" value="mentee" />
+
+          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
+          <input
+            type="tel"
+            name="phone"
+            id="mentee-phone"
+            class="waitlist-input"
+            placeholder="(617) 555-1234"
+            inputmode="tel"
+            autocomplete="tel"
+            required
+          />
+          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" required />
+          <input type="hidden" name="phone_raw" id="mentee_phone_raw" />
+          <button type="submit" class="btn-waitlist">JOIN NOW</button>
+        </form>
+
+        <p id="form-status-mentee" class="cta-status"></p>
+      </div>
+
+      <div id="cta-mentor" class="cta-panel">
+        <form
+          id="mentor-form"
+          class="waitlist-group"
+          action="https://hook.us2.make.com/8xq118spe6qy5i6qtgxikgejc3d5jfg2"
+          method="POST"
+          target="hidden_iframe"
+        >
+          <input type="hidden" name="role" value="mentor" />
+
+          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
+          <input
+            type="tel"
+            name="phone"
+            id="mentor-phone"
+            class="waitlist-input"
+            placeholder="(617) 555-1234"
+            inputmode="tel"
+            autocomplete="tel"
+            required
+          />
+          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" required />
+          <input type="hidden" name="phone_raw" id="mentor_phone_raw" />
+          <button type="submit" class="btn-waitlist">JOIN NOW</button>
+        </form>
+
+        <p id="form-status-mentor" class="cta-status"></p>
       </div>
     </div>
   </section>
@@ -890,6 +994,93 @@
     gsap.to(sbJoin, {
       scrollTrigger: { trigger: "#section-cta", start: "top 80%", toggleActions: "play reverse play reverse" },
       scaleY: 1, duration: 0.3
+    });
+
+    /* --- CTA TOGGLE (mentee vs mentor) --- */
+    const ctaHeading = document.getElementById('cta-heading');
+    const toggleButtons = document.querySelectorAll('.cta-toggle-btn');
+    const menteePanel = document.getElementById('cta-mentee');
+    const mentorPanel = document.getElementById('cta-mentor');
+
+    function setRole(role) {
+      toggleButtons.forEach(b => b.classList.remove('active'));
+      document.querySelector(`.cta-toggle-btn[data-role="${role}"]`)?.classList.add('active');
+
+      if (role === 'mentee') {
+        ctaHeading.textContent = 'Looking for help?';
+        menteePanel.classList.add('active');
+        mentorPanel.classList.remove('active');
+      } else {
+        ctaHeading.textContent = 'Got wisdom to share?';
+        mentorPanel.classList.add('active');
+        menteePanel.classList.remove('active');
+      }
+    }
+    toggleButtons.forEach(btn => btn.addEventListener('click', () => setRole(btn.dataset.role)));
+
+    /* --- FORM SUBMISSION --- */
+    const menteeForm = document.getElementById("mentee-form");
+    const mentorForm = document.getElementById("mentor-form");
+
+    const menteePhoneEl = document.getElementById("mentee-phone");
+    const mentorPhoneEl = document.getElementById("mentor-phone");
+
+    const menteePhoneRawEl = document.getElementById("mentee_phone_raw");
+    const mentorPhoneRawEl = document.getElementById("mentor_phone_raw");
+
+    const menteeStatus = document.getElementById("form-status-mentee");
+    const mentorStatus = document.getElementById("form-status-mentor");
+
+    function normalizeUSPhoneToE164(raw) {
+      const digits = (raw || "").replace(/\D/g, "");
+      if (digits.length === 10) return "+1" + digits;
+      if (digits.length === 11 && digits.startsWith("1")) return "+" + digits;
+      if (raw && raw.trim().startsWith("+") && digits.length >= 10) return raw.trim();
+      return null;
+    }
+
+    menteeForm?.addEventListener("submit", (e) => {
+      menteeStatus.style.color = "var(--text-light)";
+      menteeStatus.innerHTML = "Requesting access...";
+
+      const raw = menteePhoneEl.value;
+      const e164 = normalizeUSPhoneToE164(raw);
+
+      if (!e164) {
+        e.preventDefault();
+        menteeStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
+        return;
+      }
+
+      menteePhoneRawEl.value = raw;
+      menteePhoneEl.value = e164;
+
+      setTimeout(() => {
+        menteeStatus.innerHTML = "Thanks! Check your texts 🙂";
+        menteeForm.reset();
+      }, 1200);
+    });
+
+    mentorForm?.addEventListener("submit", (e) => {
+      mentorStatus.style.color = "var(--text-light)";
+      mentorStatus.innerHTML = "Requesting access...";
+
+      const raw = mentorPhoneEl.value;
+      const e164 = normalizeUSPhoneToE164(raw);
+
+      if (!e164) {
+        e.preventDefault();
+        mentorStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
+        return;
+      }
+
+      mentorPhoneRawEl.value = raw;
+      mentorPhoneEl.value = e164;
+
+      setTimeout(() => {
+        mentorStatus.innerHTML = "Thanks! We'll be in touch 🙂";
+        mentorForm.reset();
+      }, 1200);
     });
   </script>
 </body>
