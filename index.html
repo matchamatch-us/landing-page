@@ -189,8 +189,10 @@
     @media (max-width: 900px) {
       .custom-scrollbar { display: none; }
       .mobile-nav { display: block; }
-      .mobile-cta-bar { display: block; }
-      body { padding-bottom: calc(var(--cta-bar-h) + 34px); }
+      /* We keep the bottom CTA bar commented out/hidden if not needed, 
+         but for now leaving structure if you want to repurpose it. */
+      .mobile-cta-bar { display: none; } /* Hidden as per request to remove signup context */
+      body { padding-bottom: 0; }
     }
 
     /* --- FIXED PHONE (DESKTOP ONLY) --- */
@@ -380,50 +382,12 @@
       opacity: 0;
     }
 
-    /* Mobile-only: small chat preview */
-    .mobile-chat-demo { display: none; }
-    @media (max-width: 900px) {
-      .network-inner { padding-top: calc(var(--nav-h) + var(--safe-top) + 12px); }
-      .network-scroll-hint { bottom: calc(20px + var(--safe-bottom) + 10px + var(--cta-bar-h)); }
-      .mobile-chat-demo {
-        display: block;
-        width: min(420px, 100%);
-        margin: 18px auto 0;
-        padding: 14px 14px 16px;
-        border-radius: 22px;
-        background: rgba(255,255,255,0.70);
-        border: 1px solid rgba(0,0,0,0.08);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        text-align: left;
-      }
-      .m-bubble {
-        max-width: 88%;
-        padding: 10px 14px;
-        border-radius: 18px;
-        font-size: 15px;
-        line-height: 1.35;
-        margin: 8px 0;
-      }
-      .m-sent {
-        margin-left: auto;
-        background: rgba(47,59,40,0.70);
-        color: white;
-        border-bottom-right-radius: 6px;
-      }
-      .m-recv {
-        margin-right: auto;
-        background: #f2f2f7;
-        color: #000;
-        border-bottom-left-radius: 6px;
-      }
-    }
-
     /* --- HOW IT WORKS SECTION --- */
     .content-section {
       position: relative;
       background: var(--matcha-cream);
-      padding: 140px 0;
+      /* DESKTOP ADJUSTMENT: Raised position significantly */
+      padding: 60px 0 140px; 
       z-index: 40;
       overflow: hidden;
       margin-top: -1px;
@@ -465,62 +429,22 @@
     }
     .cta h2 { font-size: clamp(2.0rem, 6vw, 4rem); margin-bottom: 30px; }
 
-    .cta-toggle {
-      display: inline-flex;
-      border-radius: 999px;
-      border: 1px solid rgba(243, 239, 229, 0.25);
-      overflow: hidden;
-      margin-bottom: 50px;
+    .registration-soon {
       font-family: 'IBM Plex Mono', monospace;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      font-size: 0.7rem;
-    }
-    .cta-toggle-btn {
-      min-height: 44px;
-      padding: 10px 20px;
-      border: none;
-      background: transparent;
-      color: rgba(243, 239, 229, 0.7);
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-      touch-action: manipulation;
-    }
-    .cta-toggle-btn.active {
-      background: var(--matcha-green-muted);
-      color: var(--text-light);
+      font-size: 1.1rem;
+      opacity: 0.8;
+      border: 1px solid rgba(243, 239, 229, 0.25);
+      display: inline-block;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
     }
 
-    .cta-panel { display: none; }
-    .cta-panel.active { display: block; }
-
-    .waitlist-group { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
-    .waitlist-input {
-      background: transparent; border: none; border-bottom: 1px solid rgba(243, 239, 229, 0.3);
-      padding: 14px 0; color: var(--text-light); font-size: 0.9rem; outline: none;
-      transition: border-color 0.3s; font-family: 'IBM Plex Mono', monospace;
-      text-transform: uppercase; letter-spacing: 0.1em; min-height: 44px;
-    }
-    .waitlist-input:focus { border-bottom-color: var(--text-light); }
-    .waitlist-input::placeholder { color: rgba(243, 239, 229, 0.5); text-transform: uppercase; }
-
-    .btn-waitlist {
-      min-height: 48px;
-      background: var(--matcha-green-muted); color: var(--text-light); border: none;
-      padding: 16px 18px; font-weight: 600; cursor: pointer; font-size: 0.9rem;
-      transition: background 0.2s; margin-top: 10px; letter-spacing: 0.12em;
-      text-transform: uppercase; font-family: 'IBM Plex Mono', monospace;
-      border-radius: 16px; touch-action: manipulation;
-    }
-    .btn-waitlist:hover { background: #a3b58f; }
-
-    .cta-status {
-      margin-top: 22px;
-      font-size: 0.9rem;
-      min-height: 22px;
-      font-family: 'IBM Plex Mono', monospace;
-      opacity: 0.85;
-    }
+    /* Commenting out original CTA styles to keep code clean, 
+       but leaving structure in case of revert */
+    .cta-toggle, .cta-panel, .waitlist-group { display: none !important; }
 
     footer {
       background: var(--matcha-green-dark); color: rgba(243, 239, 229, 0.6);
@@ -531,14 +455,33 @@
     }
 
     @media (max-width: 900px) {
-      .split-layout { flex-direction: column; gap: 22px; }
+      .split-layout { flex-direction: column; gap: 0; }
       .content-left { width: 100%; height: auto; display: block; }
-      .card { position: relative; top: auto; transform: none; opacity: 1 !important; margin-bottom: 46px; }
+      
+      /* IPHONE VIEW (MOBILE) UPDATES: 
+         - Added "Resistance": min-height is tall so user must scroll.
+         - Sticky positioning acts as "pinholders".
+      */
+      .card { 
+        position: sticky; 
+        top: 100px; 
+        transform: none !important; 
+        opacity: 1 !important; 
+        margin-bottom: 0;
+        min-height: 85vh; /* This provides the 'resistance' / placeholder height */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--matcha-cream); /* Opaque background to cover previous cards */
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        padding-bottom: 40px;
+      }
+      
       .content-right { display: none; }
-      .content-section { padding-top: 96px; padding-bottom: 110px; }
+      .content-section { padding-top: 60px; padding-bottom: 60px; }
 
-      .cta { padding-bottom: calc(260px + var(--safe-bottom)); padding-top: 110px; }
-      footer { padding-bottom: calc(120px + var(--safe-bottom)); }
+      .cta { padding-bottom: calc(100px + var(--safe-bottom)); padding-top: 100px; }
+      footer { padding-bottom: calc(60px + var(--safe-bottom)); }
     }
   </style>
 </head>
@@ -550,16 +493,8 @@
         <span aria-hidden="true">🍵</span>
         <span>Matcha Match</span>
       </div>
-      <button class="mobile-nav-btn" id="mobile-join-btn" type="button">Join</button>
-    </div>
+      </div>
   </header>
-
-  <div class="mobile-cta-bar" aria-label="Quick join">
-    <div class="mobile-cta-row">
-      <button class="mobile-cta-btn primary" id="mobile-join-mentee" type="button">Join as mentee</button>
-      <button class="mobile-cta-btn secondary" id="mobile-join-mentor" type="button">Join as mentor</button>
-    </div>
-  </div>
 
   <div class="custom-scrollbar">
     <div class="sb-wrap" onclick="window.scrollTo(0,0)">
@@ -646,20 +581,14 @@
         <span id="headline-typed"></span><span class="typing-cursor" id="headline-cursor"></span>
       </h1>
 
-      <div class="mobile-chat-demo" aria-hidden="true">
-        <div class="m-bubble m-sent">Help me find an IB intern from BC.</div>
-        <div class="m-bubble m-recv">Got it, searching the network...</div>
-        <div class="m-bubble m-recv">Found a match. James, Class of '23. Interned at JPM last summer.</div>
       </div>
-    </div>
 
     <div class="network-scroll-hint" id="scroll-hint">SCROLL TO EXPLORE</div>
   </section>
 
   <section class="content-section" id="section-content">
     <div class="container">
-      <div class="reveal-header" style="margin-bottom: 80px;">
-        <h2>How it works</h2>
+      <div class="reveal-header" style="margin-bottom: 40px;"> <h2>How it works</h2>
       </div>
 
       <div class="split-layout">
@@ -690,71 +619,10 @@
 
   <section class="cta" id="section-cta">
     <div class="container reveal-cta">
-      <h2 id="cta-heading">Looking for help?</h2>
+      <h2 id="cta-heading">Ready to match?</h2>
 
-      <div class="cta-toggle" role="tablist" aria-label="Join as mentee or mentor">
-        <button class="cta-toggle-btn active" data-role="mentee" type="button">mentee</button>
-        <button class="cta-toggle-btn" data-role="mentor" type="button">mentor</button>
-      </div>
-
-      <iframe name="hidden_iframe" style="display:none;"></iframe>
-
-      <div id="cta-mentee" class="cta-panel active">
-        <form
-          id="mentee-form"
-          class="waitlist-group"
-          action="https://hook.us2.make.com/hpankjggy3pt463fydxkam3b1w4glrlp"
-          method="POST"
-          target="hidden_iframe"
-        >
-          <input type="hidden" name="role" value="mentee" />
-
-          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
-          <input
-            type="tel"
-            name="phone"
-            id="mentee-phone"
-            class="waitlist-input"
-            placeholder="(617) 555-1234"
-            inputmode="tel"
-            autocomplete="tel"
-            required
-          />
-          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" required />
-          <input type="hidden" name="phone_raw" id="mentee_phone_raw" />
-          <button type="submit" class="btn-waitlist">JOIN NOW</button>
-        </form>
-
-        <p id="form-status-mentee" class="cta-status"></p>
-      </div>
-
-      <div id="cta-mentor" class="cta-panel">
-        <form
-          id="mentor-form"
-          class="waitlist-group"
-          action="https://hook.us2.make.com/8xq118spe6qy5i6qtgxikgejc3d5jfg2"
-          method="POST"
-          target="hidden_iframe"
-        >
-          <input type="hidden" name="role" value="mentor" />
-
-          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
-          <input
-            type="tel"
-            name="phone"
-            id="mentor-phone"
-            class="waitlist-input"
-            placeholder="(617) 555-1234"
-            inputmode="tel"
-            autocomplete="tel"
-            required
-          />
-          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" required />
-          <input type="hidden" name="phone_raw" id="mentor_phone_raw" />
-          <button type="submit" class="btn-waitlist">JOIN NOW</button>
-        </form>
-
-        <p id="form-status-mentor" class="cta-status"></p>
+      <div class="registration-soon">
+        Registration opening soon!
       </div>
     </div>
   </section>
@@ -848,11 +716,6 @@
         // Default hidden at top
         gsap.set(phoneEl, { opacity: 0 });
 
-        /**
-         * 1. THE PINNING TIMELINE
-         * This handles the text fading and the phone content changes.
-         * It pins the section for an extra 2400px.
-         */
         const stepsTl = gsap.timeline({
           scrollTrigger: {
             trigger: "#section-content",
@@ -864,15 +727,10 @@
           }
         });
 
-        /* --- VISIBILITY TRIGGER ---
-         * This ensures the phone is visible for the ENTIRE duration of the section.
-         * We start showing it when the section is near the middle of the viewport (approach).
-         * We stop showing it EXACTLY when the pinned timeline ends.
-         */
         ScrollTrigger.create({
           trigger: "#section-content",
-          start: "top 70%", // Starts fading in as you approach
-          end: () => stepsTl.scrollTrigger.end, // SYNC with the end of the pin
+          start: "top 70%", 
+          end: () => stepsTl.scrollTrigger.end, 
           onToggle: (self) => {
             if (self.isActive) showPhone();
             else hidePhone();
@@ -902,7 +760,6 @@
           .to(sbStep3, { scaleY: 1, duration: 0.1 }, "<")
           .to({}, { duration: 0.8 });
 
-        // Ensure everything recalculates correctly after pins are applied
         ScrollTrigger.refresh();
       },
 
@@ -914,106 +771,6 @@
     gsap.to(sbJoin, {
       scrollTrigger: { trigger: "#section-cta", start: "top 80%", toggleActions: "play reverse play reverse" },
       scaleY: 1, duration: 0.3
-    });
-
-    /* --- CTA TOGGLE (mentee vs mentor) --- */
-    const ctaHeading = document.getElementById('cta-heading');
-    const toggleButtons = document.querySelectorAll('.cta-toggle-btn');
-    const menteePanel = document.getElementById('cta-mentee');
-    const mentorPanel = document.getElementById('cta-mentor');
-
-    function setRole(role) {
-      toggleButtons.forEach(b => b.classList.remove('active'));
-      document.querySelector(`.cta-toggle-btn[data-role="${role}"]`)?.classList.add('active');
-
-      if (role === 'mentee') {
-        ctaHeading.textContent = 'Looking for help?';
-        menteePanel.classList.add('active');
-        mentorPanel.classList.remove('active');
-      } else {
-        ctaHeading.textContent = 'Got wisdom to share?';
-        mentorPanel.classList.add('active');
-        menteePanel.classList.remove('active');
-      }
-    }
-    toggleButtons.forEach(btn => btn.addEventListener('click', () => setRole(btn.dataset.role)));
-
-    /* --- MOBILE JOIN SHORTCUTS --- */
-    const mobileJoinBtn = document.getElementById("mobile-join-btn");
-    const mobileJoinMentee = document.getElementById("mobile-join-mentee");
-    const mobileJoinMentor = document.getElementById("mobile-join-mentor");
-
-    function scrollToCTA() {
-      document.getElementById("section-cta").scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    mobileJoinBtn?.addEventListener("click", scrollToCTA);
-    mobileJoinMentee?.addEventListener("click", () => { setRole("mentee"); scrollToCTA(); });
-    mobileJoinMentor?.addEventListener("click", () => { setRole("mentor"); scrollToCTA(); });
-
-    /* --- FORM SUBMISSION --- */
-    const menteeForm = document.getElementById("mentee-form");
-    const mentorForm = document.getElementById("mentor-form");
-
-    const menteePhoneEl = document.getElementById("mentee-phone");
-    const mentorPhoneEl = document.getElementById("mentor-phone");
-
-    const menteePhoneRawEl = document.getElementById("mentee_phone_raw");
-    const mentorPhoneRawEl = document.getElementById("mentor_phone_raw");
-
-    const menteeStatus = document.getElementById("form-status-mentee");
-    const mentorStatus = document.getElementById("form-status-mentor");
-
-    function normalizeUSPhoneToE164(raw) {
-      const digits = (raw || "").replace(/\D/g, "");
-      if (digits.length === 10) return "+1" + digits;
-      if (digits.length === 11 && digits.startsWith("1")) return "+" + digits;
-      if (raw && raw.trim().startsWith("+") && digits.length >= 10) return raw.trim();
-      return null;
-    }
-
-    menteeForm?.addEventListener("submit", (e) => {
-      menteeStatus.style.color = "var(--text-light)";
-      menteeStatus.innerHTML = "Requesting access...";
-
-      const raw = menteePhoneEl.value;
-      const e164 = normalizeUSPhoneToE164(raw);
-
-      if (!e164) {
-        e.preventDefault();
-        menteeStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
-        return;
-      }
-
-      menteePhoneRawEl.value = raw;
-      menteePhoneEl.value = e164;
-
-      setTimeout(() => {
-        menteeStatus.innerHTML = "Thanks! Check your texts 🙂";
-        menteeForm.reset();
-      }, 1200);
-    });
-
-    mentorForm?.addEventListener("submit", (e) => {
-      mentorStatus.style.color = "var(--text-light)";
-      mentorStatus.innerHTML = "Requesting access...";
-
-      const raw = mentorPhoneEl.value;
-      const e164 = normalizeUSPhoneToE164(raw);
-
-      if (!e164) {
-        e.preventDefault();
-        mentorStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
-        return;
-      }
-
-      mentorPhoneRawEl.value = raw;
-      mentorPhoneEl.value = e164;
-
-      setTimeout(() => {
-        mentorStatus.innerHTML = "Thanks! We'll be in touch 🙂";
-        mentorForm.reset();
-      }, 1200);
     });
   </script>
 </body>
