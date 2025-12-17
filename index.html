@@ -191,7 +191,7 @@
       .custom-scrollbar { display: none; }
       .mobile-nav { display: block; }
       .mobile-cta-bar { display: block; }
-      body { padding-bottom: calc(var(--cta-bar-h) + 34px); } /* room for fixed bottom bar + safari */
+      body { padding-bottom: calc(var(--cta-bar-h) + 34px); }
     }
 
     /* --- FIXED PHONE (DESKTOP ONLY) --- */
@@ -210,7 +210,7 @@
     }
     #phone-scaler {
       transform-origin: center center;
-      will-change: transform;
+      will-change: transform, opacity;
       opacity: 0;
     }
     .phone-device {
@@ -381,7 +381,7 @@
       opacity: 0;
     }
 
-    /* Mobile-only: simple chat preview (replaces giant fixed iPhone) */
+    /* Mobile-only: small chat preview */
     .mobile-chat-demo { display: none; }
     @media (max-width: 900px) {
       .network-inner { padding-top: calc(var(--nav-h) + var(--safe-top) + 12px); }
@@ -538,7 +538,6 @@
       .content-right { display: none; }
       .content-section { padding-top: 96px; padding-bottom: 110px; }
 
-      /* extra room so CTA isn't cramped above fixed bottom buttons */
       .cta { padding-bottom: calc(260px + var(--safe-bottom)); padding-top: 110px; }
       footer { padding-bottom: calc(120px + var(--safe-bottom)); }
     }
@@ -716,7 +715,6 @@
           <input type="hidden" name="role" value="mentee" />
 
           <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
-
           <input
             type="tel"
             name="phone"
@@ -727,11 +725,8 @@
             autocomplete="tel"
             required
           />
-
           <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" required />
-
           <input type="hidden" name="phone_raw" id="mentee_phone_raw" />
-
           <button type="submit" class="btn-waitlist">JOIN NOW</button>
         </form>
 
@@ -749,7 +744,6 @@
           <input type="hidden" name="role" value="mentor" />
 
           <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
-
           <input
             type="tel"
             name="phone"
@@ -760,11 +754,8 @@
             autocomplete="tel"
             required
           />
-
           <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" required />
-
           <input type="hidden" name="phone_raw" id="mentor_phone_raw" />
-
           <button type="submit" class="btn-waitlist">JOIN NOW</button>
         </form>
 
@@ -778,7 +769,7 @@
   <script>
     gsap.registerPlugin(ScrollTrigger);
 
-    /* --- PHONE SCALE (desktop only usage) --- */
+    /* --- PHONE SCALE (desktop only) --- */
     function resizePhone() {
       const scaler = document.getElementById('phone-scaler');
       if (!scaler) return;
@@ -788,7 +779,6 @@
       const vh = window.innerHeight;
       const vw = window.innerWidth;
 
-      // only meaningful on desktop (phone hidden on mobile anyway)
       let targetScale = (vh * 0.85) / baseHeight;
       if ((baseWidth * targetScale) > (vw * 0.9)) targetScale = (vw * 0.9) / baseWidth;
 
@@ -862,9 +852,8 @@
       onUpdate: (self) => { if (sbChaos) sbChaos.style.transform = `scaleY(${self.progress})`; }
     });
 
-    /* --- PHONE VISIBILITY (fixes: disappears and never comes back) --- */
+    /* --- PHONE VISIBILITY HELPERS --- */
     const phoneEl = document.getElementById("phone-scaler");
-
     function showPhone() {
       if (!phoneEl) return;
       gsap.to(phoneEl, { opacity: 1, duration: 0.25, overwrite: true });
@@ -874,29 +863,38 @@
       gsap.to(phoneEl, { opacity: 0, duration: 0.25, overwrite: true });
     }
 
+    /* --- DESKTOP vs MOBILE GSAP --- */
     ScrollTrigger.matchMedia({
       "(min-width: 901px)": function () {
-        // keep phone sized correctly
         resizePhone();
         window.addEventListener('resize', resizePhone);
 
-        // Show phone when entering How It Works, hide again when going back to hero
+        /**
+         * REQUIRED BEHAVIOR:
+         * - Phone is visible for ALL THREE steps inside "How it works".
+         * - Phone disappears as you move from Step 3 -> Join section.
+         * - When scrolling back up from Join -> Step 3, phone reappears (and stays for steps 1–3).
+         */
+
+        // 1) Phone visible whenever we're in the How It Works region (any of the 3 steps)
         ScrollTrigger.create({
           trigger: "#section-content",
-          start: "top 85%",
+          start: "top top",
           onEnter: showPhone,
-          onLeaveBack: hidePhone
+          onEnterBack: showPhone,
+          onLeaveBack: hidePhone // when you scroll back up into the hero
         });
 
-        // Hide phone when entering Join; IMPORTANT: show again when scrolling back up from Join
+        // 2) Phone hidden in Join region, and reappears immediately when leaving Join back into Step 3
         ScrollTrigger.create({
           trigger: "#section-cta",
-          start: "top 85%",
+          start: "top top",       // hides right when Join hits the top (i.e., right after Step 3 finishes)
           onEnter: hidePhone,
-          onLeaveBack: showPhone
+          onEnterBack: hidePhone, // keep hidden while you’re within Join when coming from below
+          onLeaveBack: showPhone  // reappears as soon as you scroll back up into How It Works (Step 3)
         });
 
-        // Desktop pinned steps (How it works)
+        // Desktop pinned step sequence
         const stepsTl = gsap.timeline({
           scrollTrigger: {
             trigger: "#section-content",
@@ -931,7 +929,6 @@
       },
 
       "(max-width: 900px)": function () {
-        // Nothing needed; phone is hidden by CSS on mobile.
         if (phoneEl) gsap.set(phoneEl, { opacity: 0 });
       }
     });
@@ -961,7 +958,6 @@
         menteePanel.classList.remove('active');
       }
     }
-
     toggleButtons.forEach(btn => btn.addEventListener('click', () => setRole(btn.dataset.role)));
 
     /* --- MOBILE JOIN SHORTCUTS --- */
