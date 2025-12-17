@@ -806,34 +806,15 @@
       const tl = gsap.timeline();
       const heroBg = document.getElementById("hero-bg-wrapper");
 
-      tl.to(heroBg, {
-        "--mask-radius": "140%",
-        duration: 4.5,
-        ease: "power2.out"
-      })
-      .to(heroBg, {
-        filter: "blur(0px)",
-        transform: "scale(1)",
-        opacity: 1,
-        duration: 3.5,
-        ease: "power2.out"
-      }, "<")
-      .to(heroBg, {
-        opacity: 0.2,
-        filter: "blur(3px)",
-        duration: 1.5,
-        ease: "power2.inOut"
-      }, "-=1.0")
-      .to("#network-inner", {
-        opacity: 1,
-        duration: 1,
-        onStart: () => typeText(headlineSpan, fullHeadline, 35)
-      }, "-=0.5")
-      .to("#scroll-hint", {
-        opacity: 0.7,
-        duration: 1,
-        delay: 0.5
-      });
+      tl.to(heroBg, { "--mask-radius": "140%", duration: 4.5, ease: "power2.out" })
+        .to(heroBg, { filter: "blur(0px)", transform: "scale(1)", opacity: 1, duration: 3.5, ease: "power2.out" }, "<")
+        .to(heroBg, { opacity: 0.2, filter: "blur(3px)", duration: 1.5, ease: "power2.inOut" }, "-=1.0")
+        .to("#network-inner", {
+          opacity: 1,
+          duration: 1,
+          onStart: () => typeText(headlineSpan, fullHeadline, 35)
+        }, "-=0.5")
+        .to("#scroll-hint", { opacity: 0.7, duration: 1, delay: 0.5 });
 
       ScrollTrigger.refresh();
     });
@@ -856,11 +837,11 @@
     const phoneEl = document.getElementById("phone-scaler");
     function showPhone() {
       if (!phoneEl) return;
-      gsap.to(phoneEl, { opacity: 1, duration: 0.25, overwrite: true });
+      gsap.to(phoneEl, { opacity: 1, duration: 0.2, overwrite: true });
     }
     function hidePhone() {
       if (!phoneEl) return;
-      gsap.to(phoneEl, { opacity: 0, duration: 0.25, overwrite: true });
+      gsap.to(phoneEl, { opacity: 0, duration: 0.2, overwrite: true });
     }
 
     /* --- DESKTOP vs MOBILE GSAP --- */
@@ -869,29 +850,22 @@
         resizePhone();
         window.addEventListener('resize', resizePhone);
 
-        /**
-         * REQUIRED BEHAVIOR:
-         * - Phone is visible for ALL THREE steps inside "How it works".
-         * - Phone disappears as you move from Step 3 -> Join section.
-         * - When scrolling back up from Join -> Step 3, phone reappears (and stays for steps 1–3).
-         */
+        // Default hidden at top
+        gsap.set(phoneEl, { opacity: 0 });
 
-        // 1) Phone visible whenever we're in the How It Works region (any of the 3 steps)
+        /**
+         * FIXED TIMING RULE:
+         * Phone is visible exactly while #section-content is on-screen (even partially).
+         * It is hidden in the hero and hidden in the join section only when #section-content is not on-screen.
+         */
         ScrollTrigger.create({
           trigger: "#section-content",
-          start: "top top",
-          onEnter: showPhone,
-          onEnterBack: showPhone,
-          onLeaveBack: hidePhone // when you scroll back up into the hero
-        });
-
-        // 2) Phone hidden in Join region, and reappears immediately when leaving Join back into Step 3
-        ScrollTrigger.create({
-          trigger: "#section-cta",
-          start: "top top",       // hides right when Join hits the top (i.e., right after Step 3 finishes)
-          onEnter: hidePhone,
-          onEnterBack: hidePhone, // keep hidden while you’re within Join when coming from below
-          onLeaveBack: showPhone  // reappears as soon as you scroll back up into How It Works (Step 3)
+          start: "top bottom",   // section starts appearing
+          end: "bottom top",     // section fully gone
+          onToggle: (self) => {
+            if (self.isActive) showPhone();
+            else hidePhone();
+          }
         });
 
         // Desktop pinned step sequence
@@ -926,6 +900,9 @@
           .to("#chat-state-step3", { opacity: 1, duration: 0.3 }, ">")
           .to(sbStep3, { scaleY: 1, duration: 0.1 }, "<")
           .to({}, { duration: 0.8 });
+
+        // Ensure everything recalculates correctly after pins are applied
+        ScrollTrigger.refresh();
       },
 
       "(max-width: 900px)": function () {
