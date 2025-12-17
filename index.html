@@ -770,16 +770,27 @@
           <input type="hidden" name="role" value="mentee" />
 
           <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
+          
           <input
             type="tel"
             name="phone"
             id="mentee-phone"
             class="waitlist-input"
-            placeholder="(617) 555-1234"
+            placeholder="PHONE NUMBER"
             inputmode="tel"
             autocomplete="tel"
             required
           />
+          <input
+            type="tel"
+            id="mentee-phone-confirm"
+            class="waitlist-input"
+            placeholder="CONFIRM PHONE NUMBER"
+            inputmode="tel"
+            autocomplete="off"
+            required
+          />
+
           <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" pattern=".+@.+\.edu" title="Please enter a valid .edu email address" required />
           <input type="hidden" name="phone_raw" id="mentee_phone_raw" />
           <button type="submit" class="btn-waitlist">JOIN NOW</button>
@@ -799,16 +810,27 @@
           <input type="hidden" name="role" value="mentor" />
 
           <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
+          
           <input
             type="tel"
             name="phone"
             id="mentor-phone"
             class="waitlist-input"
-            placeholder="(617) 555-1234"
+            placeholder="PHONE NUMBER"
             inputmode="tel"
             autocomplete="tel"
             required
           />
+          <input
+            type="tel"
+            id="mentor-phone-confirm"
+            class="waitlist-input"
+            placeholder="CONFIRM PHONE NUMBER"
+            inputmode="tel"
+            autocomplete="off"
+            required
+          />
+
           <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" pattern=".+@.+\.edu" title="Please enter a valid .edu email address" required />
           <input type="hidden" name="phone_raw" id="mentor_phone_raw" />
           <button type="submit" class="btn-waitlist">JOIN NOW</button>
@@ -1022,14 +1044,23 @@
     const menteeForm = document.getElementById("mentee-form");
     const mentorForm = document.getElementById("mentor-form");
 
+    // Phone elements for Mentee
     const menteePhoneEl = document.getElementById("mentee-phone");
+    const menteePhoneConfirmEl = document.getElementById("mentee-phone-confirm");
+    
+    // Phone elements for Mentor
     const mentorPhoneEl = document.getElementById("mentor-phone");
+    const mentorPhoneConfirmEl = document.getElementById("mentor-phone-confirm");
 
+    // Hidden inputs for normalized phone
     const menteePhoneRawEl = document.getElementById("mentee_phone_raw");
     const mentorPhoneRawEl = document.getElementById("mentor_phone_raw");
 
     const menteeStatus = document.getElementById("form-status-mentee");
     const mentorStatus = document.getElementById("form-status-mentor");
+
+    // Simulated database for current session to prevent immediate re-submission
+    const registeredDatabase = new Set(); 
 
     function normalizeUSPhoneToE164(raw) {
       const digits = (raw || "").replace(/\D/g, "");
@@ -1039,19 +1070,39 @@
       return null;
     }
 
+    /* MENTEE SUBMIT */
     menteeForm?.addEventListener("submit", (e) => {
       menteeStatus.style.color = "var(--text-light)";
       menteeStatus.innerHTML = "Requesting access...";
 
       const raw = menteePhoneEl.value;
+      const confirmRaw = menteePhoneConfirmEl.value;
       const e164 = normalizeUSPhoneToE164(raw);
 
+      // 1. Phone Format Check
       if (!e164) {
         e.preventDefault();
-        menteeStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
+        menteeStatus.innerHTML = "Please enter a valid US phone number.";
         return;
       }
 
+      // 2. Phone Match Check
+      if (raw !== confirmRaw) {
+        e.preventDefault();
+        menteeStatus.innerHTML = "Phone numbers do not match.";
+        return;
+      }
+
+      // 3. Duplicate Check (Session Simulation)
+      if (registeredDatabase.has(e164)) {
+        e.preventDefault();
+        alert("Sorry, already registered");
+        menteeStatus.innerHTML = "This number is already registered.";
+        return;
+      }
+
+      // If checks pass, prepare data
+      registeredDatabase.add(e164); // Add to local session set
       menteePhoneRawEl.value = raw;
       menteePhoneEl.value = e164;
 
@@ -1061,19 +1112,39 @@
       }, 1200);
     });
 
+    /* MENTOR SUBMIT */
     mentorForm?.addEventListener("submit", (e) => {
       mentorStatus.style.color = "var(--text-light)";
       mentorStatus.innerHTML = "Requesting access...";
 
       const raw = mentorPhoneEl.value;
+      const confirmRaw = mentorPhoneConfirmEl.value;
       const e164 = normalizeUSPhoneToE164(raw);
 
+      // 1. Phone Format Check
       if (!e164) {
         e.preventDefault();
-        mentorStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
+        mentorStatus.innerHTML = "Please enter a valid US phone number.";
         return;
       }
 
+      // 2. Phone Match Check
+      if (raw !== confirmRaw) {
+        e.preventDefault();
+        mentorStatus.innerHTML = "Phone numbers do not match.";
+        return;
+      }
+
+      // 3. Duplicate Check (Session Simulation)
+      if (registeredDatabase.has(e164)) {
+        e.preventDefault();
+        alert("Sorry, already registered");
+        mentorStatus.innerHTML = "This number is already registered.";
+        return;
+      }
+
+      // If checks pass, prepare data
+      registeredDatabase.add(e164); // Add to local session set
       mentorPhoneRawEl.value = raw;
       mentorPhoneEl.value = e164;
 
