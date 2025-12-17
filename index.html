@@ -517,7 +517,7 @@
 
   <div class="custom-scrollbar">
     <div class="sb-wrap" onclick="window.scrollTo(0,0)">
-      <div class="sb-label">Start</div>
+      <div class="sb-label">Welcome</div>
       <div class="sb-line-container sb-line-long">
         <div class="sb-fill" id="fill-chaos"></div>
       </div>
@@ -566,7 +566,7 @@
 
           <div class="screen-body-container">
             <div class="chat-container" id="chat-state-step1">
-              <div class="imessage-bubble imessage-sent">Help me find an IB intern from BC.</div>
+              <div class="imessage-bubble imessage-sent">Can you help me find an IB intern from BC?</div>
             </div>
             <div class="chat-container" id="chat-state-step2">
               <div class="imessage-bubble imessage-sent">Can you help me find an IB intern from BC?</div>
@@ -739,7 +739,7 @@
     /* --- ROTATING TYPEWRITER EFFECT --- */
     const headlineSpan = document.getElementById("headline-typed");
     const phrases = [
-      "Skip the cold coffee chat. Meet the person one step ahead of you.",
+      "Skip cold coffee chats. Meet the person one step ahead of you.",
       "Coffee chats are random. Matcha Match is targeted.",
       "Find your 'been there, done that' person."
     ];
@@ -748,8 +748,8 @@
     let currentCharIndex = 0;
     let isDeleting = false;
     let typeSpeed = 40; // typing speed
-    let deleteSpeed = 20; // backspace speed
-    let pauseDelay = 2500; // time to read the text
+    let deleteSpeed = 25; // backspace speed
+    let pauseDelay = 2750; // time to read the text
 
     function startTypewriterCycle() {
       const currentPhrase = phrases[currentPhraseIndex];
