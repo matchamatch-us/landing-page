@@ -18,7 +18,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
   <style>
-    /* --- RESET & VARIABLES --- */
     :root {
       --matcha-cream: #f3efe5;
       --matcha-green-muted: #98AA80;
@@ -28,13 +27,12 @@
       --text-light: #f3efe5;
       --text-muted: #9a9da0;
 
-      --imessage-gray: #e9e9eb;
-      --imessage-green: #2F3B28;
-
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
-
       --container-pad: clamp(16px, 4vw, 24px);
+
+      --nav-h: 56px;
+      --cta-bar-h: 74px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
@@ -49,7 +47,6 @@
       text-rendering: optimizeLegibility;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
     }
-
     h1, h2, h3 { font-family: 'DM Serif Display', serif; font-weight: 400; }
 
     .container {
@@ -60,20 +57,23 @@
       z-index: 1;
     }
 
-    /* --- MOBILE FIXED NAV + FOOTER BAR --- */
+    /* Make scrollIntoView land below fixed mobile header */
+    #section-content, #section-cta { scroll-margin-top: calc(var(--nav-h) + var(--safe-top) + 12px); }
+
+    /* --- MOBILE FIXED HEADER + BOTTOM CTA --- */
     .mobile-nav {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 1400;
       padding-top: var(--safe-top);
-      background: rgba(243, 239, 229, 0.86);
+      background: rgba(243, 239, 229, 0.88);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(0,0,0,0.06);
     }
     .mobile-nav-inner {
-      height: 56px;
+      height: var(--nav-h);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -91,11 +91,11 @@
       user-select: none;
     }
     .mobile-nav-btn {
-      height: 44px;
+      min-height: 44px;
       padding: 0 14px;
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px solid rgba(0,0,0,0.12);
-      background: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.75);
       font-family: 'IBM Plex Mono', monospace;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -109,20 +109,17 @@
       position: fixed;
       left: 0; right: 0; bottom: 0;
       z-index: 1400;
-      background: rgba(243, 239, 229, 0.90);
+      background: rgba(243, 239, 229, 0.92);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-top: 1px solid rgba(0,0,0,0.06);
       padding: 12px var(--container-pad) calc(12px + var(--safe-bottom));
     }
-    .mobile-cta-row {
-      display: flex;
-      gap: 10px;
-    }
+    .mobile-cta-row { display: flex; gap: 10px; }
     .mobile-cta-btn {
       flex: 1;
-      min-height: 44px;
-      border-radius: 14px;
+      min-height: 48px;
+      border-radius: 16px;
       border: 1px solid rgba(0,0,0,0.10);
       font-family: 'IBM Plex Mono', monospace;
       letter-spacing: 0.10em;
@@ -134,14 +131,14 @@
     .mobile-cta-btn.primary {
       background: var(--matcha-green-dark);
       color: var(--text-light);
-      border-color: rgba(0,0,0,0.0);
+      border-color: transparent;
     }
     .mobile-cta-btn.secondary {
-      background: rgba(255,255,255,0.65);
-      color: rgba(0,0,0,0.80);
+      background: rgba(255,255,255,0.75);
+      color: rgba(0,0,0,0.82);
     }
 
-    /* --- CUSTOM SCROLLBAR --- */
+    /* --- CUSTOM SCROLLBAR (desktop only) --- */
     .custom-scrollbar {
       position: fixed;
       right: 40px;
@@ -194,15 +191,14 @@
       .custom-scrollbar { display: none; }
       .mobile-nav { display: block; }
       .mobile-cta-bar { display: block; }
-      body { padding-bottom: 96px; } /* make room for fixed bottom bar */
+      body { padding-bottom: calc(var(--cta-bar-h) + 34px); } /* room for fixed bottom bar + safari */
     }
 
-    /* --- FIXED PHONE --- */
+    /* --- FIXED PHONE (DESKTOP ONLY) --- */
     .phone-wrapper-fixed {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100vh;
-      height: 100svh;
       z-index: 50;
       pointer-events: none;
       display: flex;
@@ -212,143 +208,86 @@
       transform: translateZ(0);
       backface-visibility: hidden;
     }
-
     #phone-scaler {
       transform-origin: center center;
       will-change: transform;
       opacity: 0;
-      transition: opacity 0.3s ease;
     }
-
     .phone-device {
-      /* responsive phone sizing */
-      --phone-w: min(400px, 86vw);
-      --phone-h: calc(var(--phone-w) * 2.125); /* 400x850 ratio */
-      width: var(--phone-w);
-      height: var(--phone-h);
+      width: 400px; height: 850px;
       background: #1c1c1e;
-      border-radius: calc(var(--phone-w) * 0.135);
+      border-radius: 54px;
       box-shadow:
         0 0 0 4px #2a2a2a,
         0 30px 60px -15px rgba(0,0,0,0.3);
       position: relative;
       overflow: hidden;
     }
-
     .dynamic-island {
       position: absolute;
-      top: calc(var(--phone-w) * 0.045);
-      left: 50%;
+      top: 18px; left: 50%;
       transform: translateX(-50%);
-      width: calc(var(--phone-w) * 0.30);
-      height: calc(var(--phone-w) * 0.0875);
-      background: #000;
-      border-radius: 999px;
+      width: 120px; height: 35px;
+      background: #000; border-radius: 20px;
       z-index: 14;
     }
-
     .screen {
       position: absolute;
       inset: 6px;
       overflow: hidden;
-      border-radius: calc(var(--phone-w) * 0.12);
+      border-radius: 48px;
       background: #fff;
       display: flex;
       flex-direction: column;
     }
-
-    /* Status bar */
     .status-bar {
-      position: absolute;
-      top: calc(var(--phone-w) * 0.04);
-      left: 0; right: 0;
-      padding: 0 calc(var(--phone-w) * 0.08);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: clamp(12px, 3.8vw, 16px);
-      font-weight: 600;
-      color: #000;
-      z-index: 12;
+      position: absolute; top: 16px; left: 0; right: 0; padding: 0 32px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 16px; font-weight: 600; color: #000; z-index: 12;
     }
     .status-icons { display: flex; align-items: center; gap: 6px; }
     .status-signal { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
     .status-signal span { width: 3px; background: #000; border-radius: 1px; }
-    .status-signal span:nth-child(1) { height: 4px; }
-    .status-signal span:nth-child(2) { height: 6px; }
-    .status-signal span:nth-child(3) { height: 9px; }
-    .status-signal span:nth-child(4) { height: 12px; }
-    .status-wifi {
-      width: 18px; height: 12px;
-      border-radius: 50% 50% 0 0;
-      border: 2px solid #000;
-      border-bottom: none;
-      position: relative;
-    }
+    .status-signal span:nth-child(1) { height: 4px; } .status-signal span:nth-child(2) { height: 6px; }
+    .status-signal span:nth-child(3) { height: 9px; } .status-signal span:nth-child(4) { height: 12px; }
+    .status-wifi { width: 18px; height: 12px; border-radius: 50% 50% 0 0; border: 2px solid #000; border-bottom: none; position: relative; }
     .status-wifi::after { content:""; position: absolute; bottom:-2px; left:2px; right:2px; height:2px; background:#000; }
     .status-battery { width: 24px; height: 12px; border: 1.5px solid #000; border-radius: 3px; position:relative; }
     .status-battery::after { content:""; position:absolute; inset: 1px; background:#000; border-radius: 1px; }
 
     .screen-header {
-      position: absolute;
-      top: calc(var(--phone-w) * 0.15);
-      left: 0; right: 0;
-      height: calc(var(--phone-w) * 0.20);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: absolute; top: 60px; left: 0; right: 0; height: 80px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       background: rgba(255,255,255, 0.95);
       border-bottom: 1px solid rgba(0,0,0,0.05);
-      z-index: 11;
-      transition: opacity 0.3s ease;
+      z-index: 11; transition: opacity 0.25s ease;
     }
     .header-profile-pic {
       width: 38px; height: 38px; border-radius: 50%;
       display:flex; align-items:center; justify-content:center;
       font-weight:bold; font-size:16px;
     }
-    .header-name {
-      font-size: 11px; color: #000; font-weight: 600; margin-top: 6px;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
+    .header-name { font-size: 11px; color: #000; font-weight: 600; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
     #header-ai { opacity: 1; z-index: 12; }
     #header-james { opacity: 0; z-index: 11; }
 
-    .screen-body-container {
-      position: relative;
-      flex-grow: 1;
-      background: #fff;
-      overflow: hidden;
-      margin-top: calc(var(--phone-w) * 0.36);
-    }
-
+    .screen-body-container { position: relative; flex-grow: 1; background: #fff; overflow: hidden; margin-top: 140px; }
     .chat-container {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      padding: 20px 16px 40px;
-      gap: 8px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      font-family: 'SF Pro Display', sans-serif;
-      opacity: 0;
+      position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-start;
+      padding: 20px 16px 40px; gap: 8px; overflow-y: auto; font-family: 'SF Pro Display', sans-serif; opacity: 0;
     }
-
     .imessage-bubble {
-      max-width: min(260px, 72%);
-      padding: 10px 16px;
-      font-size: clamp(14px, 4vw, 16px);
-      line-height: 1.35;
-      position: relative;
-      word-wrap: break-word;
+      max-width: 260px; padding: 10px 16px; font-size: 16px; line-height: 1.35; position: relative; word-wrap: break-word;
     }
     .imessage-received { align-self: flex-start; background-color: #f2f2f7; color: #000; border-radius: 18px 18px 18px 4px; }
     .imessage-sent { align-self: flex-end; background-color: var(--matcha-green-dark); color: white; border-radius: 18px 18px 4px 18px; }
 
-    /* --- FULLSCREEN NETWORK HERO --- */
+    /* HARD FIX: hide the fixed phone entirely on iPhone/mobile */
+    @media (max-width: 900px) {
+      .phone-wrapper-fixed { display: none !important; }
+    }
+
+    /* --- HERO --- */
     .network-hero {
       height: 100vh;
       height: 100svh;
@@ -356,12 +295,9 @@
       position: relative;
       background-color: var(--matcha-cream);
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       z-index: 1;
     }
-
     .hero-bg-wrapper {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -375,7 +311,6 @@
     }
     .hero-bg-img {
       width: 100%; height: 100%;
-      object-fit: cover;
       background-image: url('network.png');
       background-position: center;
       background-size: cover;
@@ -391,7 +326,6 @@
       z-index: 2;
       pointer-events: none;
     }
-
     .network-inner {
       position: relative;
       z-index: 3;
@@ -400,11 +334,8 @@
       padding: 0 var(--container-pad);
       opacity: 0;
     }
-
     .network-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
+      display: inline-flex; align-items: center; gap: 10px;
       padding: 6px 14px;
       border-radius: 999px;
       background: rgba(243, 239, 229, 0.85);
@@ -423,12 +354,11 @@
     .network-headline {
       font-size: clamp(2.2rem, 7vw, 5rem);
       line-height: 1.05;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       min-height: 2.2em;
       color: var(--text-dark);
       letter-spacing: -0.02em;
     }
-
     .typing-cursor {
       display: inline-block;
       width: 2px;
@@ -439,20 +369,55 @@
       vertical-align: baseline;
       transform: translateY(0.1em);
     }
-
     @keyframes cursorBlink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
 
     .network-scroll-hint {
-      position: absolute;
-      bottom: 40px; left: 50%;
+      position: absolute; bottom: 40px; left: 50%;
       transform: translateX(-50%);
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--text-muted);
       font-family: 'IBM Plex Mono', monospace;
       z-index: 3;
       opacity: 0;
+    }
+
+    /* Mobile-only: simple chat preview (replaces giant fixed iPhone) */
+    .mobile-chat-demo { display: none; }
+    @media (max-width: 900px) {
+      .network-inner { padding-top: calc(var(--nav-h) + var(--safe-top) + 12px); }
+      .network-scroll-hint { bottom: calc(20px + var(--safe-bottom) + 10px + var(--cta-bar-h)); }
+      .mobile-chat-demo {
+        display: block;
+        width: min(420px, 100%);
+        margin: 18px auto 0;
+        padding: 14px 14px 16px;
+        border-radius: 22px;
+        background: rgba(255,255,255,0.70);
+        border: 1px solid rgba(0,0,0,0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        text-align: left;
+      }
+      .m-bubble {
+        max-width: 88%;
+        padding: 10px 14px;
+        border-radius: 18px;
+        font-size: 15px;
+        line-height: 1.35;
+        margin: 8px 0;
+      }
+      .m-sent {
+        margin-left: auto;
+        background: rgba(47,59,40,0.70);
+        color: white;
+        border-bottom-right-radius: 6px;
+      }
+      .m-recv {
+        margin-right: auto;
+        background: #f2f2f7;
+        color: #000;
+        border-bottom-left-radius: 6px;
+      }
     }
 
     /* --- HOW IT WORKS SECTION --- */
@@ -464,67 +429,39 @@
       overflow: hidden;
       margin-top: -1px;
     }
-
     .reveal-header h2 {
       font-size: clamp(2.1rem, 6vw, 3.5rem);
       color: var(--text-dark);
       margin-bottom: 16px;
     }
-
     .split-layout {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-top: 60px;
-      gap: 40px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-top: 60px; gap: 40px;
     }
-
     .content-left { width: 45%; height: 60vh; display: flex; align-items: center; }
     .content-right { width: 50%; position: relative; height: 100%; }
-
     .card {
-      background: transparent;
-      padding: 0;
-      opacity: 0;
-      transform: translateY(30px);
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 100%;
-      text-align: left;
+      background: transparent; padding: 0; opacity: 0;
+      transform: translateY(30px); position: absolute; top: 50%;
+      transform: translateY(-50%); width: 100%; text-align: left;
     }
     .card h3 {
-      font-size: clamp(2rem, 6vw, 3rem);
-      margin-bottom: 16px;
-      color: var(--text-dark);
-      line-height: 1.1;
+      font-size: clamp(2rem, 6vw, 3rem); margin-bottom: 16px; color: var(--text-dark); line-height: 1.1;
     }
     .card p {
-      color: var(--text-dark);
-      font-size: clamp(1.0rem, 3.6vw, 1.15rem);
-      line-height: 1.6;
-      opacity: 0.82;
-      max-width: 440px;
+      color: var(--text-dark); font-size: clamp(1.0rem, 3.6vw, 1.15rem);
+      line-height: 1.6; opacity: 0.82; max-width: 440px;
     }
     .step-num {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #b0b0b0;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      display: block;
-      letter-spacing: 0.15em;
-      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem; font-weight: 600; color: #b0b0b0;
+      text-transform: uppercase; margin-bottom: 16px; display: block;
+      letter-spacing: 0.15em; font-family: 'IBM Plex Mono', monospace;
     }
 
     /* --- CTA SECTION --- */
     .cta {
-      background: var(--matcha-green-dark);
-      color: var(--text-light);
-      text-align: center;
-      padding: 140px 0 160px;
-      z-index: 60;
-      position: relative;
+      background: var(--matcha-green-dark); color: var(--text-light);
+      text-align: center; padding: 140px 0 160px; z-index: 60; position: relative;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
     }
     .cta h2 { font-size: clamp(2.0rem, 6vw, 4rem); margin-bottom: 30px; }
@@ -558,47 +495,23 @@
     .cta-panel { display: none; }
     .cta-panel.active { display: block; }
 
-    .waitlist-group {
-      max-width: 420px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-
+    .waitlist-group { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
     .waitlist-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(243, 239, 229, 0.3);
-      padding: 14px 0;
-      color: var(--text-light);
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.3s;
-      font-family: 'IBM Plex Mono', monospace;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      min-height: 44px;
+      background: transparent; border: none; border-bottom: 1px solid rgba(243, 239, 229, 0.3);
+      padding: 14px 0; color: var(--text-light); font-size: 0.9rem; outline: none;
+      transition: border-color 0.3s; font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase; letter-spacing: 0.1em; min-height: 44px;
     }
     .waitlist-input:focus { border-bottom-color: var(--text-light); }
     .waitlist-input::placeholder { color: rgba(243, 239, 229, 0.5); text-transform: uppercase; }
 
     .btn-waitlist {
       min-height: 48px;
-      background: var(--matcha-green-muted);
-      color: var(--text-light);
-      border: none;
-      padding: 16px 18px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: background 0.2s;
-      margin-top: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-family: 'IBM Plex Mono', monospace;
-      border-radius: 14px;
-      touch-action: manipulation;
+      background: var(--matcha-green-muted); color: var(--text-light); border: none;
+      padding: 16px 18px; font-weight: 600; cursor: pointer; font-size: 0.9rem;
+      transition: background 0.2s; margin-top: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; font-family: 'IBM Plex Mono', monospace;
+      border-radius: 16px; touch-action: manipulation;
     }
     .btn-waitlist:hover { background: #a3b58f; }
 
@@ -611,57 +524,23 @@
     }
 
     footer {
-      background: var(--matcha-green-dark);
-      color: rgba(243, 239, 229, 0.6);
-      text-align: center;
-      padding: 40px 32px;
-      font-size: 0.75rem;
-      position: relative;
-      z-index: 60;
-      font-family: 'IBM Plex Mono', monospace;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      background: var(--matcha-green-dark); color: rgba(243, 239, 229, 0.6);
+      text-align: center; padding: 40px 32px; font-size: 0.75rem;
+      position: relative; z-index: 60; font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.1em; text-transform: uppercase;
       border-top: 1px solid rgba(243, 239, 229, 0.1);
     }
 
-    /* --- MOBILE LAYOUT TUNING --- */
     @media (max-width: 900px) {
-      /* content: cards become normal flow */
       .split-layout { flex-direction: column; gap: 22px; }
       .content-left { width: 100%; height: auto; display: block; }
       .card { position: relative; top: auto; transform: none; opacity: 1 !important; margin-bottom: 46px; }
       .content-right { display: none; }
-      .content-section { padding-top: 88px; padding-bottom: 100px; }
+      .content-section { padding-top: 96px; padding-bottom: 110px; }
 
-      /* hero needs breathing room under fixed nav */
-      .network-inner { padding-top: calc(54px + var(--safe-top)); }
-      .network-scroll-hint { bottom: 26px; }
-
-      /* phone becomes a “floating demo” near bottom, above CTA bar */
-      .phone-wrapper-fixed {
-        justify-content: center;
-        padding-right: 0;
-        align-items: flex-end;
-        top: auto;
-        bottom: calc(86px + var(--safe-bottom));
-        height: auto;
-      }
-      #phone-scaler { opacity: 1; }
-
-      /* mobile phone demo: show step2 as the single default */
-      #chat-state-step1, #chat-state-step3 { display: none; }
-      #chat-state-step2 { opacity: 1 !important; }
-      #header-ai { opacity: 1 !important; }
-      #header-james { display: none; }
-
-      /* ensure CTA isn’t hidden behind bottom bar */
+      /* extra room so CTA isn't cramped above fixed bottom buttons */
       .cta { padding-bottom: calc(260px + var(--safe-bottom)); padding-top: 110px; }
-      footer { padding-bottom: calc(110px + var(--safe-bottom)); }
-    }
-
-    @media (max-width: 380px) {
-      .network-pill { font-size: 0.62rem; }
-      .cta-toggle-btn { padding: 10px 16px; }
+      footer { padding-bottom: calc(120px + var(--safe-bottom)); }
     }
   </style>
 </head>
@@ -709,6 +588,7 @@
     </div>
   </div>
 
+  <!-- Fixed phone (desktop only; hidden on mobile via CSS) -->
   <div class="phone-wrapper-fixed" aria-hidden="true">
     <div id="phone-scaler">
       <div class="phone-device">
@@ -721,7 +601,6 @@
               <div class="status-battery"></div>
             </div>
           </div>
-
           <div class="dynamic-island"></div>
 
           <div class="screen-header" id="header-ai">
@@ -771,6 +650,13 @@
       <h1 class="network-headline">
         <span id="headline-typed"></span><span class="typing-cursor" id="headline-cursor"></span>
       </h1>
+
+      <!-- Mobile-only visual (small, non-fixed) -->
+      <div class="mobile-chat-demo" aria-hidden="true">
+        <div class="m-bubble m-sent">Help me find an IB intern from BC.</div>
+        <div class="m-bubble m-recv">Got it, searching the network...</div>
+        <div class="m-bubble m-recv">Found a match. James, Class of '23. Interned at JPM last summer.</div>
+      </div>
     </div>
 
     <div class="network-scroll-hint" id="scroll-hint">SCROLL TO EXPLORE</div>
@@ -817,10 +703,8 @@
         <button class="cta-toggle-btn" data-role="mentor" type="button">mentor</button>
       </div>
 
-      <!-- Hidden iframe for posting to webhooks without redirect -->
       <iframe name="hidden_iframe" style="display:none;"></iframe>
 
-      <!-- MENTEE / UNDERCLASSMEN PANEL -->
       <div id="cta-mentee" class="cta-panel active">
         <form
           id="mentee-form"
@@ -854,7 +738,6 @@
         <p id="form-status-mentee" class="cta-status"></p>
       </div>
 
-      <!-- MENTOR / UPPERCLASSMEN PANEL -->
       <div id="cta-mentor" class="cta-panel">
         <form
           id="mentor-form"
@@ -895,28 +778,22 @@
   <script>
     gsap.registerPlugin(ScrollTrigger);
 
-    /* --- PHONE SCALE --- */
+    /* --- PHONE SCALE (desktop only usage) --- */
     function resizePhone() {
       const scaler = document.getElementById('phone-scaler');
+      if (!scaler) return;
+
       const baseHeight = 850;
       const baseWidth = 400;
-
       const vh = window.innerHeight;
       const vw = window.innerWidth;
 
-      let targetScale;
-
-      // mobile: size mainly from width so it doesn't dominate the screen
-      if (vw <= 900) {
-        targetScale = (vw * 0.78) / baseWidth;
-      } else {
-        targetScale = (vh * 0.85) / baseHeight;
-        if ((baseWidth * targetScale) > (vw * 0.9)) targetScale = (vw * 0.9) / baseWidth;
-      }
+      // only meaningful on desktop (phone hidden on mobile anyway)
+      let targetScale = (vh * 0.85) / baseHeight;
+      if ((baseWidth * targetScale) > (vw * 0.9)) targetScale = (vw * 0.9) / baseWidth;
 
       gsap.set(scaler, { scale: targetScale });
     }
-    window.addEventListener('resize', resizePhone);
 
     /* --- TYPEWRITER --- */
     const headlineSpan = document.getElementById("headline-typed");
@@ -967,6 +844,8 @@
         duration: 1,
         delay: 0.5
       });
+
+      ScrollTrigger.refresh();
     });
 
     /* --- SCROLLBAR FILL --- */
@@ -980,22 +859,44 @@
       trigger: "#network-hero",
       start: "top top",
       end: "bottom top",
-      onUpdate: (self) => { sbChaos.style.transform = `scaleY(${self.progress})`; }
+      onUpdate: (self) => { if (sbChaos) sbChaos.style.transform = `scaleY(${self.progress})`; }
     });
 
-    /* --- RESPONSIVE GSAP (desktop vs mobile) --- */
+    /* --- PHONE VISIBILITY (fixes: disappears and never comes back) --- */
+    const phoneEl = document.getElementById("phone-scaler");
+
+    function showPhone() {
+      if (!phoneEl) return;
+      gsap.to(phoneEl, { opacity: 1, duration: 0.25, overwrite: true });
+    }
+    function hidePhone() {
+      if (!phoneEl) return;
+      gsap.to(phoneEl, { opacity: 0, duration: 0.25, overwrite: true });
+    }
+
     ScrollTrigger.matchMedia({
       "(min-width: 901px)": function () {
-        // Fade phone in as you approach "How it works"
+        // keep phone sized correctly
+        resizePhone();
+        window.addEventListener('resize', resizePhone);
+
+        // Show phone when entering How It Works, hide again when going back to hero
         ScrollTrigger.create({
           trigger: "#section-content",
-          start: "top bottom",
-          end: "top 20%",
-          scrub: 1,
-          onUpdate: (self) => gsap.set("#phone-scaler", { opacity: self.progress })
+          start: "top 85%",
+          onEnter: showPhone,
+          onLeaveBack: hidePhone
         });
 
-        // Desktop pinned step sequence
+        // Hide phone when entering Join; IMPORTANT: show again when scrolling back up from Join
+        ScrollTrigger.create({
+          trigger: "#section-cta",
+          start: "top 85%",
+          onEnter: hidePhone,
+          onLeaveBack: showPhone
+        });
+
+        // Desktop pinned steps (How it works)
         const stepsTl = gsap.timeline({
           scrollTrigger: {
             trigger: "#section-content",
@@ -1027,30 +928,17 @@
           .to("#chat-state-step3", { opacity: 1, duration: 0.3 }, ">")
           .to(sbStep3, { scaleY: 1, duration: 0.1 }, "<")
           .to({}, { duration: 0.8 });
-
-        // Phone fades out over CTA on desktop
-        gsap.to("#phone-scaler", {
-          scrollTrigger: { trigger: "#section-cta", start: "top bottom", end: "top center", scrub: 1 },
-          opacity: 0
-        });
       },
 
       "(max-width: 900px)": function () {
-        // On mobile: keep phone visible by default, then fade it out near CTA
-        gsap.set("#phone-scaler", { opacity: 1 });
-
-        gsap.to("#phone-scaler", {
-          scrollTrigger: { trigger: "#section-cta", start: "top 85%", end: "top 55%", scrub: 1 },
-          opacity: 0
-        });
+        // Nothing needed; phone is hidden by CSS on mobile.
+        if (phoneEl) gsap.set(phoneEl, { opacity: 0 });
       }
     });
 
-    // Join indicator fill
     gsap.to(sbJoin, {
       scrollTrigger: { trigger: "#section-cta", start: "top 80%", toggleActions: "play reverse play reverse" },
-      scaleY: 1,
-      duration: 0.3
+      scaleY: 1, duration: 0.3
     });
 
     /* --- CTA TOGGLE (mentee vs mentor) --- */
@@ -1074,9 +962,7 @@
       }
     }
 
-    toggleButtons.forEach(btn => {
-      btn.addEventListener('click', () => setRole(btn.dataset.role));
-    });
+    toggleButtons.forEach(btn => btn.addEventListener('click', () => setRole(btn.dataset.role)));
 
     /* --- MOBILE JOIN SHORTCUTS --- */
     const mobileJoinBtn = document.getElementById("mobile-join-btn");
@@ -1087,23 +973,9 @@
       document.getElementById("section-cta").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    if (mobileJoinBtn) {
-      mobileJoinBtn.addEventListener("click", () => {
-        scrollToCTA();
-      });
-    }
-    if (mobileJoinMentee) {
-      mobileJoinMentee.addEventListener("click", () => {
-        setRole("mentee");
-        scrollToCTA();
-      });
-    }
-    if (mobileJoinMentor) {
-      mobileJoinMentor.addEventListener("click", () => {
-        setRole("mentor");
-        scrollToCTA();
-      });
-    }
+    mobileJoinBtn?.addEventListener("click", scrollToCTA);
+    mobileJoinMentee?.addEventListener("click", () => { setRole("mentee"); scrollToCTA(); });
+    mobileJoinMentor?.addEventListener("click", () => { setRole("mentor"); scrollToCTA(); });
 
     /* --- FORM SUBMISSION --- */
     const menteeForm = document.getElementById("mentee-form");
@@ -1126,53 +998,49 @@
       return null;
     }
 
-    if (menteeForm) {
-      menteeForm.addEventListener("submit", (e) => {
-        menteeStatus.style.color = "var(--text-light)";
-        menteeStatus.innerHTML = "Requesting access...";
+    menteeForm?.addEventListener("submit", (e) => {
+      menteeStatus.style.color = "var(--text-light)";
+      menteeStatus.innerHTML = "Requesting access...";
 
-        const raw = menteePhoneEl.value;
-        const e164 = normalizeUSPhoneToE164(raw);
+      const raw = menteePhoneEl.value;
+      const e164 = normalizeUSPhoneToE164(raw);
 
-        if (!e164) {
-          e.preventDefault();
-          menteeStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
-          return;
-        }
+      if (!e164) {
+        e.preventDefault();
+        menteeStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
+        return;
+      }
 
-        menteePhoneRawEl.value = raw;
-        menteePhoneEl.value = e164;
+      menteePhoneRawEl.value = raw;
+      menteePhoneEl.value = e164;
 
-        setTimeout(() => {
-          menteeStatus.innerHTML = "Thanks! Check your texts 🙂";
-          menteeForm.reset();
-        }, 1200);
-      });
-    }
+      setTimeout(() => {
+        menteeStatus.innerHTML = "Thanks! Check your texts 🙂";
+        menteeForm.reset();
+      }, 1200);
+    });
 
-    if (mentorForm) {
-      mentorForm.addEventListener("submit", (e) => {
-        mentorStatus.style.color = "var(--text-light)";
-        mentorStatus.innerHTML = "Requesting access...";
+    mentorForm?.addEventListener("submit", (e) => {
+      mentorStatus.style.color = "var(--text-light)";
+      mentorStatus.innerHTML = "Requesting access...";
 
-        const raw = mentorPhoneEl.value;
-        const e164 = normalizeUSPhoneToE164(raw);
+      const raw = mentorPhoneEl.value;
+      const e164 = normalizeUSPhoneToE164(raw);
 
-        if (!e164) {
-          e.preventDefault();
-          mentorStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
-          return;
-        }
+      if (!e164) {
+        e.preventDefault();
+        mentorStatus.innerHTML = "Please enter a valid US phone number (e.g., (617) 555-1234).";
+        return;
+      }
 
-        mentorPhoneRawEl.value = raw;
-        mentorPhoneEl.value = e164;
+      mentorPhoneRawEl.value = raw;
+      mentorPhoneEl.value = e164;
 
-        setTimeout(() => {
-          mentorStatus.innerHTML = "Thanks! We'll be in touch 🙂";
-          mentorForm.reset();
-        }, 1200);
-      });
-    }
+      setTimeout(() => {
+        mentorStatus.innerHTML = "Thanks! We'll be in touch 🙂";
+        mentorForm.reset();
+      }, 1200);
+    });
   </script>
 </body>
 </html>
