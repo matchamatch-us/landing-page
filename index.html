@@ -1,63 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <!-- Mobile-first viewport + safe-area support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="theme-color" content="#f3efe5" />
+
   <title>Matcha Match | Your Career, Brewed.</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet">
-  
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.cdnfonts.com/css/sf-pro-display" rel="stylesheet" />
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
   <style>
     /* --- RESET & VARIABLES --- */
     :root {
-      --matcha-cream: #f3efe5;      
-      --matcha-green-muted: #98AA80; 
-      --matcha-green-dark: #2F3B28;  
-      
-      --text-dark: #1a1a1a;          
-      --text-light: #f3efe5;         
+      --matcha-cream: #f3efe5;
+      --matcha-green-muted: #98AA80;
+      --matcha-green-dark: #2F3B28;
+
+      --text-dark: #1a1a1a;
+      --text-light: #f3efe5;
       --text-muted: #9a9da0;
 
       --imessage-gray: #e9e9eb;
-      --imessage-green: #2F3B28; 
+      --imessage-green: #2F3B28;
+
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+      --container-pad: clamp(16px, 4vw, 24px);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-font-smoothing: antialiased;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
     ::-webkit-scrollbar { display: none; }
     html { scroll-behavior: smooth; }
-    
-    body { 
+    body {
       font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
       color: var(--text-dark);
       overflow-x: hidden;
       background-color: var(--matcha-cream);
-      /* Subtle noise texture */
+      -webkit-text-size-adjust: 100%;
+      text-rendering: optimizeLegibility;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
     }
 
-    h1, h2, h3 {
-        font-family: 'DM Serif Display', serif;
-        font-weight: 400;
-    }
+    h1, h2, h3 { font-family: 'DM Serif Display', serif; font-weight: 400; }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 var(--container-pad);
       position: relative;
       z-index: 1;
+    }
+
+    /* --- MOBILE FIXED NAV + FOOTER BAR --- */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1400;
+      padding-top: var(--safe-top);
+      background: rgba(243, 239, 229, 0.86);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .mobile-nav-inner {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--container-pad);
+    }
+    .mobile-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      color: rgba(0,0,0,0.75);
+      user-select: none;
+    }
+    .mobile-nav-btn {
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.7);
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.68rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .mobile-cta-bar {
+      display: none;
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 1400;
+      background: rgba(243, 239, 229, 0.90);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      padding: 12px var(--container-pad) calc(12px + var(--safe-bottom));
+    }
+    .mobile-cta-row {
+      display: flex;
+      gap: 10px;
+    }
+    .mobile-cta-btn {
+      flex: 1;
+      min-height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.10);
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      font-size: 0.68rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .mobile-cta-btn.primary {
+      background: var(--matcha-green-dark);
+      color: var(--text-light);
+      border-color: rgba(0,0,0,0.0);
+    }
+    .mobile-cta-btn.secondary {
+      background: rgba(255,255,255,0.65);
+      color: rgba(0,0,0,0.80);
     }
 
     /* --- CUSTOM SCROLLBAR --- */
@@ -73,7 +154,6 @@
       gap: 8px;
       mix-blend-mode: multiply;
     }
-
     .sb-label {
       font-size: 0.65rem;
       font-weight: 600;
@@ -84,7 +164,6 @@
       font-family: 'IBM Plex Mono', monospace;
       margin: 6px 0;
     }
-
     .sb-line-container {
       width: 2px;
       background: rgba(0,0,0, 0.08);
@@ -92,10 +171,8 @@
       overflow: hidden;
       border-radius: 2px;
     }
-
     .sb-line-long { height: 60px; }
     .sb-line-short { height: 12px; margin: 2px 0; }
-
     .sb-fill {
       position: absolute;
       top: 0; left: 0;
@@ -105,18 +182,19 @@
       transform-origin: top center;
       transition: transform 0.1s linear;
     }
-
     .sb-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
       cursor: pointer;
     }
-    
     .sb-wrap:hover .sb-label { color: var(--text-dark); }
 
     @media (max-width: 900px) {
       .custom-scrollbar { display: none; }
+      .mobile-nav { display: block; }
+      .mobile-cta-bar { display: block; }
+      body { padding-bottom: 96px; } /* make room for fixed bottom bar */
     }
 
     /* --- FIXED PHONE --- */
@@ -124,7 +202,8 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100vh;
-      z-index: 50; 
+      height: 100svh;
+      z-index: 50;
       pointer-events: none;
       display: flex;
       align-items: center;
@@ -132,13 +211,6 @@
       padding-right: min(10vw, 80px);
       transform: translateZ(0);
       backface-visibility: hidden;
-    }
-
-    @media (max-width: 900px) {
-      .phone-wrapper-fixed {
-        justify-content: center;
-        padding-right: 0;
-      }
     }
 
     #phone-scaler {
@@ -149,9 +221,13 @@
     }
 
     .phone-device {
-      width: 400px; height: 850px;
+      /* responsive phone sizing */
+      --phone-w: min(400px, 86vw);
+      --phone-h: calc(var(--phone-w) * 2.125); /* 400x850 ratio */
+      width: var(--phone-w);
+      height: var(--phone-h);
       background: #1c1c1e;
-      border-radius: 54px; 
+      border-radius: calc(var(--phone-w) * 0.135);
       box-shadow:
         0 0 0 4px #2a2a2a,
         0 30px 60px -15px rgba(0,0,0,0.3);
@@ -161,10 +237,13 @@
 
     .dynamic-island {
       position: absolute;
-      top: 18px; left: 50%;
+      top: calc(var(--phone-w) * 0.045);
+      left: 50%;
       transform: translateX(-50%);
-      width: 120px; height: 35px;
-      background: #000; border-radius: 20px;
+      width: calc(var(--phone-w) * 0.30);
+      height: calc(var(--phone-w) * 0.0875);
+      background: #000;
+      border-radius: 999px;
       z-index: 14;
     }
 
@@ -172,7 +251,7 @@
       position: absolute;
       inset: 6px;
       overflow: hidden;
-      border-radius: 48px;
+      border-radius: calc(var(--phone-w) * 0.12);
       background: #fff;
       display: flex;
       flex-direction: column;
@@ -180,48 +259,91 @@
 
     /* Status bar */
     .status-bar {
-      position: absolute; top: 16px; left: 0; right: 0; padding: 0 32px;
-      display: flex; justify-content: space-between; align-items: center;
-      font-family: 'SF Pro Display', sans-serif; font-size: 16px; font-weight: 600; color: #000; z-index: 12;
+      position: absolute;
+      top: calc(var(--phone-w) * 0.04);
+      left: 0; right: 0;
+      padding: 0 calc(var(--phone-w) * 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: clamp(12px, 3.8vw, 16px);
+      font-weight: 600;
+      color: #000;
+      z-index: 12;
     }
     .status-icons { display: flex; align-items: center; gap: 6px; }
     .status-signal { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
     .status-signal span { width: 3px; background: #000; border-radius: 1px; }
-    .status-signal span:nth-child(1) { height: 4px; } .status-signal span:nth-child(2) { height: 6px; }
-    .status-signal span:nth-child(3) { height: 9px; } .status-signal span:nth-child(4) { height: 12px; }
-    .status-wifi { width: 18px; height: 12px; border-radius: 50% 50% 0 0; border: 2px solid #000; border-bottom: none; position: relative; }
+    .status-signal span:nth-child(1) { height: 4px; }
+    .status-signal span:nth-child(2) { height: 6px; }
+    .status-signal span:nth-child(3) { height: 9px; }
+    .status-signal span:nth-child(4) { height: 12px; }
+    .status-wifi {
+      width: 18px; height: 12px;
+      border-radius: 50% 50% 0 0;
+      border: 2px solid #000;
+      border-bottom: none;
+      position: relative;
+    }
     .status-wifi::after { content:""; position: absolute; bottom:-2px; left:2px; right:2px; height:2px; background:#000; }
     .status-battery { width: 24px; height: 12px; border: 1.5px solid #000; border-radius: 3px; position:relative; }
     .status-battery::after { content:""; position:absolute; inset: 1px; background:#000; border-radius: 1px; }
 
     .screen-header {
-      position: absolute; top: 60px; left: 0; right: 0; height: 80px; 
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: rgba(255,255,255, 0.95); 
+      position: absolute;
+      top: calc(var(--phone-w) * 0.15);
+      left: 0; right: 0;
+      height: calc(var(--phone-w) * 0.20);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255, 0.95);
       border-bottom: 1px solid rgba(0,0,0,0.05);
-      z-index: 11; transition: opacity 0.3s ease;
+      z-index: 11;
+      transition: opacity 0.3s ease;
     }
     .header-profile-pic {
       width: 38px; height: 38px; border-radius: 50%;
       display:flex; align-items:center; justify-content:center;
       font-weight:bold; font-size:16px;
     }
-    .header-name { font-size: 11px; color: #000; font-weight: 600; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-
+    .header-name {
+      font-size: 11px; color: #000; font-weight: 600; margin-top: 6px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
     #header-ai { opacity: 1; z-index: 12; }
     #header-james { opacity: 0; z-index: 11; }
 
-    .screen-body-container { position: relative; flex-grow: 1; background: #fff; overflow: hidden; margin-top: 140px; }
-    .chat-container {
-      position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-start;
-      padding: 20px 16px 40px; gap: 8px; overflow-y: auto; font-family: 'SF Pro Display', sans-serif; opacity: 0; 
+    .screen-body-container {
+      position: relative;
+      flex-grow: 1;
+      background: #fff;
+      overflow: hidden;
+      margin-top: calc(var(--phone-w) * 0.36);
     }
-    #chat-state-step1 { z-index: 5; }
-    #chat-state-step2 { z-index: 4; }
-    #chat-state-step3 { z-index: 4; }
+
+    .chat-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 20px 16px 40px;
+      gap: 8px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      font-family: 'SF Pro Display', sans-serif;
+      opacity: 0;
+    }
 
     .imessage-bubble {
-      max-width: 260px; padding: 10px 16px; font-size: 16px; line-height: 1.35; position: relative; word-wrap: break-word;
+      max-width: min(260px, 72%);
+      padding: 10px 16px;
+      font-size: clamp(14px, 4vw, 16px);
+      line-height: 1.35;
+      position: relative;
+      word-wrap: break-word;
     }
     .imessage-received { align-self: flex-start; background-color: #f2f2f7; color: #000; border-radius: 18px 18px 18px 4px; }
     .imessage-sent { align-self: flex-end; background-color: var(--matcha-green-dark); color: white; border-radius: 18px 18px 4px 18px; }
@@ -229,11 +351,14 @@
     /* --- FULLSCREEN NETWORK HERO --- */
     .network-hero {
       height: 100vh;
-      width: 100vw;
+      height: 100svh;
+      width: 100%;
       position: relative;
       background-color: var(--matcha-cream);
       overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       z-index: 1;
     }
 
@@ -241,29 +366,27 @@
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       z-index: 1;
-      --mask-radius: 0%; 
+      --mask-radius: 0%;
       -webkit-mask-image: radial-gradient(circle at center, black var(--mask-radius), transparent calc(var(--mask-radius) + 50%));
       mask-image: radial-gradient(circle at center, black var(--mask-radius), transparent calc(var(--mask-radius) + 50%));
       opacity: 0;
       transform: scale(1.15);
       filter: blur(15px);
     }
-
     .hero-bg-img {
       width: 100%; height: 100%;
       object-fit: cover;
-      background-image: url('network.png'); 
+      background-image: url('network.png');
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
     }
-
     .hero-bottom-fade {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 180px; 
+      height: 180px;
       background: linear-gradient(to bottom, rgba(243, 239, 229, 0) 0%, var(--matcha-cream) 90%);
       z-index: 2;
       pointer-events: none;
@@ -273,13 +396,15 @@
       position: relative;
       z-index: 3;
       text-align: center;
-      max-width: 800px;
-      padding: 0 24px;
+      max-width: 900px;
+      padding: 0 var(--container-pad);
       opacity: 0;
     }
 
     .network-pill {
-      display: inline-flex; align-items: center; gap: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       padding: 6px 14px;
       border-radius: 999px;
       background: rgba(243, 239, 229, 0.85);
@@ -293,15 +418,10 @@
       font-weight: 500;
       backdrop-filter: blur(4px);
     }
-
-    .network-pill-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--matcha-green-muted);
-    }
+    .network-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--matcha-green-muted); }
 
     .network-headline {
-      font-size: clamp(3rem, 5.5vw, 5rem);
+      font-size: clamp(2.2rem, 7vw, 5rem);
       line-height: 1.05;
       margin-bottom: 14px;
       min-height: 2.2em;
@@ -311,7 +431,7 @@
 
     .typing-cursor {
       display: inline-block;
-      width: 2px; 
+      width: 2px;
       height: 0.9em;
       background: var(--matcha-green-muted);
       margin-left: 2px;
@@ -320,14 +440,15 @@
       transform: translateY(0.1em);
     }
 
-    @keyframes cursorBlink {
-      0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; }
-    }
+    @keyframes cursorBlink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
 
     .network-scroll-hint {
-      position: absolute; bottom: 40px; left: 50%;
+      position: absolute;
+      bottom: 40px; left: 50%;
       transform: translateX(-50%);
-      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
       color: var(--text-muted);
       font-family: 'IBM Plex Mono', monospace;
       z-index: 3;
@@ -345,47 +466,68 @@
     }
 
     .reveal-header h2 {
-      font-size: 3.5rem;
+      font-size: clamp(2.1rem, 6vw, 3.5rem);
       color: var(--text-dark);
       margin-bottom: 16px;
     }
 
     .split-layout {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      margin-top: 60px; gap: 40px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-top: 60px;
+      gap: 40px;
     }
 
-    .content-left { 
-      width: 45%; height: 60vh; display: flex; align-items: center;
-    }
+    .content-left { width: 45%; height: 60vh; display: flex; align-items: center; }
     .content-right { width: 50%; position: relative; height: 100%; }
 
     .card {
-      background: transparent; padding: 0; opacity: 0;
-      transform: translateY(30px); position: absolute; top: 50%;
-      transform: translateY(-50%); width: 100%; text-align: left;
+      background: transparent;
+      padding: 0;
+      opacity: 0;
+      transform: translateY(30px);
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      text-align: left;
     }
-    
     .card h3 {
-      font-size: 3rem; margin-bottom: 16px; color: var(--text-dark); line-height: 1.1;
+      font-size: clamp(2rem, 6vw, 3rem);
+      margin-bottom: 16px;
+      color: var(--text-dark);
+      line-height: 1.1;
     }
     .card p {
-      color: var(--text-dark); font-size: 1.15rem; line-height: 1.6; opacity: 0.8; max-width: 440px;
+      color: var(--text-dark);
+      font-size: clamp(1.0rem, 3.6vw, 1.15rem);
+      line-height: 1.6;
+      opacity: 0.82;
+      max-width: 440px;
     }
     .step-num {
-      font-size: 0.8rem; font-weight: 600; color: #b0b0b0; 
-      text-transform: uppercase; margin-bottom: 16px; display: block;
-      letter-spacing: 0.15em; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #b0b0b0;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: block;
+      letter-spacing: 0.15em;
+      font-family: 'IBM Plex Mono', monospace;
     }
 
     /* --- CTA SECTION --- */
     .cta {
-      background: var(--matcha-green-dark); color: var(--text-light);
-      text-align: center; padding: 140px 0 160px; z-index: 60; position: relative;
+      background: var(--matcha-green-dark);
+      color: var(--text-light);
+      text-align: center;
+      padding: 140px 0 160px;
+      z-index: 60;
+      position: relative;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
     }
-    
-    .cta h2 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 30px; }
+    .cta h2 { font-size: clamp(2.0rem, 6vw, 4rem); margin-bottom: 30px; }
 
     .cta-toggle {
       display: inline-flex;
@@ -398,74 +540,151 @@
       letter-spacing: 0.12em;
       font-size: 0.7rem;
     }
-
     .cta-toggle-btn {
+      min-height: 44px;
       padding: 10px 20px;
       border: none;
       background: transparent;
       color: rgba(243, 239, 229, 0.7);
       cursor: pointer;
       transition: background 0.2s, color 0.2s;
+      touch-action: manipulation;
     }
-
     .cta-toggle-btn.active {
       background: var(--matcha-green-muted);
       color: var(--text-light);
     }
 
-    .cta-panel {
-      display: none;
+    .cta-panel { display: none; }
+    .cta-panel.active { display: block; }
+
+    .waitlist-group {
+      max-width: 420px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
     }
 
-    .cta-panel.active {
-      display: block;
-    }
-
-    .waitlist-group { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
     .waitlist-input {
-      background: transparent; border: none; border-bottom: 1px solid rgba(243, 239, 229, 0.3);
-      padding: 12px 0; color: var(--text-light); font-size: 0.9rem; outline: none;
-      transition: border-color 0.3s; font-family: 'IBM Plex Mono', monospace;
-      text-transform: uppercase; letter-spacing: 0.1em;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(243, 239, 229, 0.3);
+      padding: 14px 0;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.3s;
+      font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      min-height: 44px;
     }
     .waitlist-input:focus { border-bottom-color: var(--text-light); }
     .waitlist-input::placeholder { color: rgba(243, 239, 229, 0.5); text-transform: uppercase; }
-    
+
     .btn-waitlist {
-      background: var(--matcha-green-muted); color: var(--text-light); border: none;
-      padding: 18px; font-weight: 600; cursor: pointer; font-size: 0.9rem;
-      transition: background 0.2s; margin-top: 24px; letter-spacing: 0.12em;
-      text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; border-radius: 0;
+      min-height: 48px;
+      background: var(--matcha-green-muted);
+      color: var(--text-light);
+      border: none;
+      padding: 16px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+      margin-top: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: 'IBM Plex Mono', monospace;
+      border-radius: 14px;
+      touch-action: manipulation;
     }
     .btn-waitlist:hover { background: #a3b58f; }
 
     .cta-status {
-      margin-top: 24px;
+      margin-top: 22px;
       font-size: 0.9rem;
-      height: 20px;
+      min-height: 22px;
       font-family: 'IBM Plex Mono', monospace;
-      opacity: 0.8;
+      opacity: 0.85;
     }
 
     footer {
-      background: var(--matcha-green-dark); color: rgba(243, 239, 229, 0.6);
-      text-align: center; padding: 40px 32px; font-size: 0.75rem;
-      position: relative; z-index: 60; font-family: 'IBM Plex Mono', monospace;
-      letter-spacing: 0.1em; text-transform: uppercase;
+      background: var(--matcha-green-dark);
+      color: rgba(243, 239, 229, 0.6);
+      text-align: center;
+      padding: 40px 32px;
+      font-size: 0.75rem;
+      position: relative;
+      z-index: 60;
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       border-top: 1px solid rgba(243, 239, 229, 0.1);
     }
 
+    /* --- MOBILE LAYOUT TUNING --- */
     @media (max-width: 900px) {
-      .split-layout { flex-direction: column; gap: 32px; }
+      /* content: cards become normal flow */
+      .split-layout { flex-direction: column; gap: 22px; }
       .content-left { width: 100%; height: auto; display: block; }
-      .card { position: relative; transform: none; top: auto; opacity: 1 !important; margin-bottom: 60px; }
+      .card { position: relative; top: auto; transform: none; opacity: 1 !important; margin-bottom: 46px; }
       .content-right { display: none; }
-      .content-section { padding-top: 80px; }
-      .network-headline { font-size: 3rem; }
+      .content-section { padding-top: 88px; padding-bottom: 100px; }
+
+      /* hero needs breathing room under fixed nav */
+      .network-inner { padding-top: calc(54px + var(--safe-top)); }
+      .network-scroll-hint { bottom: 26px; }
+
+      /* phone becomes a “floating demo” near bottom, above CTA bar */
+      .phone-wrapper-fixed {
+        justify-content: center;
+        padding-right: 0;
+        align-items: flex-end;
+        top: auto;
+        bottom: calc(86px + var(--safe-bottom));
+        height: auto;
+      }
+      #phone-scaler { opacity: 1; }
+
+      /* mobile phone demo: show step2 as the single default */
+      #chat-state-step1, #chat-state-step3 { display: none; }
+      #chat-state-step2 { opacity: 1 !important; }
+      #header-ai { opacity: 1 !important; }
+      #header-james { display: none; }
+
+      /* ensure CTA isn’t hidden behind bottom bar */
+      .cta { padding-bottom: calc(260px + var(--safe-bottom)); padding-top: 110px; }
+      footer { padding-bottom: calc(110px + var(--safe-bottom)); }
+    }
+
+    @media (max-width: 380px) {
+      .network-pill { font-size: 0.62rem; }
+      .cta-toggle-btn { padding: 10px 16px; }
     }
   </style>
 </head>
+
 <body>
+  <!-- Mobile fixed header -->
+  <header class="mobile-nav" aria-label="Mobile navigation">
+    <div class="mobile-nav-inner">
+      <div class="mobile-brand">
+        <span aria-hidden="true">🍵</span>
+        <span>Matcha Match</span>
+      </div>
+      <button class="mobile-nav-btn" id="mobile-join-btn" type="button">Join</button>
+    </div>
+  </header>
+
+  <!-- Mobile fixed bottom bar -->
+  <div class="mobile-cta-bar" aria-label="Quick join">
+    <div class="mobile-cta-row">
+      <button class="mobile-cta-btn primary" id="mobile-join-mentee" type="button">Join as mentee</button>
+      <button class="mobile-cta-btn secondary" id="mobile-join-mentor" type="button">Join as mentor</button>
+    </div>
+  </div>
 
   <div class="custom-scrollbar">
     <div class="sb-wrap" onclick="window.scrollTo(0,0)">
@@ -474,14 +693,14 @@
         <div class="sb-fill" id="fill-chaos"></div>
       </div>
     </div>
-    
+
     <div class="sb-wrap" onclick="document.getElementById('section-content').scrollIntoView()">
       <div class="sb-label">How</div>
       <div class="sb-line-container sb-line-short"><div class="sb-fill" id="fill-step1"></div></div>
       <div class="sb-line-container sb-line-short"><div class="sb-fill" id="fill-step2"></div></div>
       <div class="sb-line-container sb-line-short"><div class="sb-fill" id="fill-step3"></div></div>
     </div>
-    
+
     <div class="sb-wrap" onclick="document.getElementById('section-cta').scrollIntoView()">
       <div class="sb-line-container sb-line-long" style="height:40px; margin-bottom:6px;">
         <div class="sb-fill" id="fill-join"></div>
@@ -490,7 +709,7 @@
     </div>
   </div>
 
-  <div class="phone-wrapper-fixed">
+  <div class="phone-wrapper-fixed" aria-hidden="true">
     <div id="phone-scaler">
       <div class="phone-device">
         <div class="screen">
@@ -502,11 +721,12 @@
               <div class="status-battery"></div>
             </div>
           </div>
+
           <div class="dynamic-island"></div>
-          
+
           <div class="screen-header" id="header-ai">
             <div class="header-profile-pic" style="background: #f4f4f4; border: 1px solid #d0d0d0; color:#222;">
-                <span style="font-size: 14px;">🍵</span>
+              <span style="font-size: 14px;">🍵</span>
             </div>
             <span class="header-name">Matcha AI</span>
           </div>
@@ -547,6 +767,7 @@
         <span class="network-pill-dot"></span>
         MATCHA MATCH · BOSTON COLLEGE
       </div>
+
       <h1 class="network-headline">
         <span id="headline-typed"></span><span class="typing-cursor" id="headline-cursor"></span>
       </h1>
@@ -560,6 +781,7 @@
       <div class="reveal-header" style="margin-bottom: 80px;">
         <h2>How it works</h2>
       </div>
+
       <div class="split-layout">
         <div class="content-left">
           <div class="card step-card" id="card-step1">
@@ -567,17 +789,20 @@
             <h3>Set Your Target</h3>
             <p>Tell our AI what you're looking for. "Help me find a JPM IB intern from BC." No portals, no forms. Just text.</p>
           </div>
+
           <div class="card step-card" id="card-step2">
             <span class="step-num">Step 02</span>
             <h3>Get Matched</h3>
             <p>We instantly scan the network to find upperclassmen who have landed that exact role. Real people, real experience.</p>
           </div>
+
           <div class="card step-card" id="card-step3">
             <span class="step-num">Step 03</span>
             <h3>Connect Directly</h3>
             <p>Get introduced via text. Skip the cold emails and schedule a chat with someone who's been in your shoes.</p>
           </div>
         </div>
+
         <div class="content-right"></div>
       </div>
     </div>
@@ -587,9 +812,9 @@
     <div class="container reveal-cta">
       <h2 id="cta-heading">Looking for help?</h2>
 
-      <div class="cta-toggle">
-        <button class="cta-toggle-btn active" data-role="mentee">mentee</button>
-        <button class="cta-toggle-btn" data-role="mentor">mentor</button>
+      <div class="cta-toggle" role="tablist" aria-label="Join as mentee or mentor">
+        <button class="cta-toggle-btn active" data-role="mentee" type="button">mentee</button>
+        <button class="cta-toggle-btn" data-role="mentor" type="button">mentor</button>
       </div>
 
       <!-- Hidden iframe for posting to webhooks without redirect -->
@@ -604,10 +829,9 @@
           method="POST"
           target="hidden_iframe"
         >
-          <!-- NEW: role explicitly sent to Make -->
-          <input type="hidden" name="role" value="mentee">
+          <input type="hidden" name="role" value="mentee" />
 
-          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
+          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
 
           <input
             type="tel"
@@ -615,12 +839,14 @@
             id="mentee-phone"
             class="waitlist-input"
             placeholder="(617) 555-1234"
+            inputmode="tel"
+            autocomplete="tel"
             required
-          >
+          />
 
-          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" required>
+          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" required />
 
-          <input type="hidden" name="phone_raw" id="mentee_phone_raw">
+          <input type="hidden" name="phone_raw" id="mentee_phone_raw" />
 
           <button type="submit" class="btn-waitlist">JOIN NOW</button>
         </form>
@@ -637,10 +863,9 @@
           method="POST"
           target="hidden_iframe"
         >
-          <!-- NEW: role explicitly sent to Make -->
-          <input type="hidden" name="role" value="mentor">
+          <input type="hidden" name="role" value="mentor" />
 
-          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" required>
+          <input type="text" name="name" class="waitlist-input" placeholder="FULL NAME" autocomplete="name" required />
 
           <input
             type="tel"
@@ -648,12 +873,14 @@
             id="mentor-phone"
             class="waitlist-input"
             placeholder="(617) 555-1234"
+            inputmode="tel"
+            autocomplete="tel"
             required
-          >
+          />
 
-          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" required>
+          <input type="email" name="email" class="waitlist-input" placeholder="BC EMAIL ADDRESS" autocomplete="email" required />
 
-          <input type="hidden" name="phone_raw" id="mentor_phone_raw">
+          <input type="hidden" name="phone_raw" id="mentor_phone_raw" />
 
           <button type="submit" class="btn-waitlist">JOIN NOW</button>
         </form>
@@ -671,10 +898,22 @@
     /* --- PHONE SCALE --- */
     function resizePhone() {
       const scaler = document.getElementById('phone-scaler');
-      const baseHeight = 850; const baseWidth = 400;
-      const vh = window.innerHeight; const vw = window.innerWidth;
-      let targetScale = (vh * 0.85) / baseHeight;
-      if ((baseWidth * targetScale) > (vw * 0.9)) { targetScale = (vw * 0.9) / baseWidth; }
+      const baseHeight = 850;
+      const baseWidth = 400;
+
+      const vh = window.innerHeight;
+      const vw = window.innerWidth;
+
+      let targetScale;
+
+      // mobile: size mainly from width so it doesn't dominate the screen
+      if (vw <= 900) {
+        targetScale = (vw * 0.78) / baseWidth;
+      } else {
+        targetScale = (vh * 0.85) / baseHeight;
+        if ((baseWidth * targetScale) > (vw * 0.9)) targetScale = (vw * 0.9) / baseWidth;
+      }
+
       gsap.set(scaler, { scale: targetScale });
     }
     window.addEventListener('resize', resizePhone);
@@ -684,9 +923,11 @@
     const fullHeadline = "Your professional network, brewed perfectly.";
 
     function typeText(targetEl, text, speed) {
-      let i = 0; targetEl.textContent = "";
+      let i = 0;
+      targetEl.textContent = "";
       const interval = setInterval(() => {
-        targetEl.textContent = text.slice(0, i); i++;
+        targetEl.textContent = text.slice(0, i);
+        i++;
         if (i > text.length) clearInterval(interval);
       }, speed);
     }
@@ -694,7 +935,7 @@
     /* --- INITIAL LOAD ANIMATION SEQUENCE --- */
     window.addEventListener('load', () => {
       resizePhone();
-      
+
       const tl = gsap.timeline();
       const heroBg = document.getElementById("hero-bg-wrapper");
 
@@ -719,9 +960,7 @@
       .to("#network-inner", {
         opacity: 1,
         duration: 1,
-        onStart: () => {
-            typeText(headlineSpan, fullHeadline, 35);
-        }
+        onStart: () => typeText(headlineSpan, fullHeadline, 35)
       }, "-=0.5")
       .to("#scroll-hint", {
         opacity: 0.7,
@@ -738,52 +977,80 @@
     const sbJoin  = document.getElementById('fill-join');
 
     ScrollTrigger.create({
-      trigger: "#network-hero", start: "top top", end: "bottom top",
+      trigger: "#network-hero",
+      start: "top top",
+      end: "bottom top",
       onUpdate: (self) => { sbChaos.style.transform = `scaleY(${self.progress})`; }
     });
 
-    /* --- PHONE & CONTENT TIMELINE --- */
-    ScrollTrigger.create({
-      trigger: "#section-content", start: "top bottom", end: "top 20%", scrub: 1,
-      onUpdate: (self) => { gsap.set("#phone-scaler", { opacity: self.progress }); }
-    });
+    /* --- RESPONSIVE GSAP (desktop vs mobile) --- */
+    ScrollTrigger.matchMedia({
+      "(min-width: 901px)": function () {
+        // Fade phone in as you approach "How it works"
+        ScrollTrigger.create({
+          trigger: "#section-content",
+          start: "top bottom",
+          end: "top 20%",
+          scrub: 1,
+          onUpdate: (self) => gsap.set("#phone-scaler", { opacity: self.progress })
+        });
 
-    if (window.innerWidth > 900) {
+        // Desktop pinned step sequence
         const stepsTl = gsap.timeline({
-            scrollTrigger: { trigger: "#section-content", start: "top top", end: "+=2400", pin: true, scrub: 1 }
+          scrollTrigger: {
+            trigger: "#section-content",
+            start: "top top",
+            end: "+=2400",
+            pin: true,
+            scrub: 1
+          }
         });
 
         stepsTl
-        .to("#card-step1", { opacity: 1, duration: 0.3 })
-        .to("#chat-state-step1", { opacity: 1, duration: 0.3 }, "<")
-        .to(sbStep1, { scaleY: 1, duration: 0.1 }, "<")
-        .to({}, { duration: 0.8 }) 
+          .to("#card-step1", { opacity: 1, duration: 0.3 })
+          .to("#chat-state-step1", { opacity: 1, duration: 0.3 }, "<")
+          .to(sbStep1, { scaleY: 1, duration: 0.1 }, "<")
+          .to({}, { duration: 0.8 })
 
-        .to("#card-step1", { opacity: 0, duration: 0.3 })
-        .to("#card-step2", { opacity: 1, duration: 0.3 })
-        .to("#chat-state-step1", { opacity: 0, duration: 0.3 }, "<")
-        .to("#chat-state-step2", { opacity: 1, duration: 0.3 }, ">")
-        .to(sbStep2, { scaleY: 1, duration: 0.1 }, "<")
-        .to({}, { duration: 0.8 })
+          .to("#card-step1", { opacity: 0, duration: 0.3 })
+          .to("#card-step2", { opacity: 1, duration: 0.3 })
+          .to("#chat-state-step1", { opacity: 0, duration: 0.3 }, "<")
+          .to("#chat-state-step2", { opacity: 1, duration: 0.3 }, ">")
+          .to(sbStep2, { scaleY: 1, duration: 0.1 }, "<")
+          .to({}, { duration: 0.8 })
 
-        .to("#card-step2", { opacity: 0, duration: 0.3 })
-        .to("#card-step3", { opacity: 1, duration: 0.3 })
-        .to("#chat-state-step2", { opacity: 0, duration: 0.3 }, "<")
-        .to("#header-ai", { opacity: 0, duration: 0.3 }, "<")
-        .to("#header-james", { opacity: 1, duration: 0.3 }, ">")
-        .to("#chat-state-step3", { opacity: 1, duration: 0.3 }, ">")
-        .to(sbStep3, { scaleY: 1, duration: 0.1 }, "<")
-        .to({}, { duration: 0.8 });
-    }
+          .to("#card-step2", { opacity: 0, duration: 0.3 })
+          .to("#card-step3", { opacity: 1, duration: 0.3 })
+          .to("#chat-state-step2", { opacity: 0, duration: 0.3 }, "<")
+          .to("#header-ai", { opacity: 0, duration: 0.3 }, "<")
+          .to("#header-james", { opacity: 1, duration: 0.3 }, ">")
+          .to("#chat-state-step3", { opacity: 1, duration: 0.3 }, ">")
+          .to(sbStep3, { scaleY: 1, duration: 0.1 }, "<")
+          .to({}, { duration: 0.8 });
 
+        // Phone fades out over CTA on desktop
+        gsap.to("#phone-scaler", {
+          scrollTrigger: { trigger: "#section-cta", start: "top bottom", end: "top center", scrub: 1 },
+          opacity: 0
+        });
+      },
+
+      "(max-width: 900px)": function () {
+        // On mobile: keep phone visible by default, then fade it out near CTA
+        gsap.set("#phone-scaler", { opacity: 1 });
+
+        gsap.to("#phone-scaler", {
+          scrollTrigger: { trigger: "#section-cta", start: "top 85%", end: "top 55%", scrub: 1 },
+          opacity: 0
+        });
+      }
+    });
+
+    // Join indicator fill
     gsap.to(sbJoin, {
       scrollTrigger: { trigger: "#section-cta", start: "top 80%", toggleActions: "play reverse play reverse" },
-      scaleY: 1, duration: 0.3
-    });
-    
-    gsap.to("#phone-scaler", {
-      scrollTrigger: { trigger: "#section-cta", start: "top bottom", end: "top center", scrub: 1 },
-      opacity: 0
+      scaleY: 1,
+      duration: 0.3
     });
 
     /* --- CTA TOGGLE (mentee vs mentor) --- */
@@ -792,27 +1059,53 @@
     const menteePanel = document.getElementById('cta-mentee');
     const mentorPanel = document.getElementById('cta-mentor');
 
+    function setRole(role) {
+      toggleButtons.forEach(b => b.classList.remove('active'));
+      document.querySelector(`.cta-toggle-btn[data-role="${role}"]`)?.classList.add('active');
+
+      if (role === 'mentee') {
+        ctaHeading.textContent = 'Looking for help?';
+        menteePanel.classList.add('active');
+        mentorPanel.classList.remove('active');
+      } else {
+        ctaHeading.textContent = 'Got wisdom to share?';
+        mentorPanel.classList.add('active');
+        menteePanel.classList.remove('active');
+      }
+    }
+
     toggleButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const role = btn.dataset.role;
-
-        toggleButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        if (role === 'mentee') {
-          ctaHeading.textContent = 'Looking for help?';
-          menteePanel.classList.add('active');
-          mentorPanel.classList.remove('active');
-        } else {
-          ctaHeading.textContent = 'Got wisdom to share?';
-          mentorPanel.classList.add('active');
-          menteePanel.classList.remove('active');
-        }
-      });
+      btn.addEventListener('click', () => setRole(btn.dataset.role));
     });
 
-    /* --- FORM SUBMISSION (two separate forms -> two separate tables/webhooks) --- */
+    /* --- MOBILE JOIN SHORTCUTS --- */
+    const mobileJoinBtn = document.getElementById("mobile-join-btn");
+    const mobileJoinMentee = document.getElementById("mobile-join-mentee");
+    const mobileJoinMentor = document.getElementById("mobile-join-mentor");
 
+    function scrollToCTA() {
+      document.getElementById("section-cta").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    if (mobileJoinBtn) {
+      mobileJoinBtn.addEventListener("click", () => {
+        scrollToCTA();
+      });
+    }
+    if (mobileJoinMentee) {
+      mobileJoinMentee.addEventListener("click", () => {
+        setRole("mentee");
+        scrollToCTA();
+      });
+    }
+    if (mobileJoinMentor) {
+      mobileJoinMentor.addEventListener("click", () => {
+        setRole("mentor");
+        scrollToCTA();
+      });
+    }
+
+    /* --- FORM SUBMISSION --- */
     const menteeForm = document.getElementById("mentee-form");
     const mentorForm = document.getElementById("mentor-form");
 
