@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Mobile-first viewport + safe-area support -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="theme-color" content="#f3efe5" />
@@ -545,7 +544,6 @@
 </head>
 
 <body>
-  <!-- Mobile fixed header -->
   <header class="mobile-nav" aria-label="Mobile navigation">
     <div class="mobile-nav-inner">
       <div class="mobile-brand">
@@ -556,7 +554,6 @@
     </div>
   </header>
 
-  <!-- Mobile fixed bottom bar -->
   <div class="mobile-cta-bar" aria-label="Quick join">
     <div class="mobile-cta-row">
       <button class="mobile-cta-btn primary" id="mobile-join-mentee" type="button">Join as mentee</button>
@@ -587,7 +584,6 @@
     </div>
   </div>
 
-  <!-- Fixed phone (desktop only; hidden on mobile via CSS) -->
   <div class="phone-wrapper-fixed" aria-hidden="true">
     <div id="phone-scaler">
       <div class="phone-device">
@@ -650,7 +646,6 @@
         <span id="headline-typed"></span><span class="typing-cursor" id="headline-cursor"></span>
       </h1>
 
-      <!-- Mobile-only visual (small, non-fixed) -->
       <div class="mobile-chat-demo" aria-hidden="true">
         <div class="m-bubble m-sent">Help me find an IB intern from BC.</div>
         <div class="m-bubble m-recv">Got it, searching the network...</div>
@@ -837,11 +832,11 @@
     const phoneEl = document.getElementById("phone-scaler");
     function showPhone() {
       if (!phoneEl) return;
-      gsap.to(phoneEl, { opacity: 1, duration: 0.2, overwrite: true });
+      gsap.to(phoneEl, { opacity: 1, duration: 0.4, overwrite: true });
     }
     function hidePhone() {
       if (!phoneEl) return;
-      gsap.to(phoneEl, { opacity: 0, duration: 0.2, overwrite: true });
+      gsap.to(phoneEl, { opacity: 0, duration: 0.4, overwrite: true });
     }
 
     /* --- DESKTOP vs MOBILE GSAP --- */
@@ -854,31 +849,37 @@
         gsap.set(phoneEl, { opacity: 0 });
 
         /**
-         * FIXED TIMING RULE:
-         * Phone is visible exactly while #section-content is on-screen (even partially).
-         * It is hidden in the hero and hidden in the join section only when #section-content is not on-screen.
+         * 1. THE PINNING TIMELINE
+         * This handles the text fading and the phone content changes.
+         * It pins the section for an extra 2400px.
          */
-        ScrollTrigger.create({
-          trigger: "#section-content",
-          start: "top bottom",   // section starts appearing
-          end: "bottom top",     // section fully gone
-          onToggle: (self) => {
-            if (self.isActive) showPhone();
-            else hidePhone();
-          }
-        });
-
-        // Desktop pinned step sequence
         const stepsTl = gsap.timeline({
           scrollTrigger: {
             trigger: "#section-content",
             start: "top top",
             end: "+=2400",
             pin: true,
-            scrub: 1
+            scrub: 1,
+            id: "steps-timeline"
           }
         });
 
+        /* --- VISIBILITY TRIGGER ---
+         * This ensures the phone is visible for the ENTIRE duration of the section.
+         * We start showing it when the section is near the middle of the viewport (approach).
+         * We stop showing it EXACTLY when the pinned timeline ends.
+         */
+        ScrollTrigger.create({
+          trigger: "#section-content",
+          start: "top 70%", // Starts fading in as you approach
+          end: () => stepsTl.scrollTrigger.end, // SYNC with the end of the pin
+          onToggle: (self) => {
+            if (self.isActive) showPhone();
+            else hidePhone();
+          }
+        });
+
+        // Step Animations
         stepsTl
           .to("#card-step1", { opacity: 1, duration: 0.3 })
           .to("#chat-state-step1", { opacity: 1, duration: 0.3 }, "<")
